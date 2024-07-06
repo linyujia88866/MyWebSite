@@ -40,6 +40,7 @@ const postData = async () => {
           router.push({ name: 'home' });
         }
       })
+
       .catch(error => console.error('Error:', error));
 };
 </script>
