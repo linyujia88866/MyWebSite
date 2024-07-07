@@ -19,6 +19,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   publicPath: './',
   devServer: {
+    webSocketServer: false,
     host: 'localhost',
     port: 8082,
     historyApiFallback: true,
@@ -29,9 +30,7 @@ module.exports = defineConfig({
         pathRewrite: {
           '^/': '/'
         }
-
       }
-
     }
   }
 })

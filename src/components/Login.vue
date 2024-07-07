@@ -32,9 +32,6 @@ const requestBody = {
 const postData = async () => {
   axios.post(url, requestBody)
       .then(response => {
-        console.log(response.data)
-        console.log(response.data.data)
-        console.log(response.data.success)
         if(response.data.success==="200"){
           console.log(response.data.success)
           router.push({ name: 'home' });

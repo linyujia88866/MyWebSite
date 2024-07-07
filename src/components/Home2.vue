@@ -17,7 +17,22 @@
         <!-- 帮助图标 -->
         <img src="../assets/help.jpg" alt="Help Icon" class="help-icon">
         <!-- 用户头像 -->
-        <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
+        <div class="avatar" @click="toggleMenu">
+          <!-- 头像内容，可以是图片或者其他元素 -->
+          <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
+        </div>
+        <div class="user-menu">
+
+          <ul v-if="menuVisible" class="menu">
+            <!-- 菜单项 -->
+            <li><a href="#">个人信息</a></li>
+            <li><a href="#">设置</a></li>
+            <li><a href="#" @click="logout">退出登录</a></li>
+          </ul>
+        </div>
+
+
+
       </div>
     </div>
     <div class="card-container">
@@ -52,12 +67,35 @@ const router = useRouter();
 const route = useRoute();
 
 
+
 const url = '/verify';
+
+
+const menuVisible = ref(false);
+
+function toggleMenu() {
+  menuVisible.value = !menuVisible.value;
+}
+
+function logout() {
+  // 执行退出登录的操作，例如清除token或调用API
+  menuVisible.value = false; // 可选：关闭菜单
+  // 进行其他退出登录的逻辑，例如跳转到登录页面
+  axios.post('/logout')
+      .then(response => {
+        if(response.data.success === "200"){
+          isLogin = false;
+          router.push({name: 'login'});
+        }
+      })
+      .catch(error => console.error('Error:', error));
+}
+
+
 onMounted( async () => {
   isLogin=false;
   const result = await verify();
   if (!isLogin) {
-    console.log("重新返回登录界面")
     // 要执行的代码;
     router.push({name: 'login'});
   }
@@ -67,8 +105,6 @@ onMounted( async () => {
 async function verify() {
   await axios.post(url)
       .then(response => {
-        console.log(response.data)
-        console.log(response.data.data)
         if(response.data.success === "200"){
           isLogin = true;
         }
@@ -78,10 +114,6 @@ async function verify() {
       .catch(error => console.error('Error:', error));
   return 1;
 }
-
-
-
-
 
 </script>
 
@@ -174,6 +206,42 @@ async function verify() {
   font-weight: bold;
   font-size: 24px;
   color: #42b983;
+}
+
+
+
+.user-menu {
+  position: relative;
+}
+.avatar {
+  cursor: pointer;
+}
+.menu {
+  position: absolute;
+  top: 20px;
+  right: -10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  width: 200px;
+}
+.menu li {
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+  //width: 500px;
+}
+.menu li:last-child {
+  border-bottom: none;
+}
+.menu a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+.menu a:hover {
+  background-color: #f0f0f0;
 }
 
 </style>
