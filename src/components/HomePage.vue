@@ -1,49 +1,18 @@
 /* eslint-disable */
 <template>
   <div class="home-page">
-    <div class="top-bar">
-      <div class="tabs">
-        <!-- 页签内容 -->
-        <div class="nav-bar">
-          <ul>
-            <li v-for="(tab, index) in tabs" :key="index" :class="{active: activeTab === tab}">
-              <a @click="activeTab = tab">{{ tab }}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="user-actions">
-
-        <!-- 帮助图标 -->
-        <img src="../assets/help.jpg" alt="Help Icon" class="help-icon">
-        <!-- 用户头像 -->
-        <div class="avatar" @click="toggleMenu">
-          <!-- 头像内容，可以是图片或者其他元素 -->
-          <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
-        </div>
-        <div class="user-menu">
-
-          <ul v-if="menuVisible" class="menu">
-            <!-- 菜单项 -->
-            <li><a href="#">个人信息</a></li>
-            <li><a href="#">设置</a></li>
-            <li><a href="#" @click="logout">退出登录</a></li>
-          </ul>
-        </div>
-
-
-
-      </div>
+    <div>
+      <navigate ref="childRef"></navigate>
     </div>
     <div class="card-container">
         <!-- 卡片内容 -->
         <div class="card card1">
 
         </div>
-        <div class="card">
+        <div class="card card-notebook" @click="gotoNotebook">
 
         </div>
-        <div class="card">
+        <div class="card card-memory" @click="gotoMemory">
 
         </div>
         <div class="card">
@@ -58,61 +27,20 @@
 
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, ref} from "vue";
-import axios from "axios";
-let activeTab= ref('首页');
-let tabs= ref(['首页', '通知', '设置']);
-let isLogin= false;
+import {ref} from "vue";
+import Navigate from "@/components/Navigate.vue";
 const router = useRouter();
-const route = useRoute();
-
-
-
+useRoute();
 const url = '/verify';
 
+const childRef = ref(null);
 
-const menuVisible = ref(false);
-
-function toggleMenu() {
-  menuVisible.value = !menuVisible.value;
+function gotoNotebook() {
+  router.push({name: 'notebook'});
 }
 
-function logout() {
-  // 执行退出登录的操作，例如清除token或调用API
-  menuVisible.value = false; // 可选：关闭菜单
-  // 进行其他退出登录的逻辑，例如跳转到登录页面
-  axios.post('/logout')
-      .then(response => {
-        if(response.data.success === "200"){
-          isLogin = false;
-          router.push({name: 'login'});
-        }
-      })
-      .catch(error => console.error('Error:', error));
-}
-
-
-onMounted( async () => {
-  isLogin=false;
-  const result = await verify();
-  if (!isLogin) {
-    // 要执行的代码;
-    router.push({name: 'login'});
-  }
-})
-
-
-async function verify() {
-  await axios.post(url)
-      .then(response => {
-        if(response.data.success === "200"){
-          isLogin = true;
-        }
-
-        return 2;
-      })
-      .catch(error => console.error('Error:', error));
-  return 1;
+function gotoMemory() {
+  router.push({name: 'memory'});
 }
 
 </script>
@@ -185,7 +113,19 @@ async function verify() {
 }
 
 .card1{
-  background-image: url('../assets/quick.png');
+   background-image: url('../assets/quick.png');
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+ }
+.card-notebook{
+  background-image: url('../assets/notebook.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.card-memory{
+  background-image: url('../assets/seven.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
