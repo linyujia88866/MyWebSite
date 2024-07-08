@@ -22,7 +22,6 @@ import {ref} from "vue";
 const router = useRouter();
 let user = ref('LiYan');
 let pwd = ref('9802');
-import axios from 'axios';
 import {myHttp} from "@/request/myrequest";
 const url = '/login';
 const requestBody = {

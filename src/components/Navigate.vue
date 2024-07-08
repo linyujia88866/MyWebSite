@@ -1,7 +1,6 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, ref, watch} from "vue";
-import axios from "axios";
+import {onMounted, ref} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 

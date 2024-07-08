@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
 
 let msg=ref("");
