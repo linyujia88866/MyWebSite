@@ -38,7 +38,7 @@ function gotoNotebook() {
 }
 
 function gotoMemory() {
-  router.push({name: 'memory'});
+  router.push({name: 'memoryCards'});
 }
 
 </script>
@@ -51,41 +51,6 @@ function gotoMemory() {
   margin: 0;
   padding: 0;
   flex-direction: column;
-}
-
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin: 0;
-  background-color: #f5f5f5;
-}
-
-.tabs {
-  /* 页签样式 */
-}
-
-.user-actions {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.help-icon {
-  width: 30px;
-  height: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border-radius: 50%;
-  cursor: pointer;
 }
 
 .card-container {
@@ -147,24 +112,6 @@ function gotoMemory() {
 }
 
 
-
-.user-menu {
-  position: relative;
-}
-.avatar {
-  cursor: pointer;
-}
-.menu {
-  position: absolute;
-  top: 20px;
-  right: -10px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  background: #fff;
-  border: 1px solid #eee;
-  width: 200px;
-}
 .menu li {
   padding: 5px 10px;
   border-bottom: 1px solid #eee;

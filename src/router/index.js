@@ -3,6 +3,9 @@ import Login from "@/components/Login.vue";
 import HomePage from "@/components/HomePage.vue";
 import NoteBook from "@/components/NoteBook.vue";
 import Memorandum from "@/components/Memorandum.vue";
+import MemoryCards from "@/components/MemoryCards.vue";
+import Message from "@/components/Message.vue";
+import Setting from "@/components/Setting.vue";
 
 const routes = [
   {
@@ -24,6 +27,21 @@ const routes = [
     path: '/memory',
     name: 'memory',
     component: Memorandum
+  },
+  {
+    path: '/memoryCards',
+    name: 'memoryCards',
+    component: MemoryCards
+  },
+  {
+    path: '/message',
+    name: 'message',
+    component: Message
+  },
+  {
+    path: '/setting',
+    name: 'setting',
+    component: Setting
   }
 ]
 

@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 let activeTab= ref('首页');
-let tabs= ref(['首页', '功能', '通知', '设置']);
+let tabs= ref(['首页', '通知', '设置']);
 let isLogin= false;
 const router = useRouter();
 useRoute();
@@ -37,7 +37,9 @@ async function verify() {
 }
 
 onMounted( async () => {
-  console.log("初始页签" + props.originTab)
+  if(props.originTab==='功能'){
+    tabs.value=['首页', '功能', '通知', '设置']
+  }
   activeTab.value = props.originTab;
   isLogin=false;
   await verify();
@@ -52,6 +54,10 @@ function changeTab(tab){
   activeTab.value = tab;
   if(tab==="首页"){
     router.push({name: 'home'});
+  }else if(tab==="通知"){
+    router.push({name: 'message'});
+  }else if(tab==="设置"){
+    router.push({name: 'setting'});
   }
 }
 
@@ -121,7 +127,7 @@ defineExpose({
   align-items: center;
   padding: 10px;
   margin: 0;
-  background-color: #f5f5f5;
+  background-color: rgb(135, 206, 235);
 }
 
 .tabs {
@@ -159,12 +165,14 @@ defineExpose({
 .nav-bar li {
   display: inline-block;
   margin-right: 10px;
+  color: #ffffff;
+  font-size: 20px;
 }
 
 .nav-bar li.active a {
   font-weight: bold;
   font-size: 24px;
-  color: #42b983;
+  color: #008000;
 }
 
 

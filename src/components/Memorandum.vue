@@ -1,7 +1,8 @@
 <script setup>
 import {ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
-
+import {useRouter} from 'vue-router';
+const router = useRouter();
 let msg=ref("");
 const originTab=ref("功能");
 let items=ref(["web应用开发","UI动效设计","手机微电影制作"]);
@@ -20,11 +21,17 @@ function remove(index){
 function clear(){
   items.value=[];
 }
+
+function gotoMemoryCards(){
+  router.push({name: 'memoryCards'});
+}
 </script>
 
 <template>
   <div>
     <navigate ref="childRef" :origin-tab="originTab"></navigate>
+    <h4 style="text-align: left; padding-top: 10px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
+        @click="gotoMemoryCards">返回任务清单列表</h4>
     <header>
       <h2>小黑记事本</h2>
     </header>
