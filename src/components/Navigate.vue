@@ -3,6 +3,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {onMounted, ref, watch} from "vue";
 import axios from "axios";
 import { defineProps } from 'vue';
+import {myHttp} from "@/request/myrequest";
 
 const props = defineProps({
   originTab: {
@@ -25,9 +26,9 @@ function toggleMenu() {
 }
 
 async function verify() {
-  await axios.post(url)
+  await myHttp.post(url)
       .then(response => {
-        if(response.data.success === "200"){
+        if (response.data.success === "200") {
           isLogin = true;
         }
         return 0;
@@ -40,7 +41,7 @@ onMounted( async () => {
   console.log("初始页签" + props.originTab)
   activeTab.value = props.originTab;
   isLogin=false;
-  const result = await verify();
+  await verify();
   if (!isLogin) {
     // 要执行的代码;
     await router.push({name: 'login'});
@@ -63,7 +64,7 @@ function logout() {
   // 执行退出登录的操作，例如清除token或调用API
   menuVisible.value = false; // 可选：关闭菜单
   // 进行其他退出登录的逻辑，例如跳转到登录页面
-  axios.post('/logout')
+  myHttp.post('/logout')
       .then(response => {
         if(response.data.success === "200"){
           isLogin = false;

@@ -20,10 +20,6 @@ function remove(index){
 function clear(){
   items.value=[];
 }
-
-// onMounted( async () => {
-//   childRef.value.updateTab() ;
-// })
 </script>
 
 <template>

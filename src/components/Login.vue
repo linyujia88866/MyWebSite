@@ -23,6 +23,7 @@ const router = useRouter();
 let user = ref('LiYan');
 let pwd = ref('9802');
 import axios from 'axios';
+import {myHttp} from "@/request/myrequest";
 const url = '/login';
 const requestBody = {
   user: user.value,
@@ -30,11 +31,12 @@ const requestBody = {
 };
 
 const postData = async () => {
-  axios.post(url, requestBody)
+  console.log("请求了login")
+  myHttp.post(url, requestBody)
       .then(response => {
-        if(response.data.success==="200"){
+        if (response.data.success === "200") {
           console.log(response.data.success)
-          router.push({ name: 'home' });
+          router.push({name: 'home'});
         }
       })
 

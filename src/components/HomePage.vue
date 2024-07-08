@@ -26,12 +26,10 @@
 </template>
 
 <script setup>
-import {useRoute, useRouter} from 'vue-router';
+import {useRouter} from 'vue-router';
 import {ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
 const router = useRouter();
-useRoute();
-const url = '/verify';
 
 const childRef = ref(null);
 
