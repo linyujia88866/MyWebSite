@@ -1,8 +1,12 @@
 <template>
   <div class="login-container">
     <img alt="Vue logo" src="../assets/logo.png" >
-    <h1>燕子爱学习中文网</h1>
+    <h1>注册账号</h1>
     <form @submit.prevent="postData">
+      <div style="display: flex">
+        <label for="userId"  style="width: 120px; text-align: left;padding-top: 20px">身份证:</label>
+        <input type="text" id="userId" v-model="userid" >
+      </div>
       <div style="display: flex">
         <label for="username" style="width: 120px; text-align: left; padding-top: 20px">username:</label>
         <input type="text" id="username" v-model="user">
@@ -12,11 +16,10 @@
         <input type="password" id="password" v-model="pwd" >
       </div>
       <div style="display: flex">
-        <button type="submit" style="margin-right: 10px">登录</button>
-        <button type="submit" @click.prevent="onShowDialog" style="margin-left: 10px">注册</button>
+        <button type="submit"  style="">注册</button>
       </div>
     </form>
-    <a style="text-align: right;float: right;" href="https://www.baidu.com">使用访客身份登录</a>
+    <a style="text-align: right;float: right;" href="/#/login">返回登录页面</a>
   </div>
 </template>
 
@@ -26,28 +29,25 @@ import {ref} from "vue";
 const router = useRouter();
 let user = ref('LiYan');
 let pwd = ref('9802');
+let userid = ref('');
 import {myHttp} from "@/request/myrequest";
-
-
-const isShow = ref(false);
-const onShowDialog = (show) => {
-  isShow.value = show;
-  router.push({name: 'registry'});
-};
-
 ref({ name: '', email: '' });
-const url = '/login';
-const requestBody = {
-  user: user.value,
-  password: pwd.value
-};
+const url = '/user/register';
+
 
 const postData = async () => {
-  console.log("请求了login")
+  let requestBody = {
+    username: user.value,
+    password: pwd.value,
+    id: userid.value
+  };
   myHttp.post(url, requestBody)
       .then(response => {
-        if (response.data.success === "200") {
-          router.push({name: 'home'});
+        if (response.data.code === 333) {
+          alert(response.data.message)
+        }else {
+          alert("注册成功")
+          router.push({name: 'login'});
         }
       })
 
