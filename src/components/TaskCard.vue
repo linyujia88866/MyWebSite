@@ -1,11 +1,14 @@
 <template>
   <div class="notebook">
-    <div class="task-card-header">
-      <h3>{{ title }}</h3>
+    <div class="task-card-header" v-if="title">
+      <h3>标题：</h3>
+      <span>{{ title }}</span>
+      <h3>更新时间：</h3>
       <span>{{ createdAt }}</span>
     </div>
-    <div class="task-card-content">
-      <p>{{ description }}</p>
+    <div class="task-card-header" v-else>
+      <h3 style="text-align: center; margin-top: 40px; margin-bottom: 0; padding-bottom: 0;color: green; font-size: 50px;"> + </h3>
+      <h3 style="text-align: center; margin-top: 0;  color: green;">创建新的任务清单</h3>
     </div>
   </div>
 </template>
@@ -15,9 +18,11 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
-    title: String,
+    title: {
+      type: String,
+      default: ""
+    },
     createdAt: String,
-    description: String
   }
 });
 </script>
@@ -36,6 +41,14 @@ export default defineComponent({
   justify-content: left;
 }
 
+h3{
+  text-align: left;
+  padding-left: 10px;
+}
+span{
+  text-align: left;
+}
+
 .task-card-content {
   margin-top: 10px;
 }
@@ -45,7 +58,7 @@ export default defineComponent({
   //padding: 20px;
   margin: 10px;
   width: 200px; /* 本子的宽度 */
-  height: 150px; /* 本子的高度 */
+  height: 200px; /* 本子的高度 */
   //background-color: #fff; /* 本子的背景颜色 */
   //border: 1px solid #000; /* 本子的边框 */
   border-radius: 5px; /* 本子的圆角 */

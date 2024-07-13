@@ -16,22 +16,22 @@ const { defineConfig } = require('@vue/cli-service')
 // };
 
 module.exports = defineConfig({
+  lintOnSave: false,
   transpileDependencies: true,
-  // publicPath: 'http://localhost:8082/',
   publicPath: './',
   devServer: {
     webSocketServer: false,
     host: 'localhost',
-    port: 8082,
+    port: 8080,
     historyApiFallback: true,
-    proxy: {
-      '/': {
-        target: 'http://127.0.0.1:8081',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/': '/'
-        }
-      }
-    }
+    // proxy: {
+    //   '/': {
+    //     target: 'http://127.0.0.1:9802',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/': '/'
+    //     }
+    //   }
+    // }
   }
 })

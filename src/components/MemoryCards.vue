@@ -2,23 +2,12 @@
   <div>
     <navigate  :origin-tab="'功能'"></navigate>
     <div class="card-container">
-      <task-card
-          id="showcase"
-          :title="'示例待办清单标题'"
-          :created-at="'2002-01-21'"
-          :description="'待办任务描述'"
-          @click="gotoShowCase"
-      />
+      <task-card />
       <task-card
           v-for="task in tasks"
-          :key="task.id"
           :title="task.title"
           :created-at="task.createdAt"
-          :description="task.description"
-      />
-      <task-card
-          :title="'＋'"
-          :created-at="'创建新的任务清单'"
+          @click.prevent="gotoShowCase(task.taskId)"
       />
     </div>
   </div>
@@ -31,25 +20,34 @@ import Navigate from "@/components/Navigate.vue";
 
 import {useRouter} from 'vue-router';
 const router = useRouter();
-function gotoShowCase(){
-  router.push({name: 'memory'});
+function gotoShowCase(taskId){
+  router.push({name: 'memory',query:{taskId: taskId}});
 }
-const tasks = reactive([
-  {
-    id: 1,
-    title: '待办清单1',
-    createdAt: '2024-01-21',
-    description: '待办任务描述'
-  },
-  // ... 其他任务对象
-]);
+const tasks = reactive([])
+let url = "/task/tasks"
+import {myHttp} from "@/request/myrequest";
+
+myHttp.get(url)
+    .then(response => {
+      if (response.data.code === 200) {
+        let array = response.data.data;
+        for (let i = 0; i < array.length; i++) {
+          tasks.push(array[i])
+        }
+      }else {
+        alert("获取任务列表失败！")
+      }
+    })
+    .catch(error => console.error('Error:', error));
+
+
 </script>
 
 <style>
 /* 在这里添加全局样式 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-gap: 10px;
   padding: 10px;
   flex-grow: 1;

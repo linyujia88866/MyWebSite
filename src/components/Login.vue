@@ -37,20 +37,21 @@ const onShowDialog = (show) => {
 
 ref({ name: '', email: '' });
 const url = '/login';
-const requestBody = {
-  user: user.value,
-  password: pwd.value
-};
+
 
 const postData = async () => {
-  console.log("请求了login")
+  const requestBody = {
+    user: user.value,
+    password: pwd.value
+  };
   myHttp.post(url, requestBody)
       .then(response => {
         if (response.data.success === "200") {
           router.push({name: 'home'});
+        } else if(response.data.success === "500"){
+          alert("账号或密码错误")
         }
       })
-
       .catch(error => console.error('Error:', error));
 };
 </script>

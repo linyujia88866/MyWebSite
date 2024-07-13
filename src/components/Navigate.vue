@@ -50,7 +50,6 @@ onMounted( async () => {
 })
 
 function changeTab(tab){
-  console.log("更改tab" + tab)
   activeTab.value = tab;
   if(tab==="首页"){
     router.push({name: 'home'});

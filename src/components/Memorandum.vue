@@ -1,12 +1,36 @@
 <script setup>
 import {ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
-import {useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
+const route=useRoute()
+import {myHttp} from "@/request/myrequest";
+
+let url ="/task"
+let taskId = route.query.taskId
+if(taskId){
+  url=url+"/"+taskId
+}
+let items=ref([]);
 const router = useRouter();
 let msg=ref("");
 const originTab=ref("功能");
-let items=ref(["web应用开发","UI动效设计","手机微电影制作"]);
+let title = ref("")
+
+myHttp.get(url)
+    .then(response => {
+      if (response.data.code === 200) {
+        let data = response.data.data
+        title.value = data.title
+        items.value = data.content.split(",")
+      } else {
+        alert("获取任务信息失败")
+      }
+    })
+
+// let items=ref(["web应用开发","UI动效设计","手机微电影制作"]);
+
 const childRef = ref(null);
+
 function add(){
   console.log(msg.value)
   if(msg.value!=="")
@@ -22,6 +46,25 @@ function clear(){
   items.value=[];
 }
 
+async function saveTask() {
+  let requestBody = {
+    title: title.value,
+    content: items.value.toString()
+  };
+
+  await myHttp.post("/task/save", requestBody)
+      .then(response => {
+        console.log(response.data)
+        if (response.data.code === 200) {
+
+          alert("任务保存成功" + response.data.data)
+        }
+        return 0;
+      })
+      .catch(error => console.error('Error:', error));
+  return 1;
+}
+
 function gotoMemoryCards(){
   router.push({name: 'memoryCards'});
 }
@@ -33,22 +76,28 @@ function gotoMemoryCards(){
     <h4 style="text-align: left; padding-top: 10px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
         @click="gotoMemoryCards">返回任务清单列表</h4>
     <header>
-      <h2>小黑记事本</h2>
+      <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">
     </header>
-    <section id="app">
+    <section >
       <div class="title">
-        <input type="text" placeholder="请输入待做事项" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
+        <input type="text" placeholder="请输入待做事项(按ENTER键添加任务)" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
       </div>
       <div class="items">
         <ul type="1">
           <li v-for="(item,index) in items">
-            <span class="order">{{index+1}}.</span>{{item}} <span class="delete" @click="remove(index)">x</span>
+            <span class="order">{{index+1}}.</span><span style="text-align: left;display: block; width: 80%">{{item}}</span> <span class="delete" @click="remove(index)">x</span>
           </li>
         </ul>
       </div>
       <div class="tongji" v-show="items.length!==0">
-        <div class="left"><span>{{items.length}}</span>items left</div>
-        <div class="clear"><span @click="clear">Clear</span></div>
+        <div class="left">当前共有<span style="text-align: center;">{{items.length}}</span>个待办任务</div>
+        <div class="clear"><span @click="clear">清空所有任务</span></div>
+      </div>
+    </section>
+    <div style="height: 2px"></div>
+    <section v-if="items.length">
+      <div>
+        <button type="submit" @click="saveTask">保存清单</button>
       </div>
     </section>
   </div>
@@ -74,6 +123,35 @@ h2{
   line-height: 60px;
 }
 
+button[type="submit"] {
+  width: 100px;
+  height: 38px;
+  padding-left: 8px;
+  //margin: 10px;
+  text-align: center;
+  float: right;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  //margin-right: 10px;
+  cursor: pointer;
+}
+
+.the-title{
+  color: #2c3e50;;
+  font-weight: 400;
+  line-height: 60px;
+  max-width: 500px;
+  border: #2c3e50 2px solid;
+  border-radius: 5px;
+}
+
+.the-title-label{
+  color: #2c3e50;;
+  font-weight: 400;
+  line-height: 60px;
+  max-width: 500px;
+}
+
 section{
   width:90%;
   margin:0 auto;
@@ -91,7 +169,7 @@ input{
   padding:5px 20px;
   box-sizing: border-box;
   font-size: 20px;
-  color:#333;
+  color: #2c3e50;
 }
 .items{
   width:100%;
@@ -110,6 +188,9 @@ li{
 }
 .order{
   padding: 0 10px;
+  text-align: left;
+  float: left;
+  width: 10px;
 }
 .delete{
   position: absolute;
@@ -135,7 +216,7 @@ li{
   font-style: italic;
 }
 .left span{
-  margin-right: 10px;
+  //margin-right: 10px;
 
 }
 .clear{
