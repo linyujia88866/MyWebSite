@@ -2,7 +2,7 @@
   <div>
     <navigate  :origin-tab="'功能'"></navigate>
     <div class="card-container">
-      <task-card />
+      <task-card  @click.prevent="gotoShowCase()" />
       <task-card
           v-for="task in tasks"
           :title="task.title"

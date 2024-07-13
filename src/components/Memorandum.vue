@@ -1,31 +1,43 @@
 <script setup>
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
 import {useRoute, useRouter} from 'vue-router';
 const route=useRoute()
 import {myHttp} from "@/request/myrequest";
 
 let url ="/task"
-let taskId = route.query.taskId
-if(taskId){
-  url=url+"/"+taskId
+let taskId = ref("")
+taskId.value = route.query.taskId
+if(taskId.value){
+  url=url+"/get/"+taskId.value
+  getTaskInfo()
 }
-let items=ref([]);
+let items=reactive([]);
 const router = useRouter();
 let msg=ref("");
 const originTab=ref("功能");
 let title = ref("")
 
-myHttp.get(url)
-    .then(response => {
-      if (response.data.code === 200) {
-        let data = response.data.data
-        title.value = data.title
-        items.value = data.content.split(",")
-      } else {
-        alert("获取任务信息失败")
-      }
-    })
+
+function getTaskInfo() {
+  console.log("请求了" + url)
+  myHttp.get(url)
+      .then(response => {
+        if (response.data.code === 200) {
+          let data = response.data.data
+          title.value = data.title
+          let things = data.content.split(",")
+          console.log(things)
+          for(let i = 0; i < things.length; i++){
+            console.log(things[i])
+            items.push({content: things[i]})
+          }
+        } else {
+          alert("获取任务信息失败")
+        }
+      })
+}
+
 
 // let items=ref(["web应用开发","UI动效设计","手机微电影制作"]);
 
@@ -35,34 +47,57 @@ function add(){
   console.log(msg.value)
   if(msg.value!=="")
   {
-    items.value.push(msg.value);
+    items.push({content: msg.value});
     msg.value="";
   }
 }
 function remove(index){
-  items.value.splice(index,1);
+  items.splice(index,1);
 }
 function clear(){
-  items.value=[];
+  items=[];
 }
 
 async function saveTask() {
+  let newItems = []
+  for(let i = 0; i < items.length; i++){
+    console.log(items[i].content)
+    newItems.push(items[i].content)
+  }
+
   let requestBody = {
     title: title.value,
-    content: items.value.toString()
+    content: newItems.toString()
   };
+  if(taskId.value){
+    await updateTask(requestBody)
+  } else {
+    await createNewTask(requestBody)
+  }
+}
 
-  await myHttp.post("/task/save", requestBody)
+async function updateTask(requestBody) {
+  await myHttp.post("/task/update/" + taskId.value, requestBody)
       .then(response => {
-        console.log(response.data)
         if (response.data.code === 200) {
-
-          alert("任务保存成功" + response.data.data)
+          alert("任务保存成功" + taskId.value)
         }
         return 0;
       })
       .catch(error => console.error('Error:', error));
-  return 1;
+}
+
+async function createNewTask(requestBody) {
+  await myHttp.post("/task/save", requestBody)
+      .then(response => {
+        console.log(response.data)
+        if (response.data.code === 200) {
+          alert("任务保存成功" + response.data.data)
+          taskId.value = response.data.data
+        }
+        return 0;
+      })
+      .catch(error => console.error('Error:', error));
 }
 
 function gotoMemoryCards(){
@@ -85,7 +120,7 @@ function gotoMemoryCards(){
       <div class="items">
         <ul type="1">
           <li v-for="(item,index) in items">
-            <span class="order">{{index+1}}.</span><span style="text-align: left;display: block; width: 80%">{{item}}</span> <span class="delete" @click="remove(index)">x</span>
+            <span class="order">{{index+1}}.</span><input style="text-align: left;display: block; width: 80%"  v-model.trim="item.content"> <span class="delete" @click="remove(index)">x</span>
           </li>
         </ul>
       </div>
@@ -187,7 +222,7 @@ li{
   position: relative;
 }
 .order{
-  padding: 0 10px;
+  padding-top: 15px;
   text-align: left;
   float: left;
   width: 10px;
