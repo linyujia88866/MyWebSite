@@ -20,16 +20,13 @@ let title = ref("")
 
 
 function getTaskInfo() {
-  console.log("请求了" + url)
   myHttp.get(url)
       .then(response => {
         if (response.data.code === 200) {
           let data = response.data.data
           title.value = data.title
           let things = data.content.split(",")
-          console.log(things)
           for(let i = 0; i < things.length; i++){
-            console.log(things[i])
             items.push({content: things[i]})
           }
         } else {
@@ -44,7 +41,6 @@ function getTaskInfo() {
 const childRef = ref(null);
 
 function add(){
-  console.log(msg.value)
   if(msg.value!=="")
   {
     items.push({content: msg.value});
@@ -61,7 +57,6 @@ function clear(){
 async function saveTask() {
   let newItems = []
   for(let i = 0; i < items.length; i++){
-    console.log(items[i].content)
     newItems.push(items[i].content)
   }
 
@@ -90,7 +85,6 @@ async function updateTask(requestBody) {
 async function createNewTask(requestBody) {
   await myHttp.post("/task/save", requestBody)
       .then(response => {
-        console.log(response.data)
         if (response.data.code === 200) {
           alert("任务保存成功" + response.data.data)
           taskId.value = response.data.data
