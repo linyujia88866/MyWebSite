@@ -25,7 +25,7 @@ function getTaskInfo() {
         if (response.data.code === 200) {
           let data = response.data.data
           title.value = data.title
-          let things = data.content.split(",")
+          let things = data.content.split("#*#*10086")
           for(let i = 0; i < things.length; i++){
             items.push({content: things[i]})
           }
@@ -62,13 +62,14 @@ async function saveTask() {
 
   let requestBody = {
     title: title.value,
-    content: newItems.toString()
+    content: newItems.join("#*#*10086")
   };
   if(taskId.value){
     await updateTask(requestBody)
   } else {
     await createNewTask(requestBody)
   }
+  await router.push({name: 'memoryCards'})
 }
 
 async function updateTask(requestBody) {
@@ -77,7 +78,6 @@ async function updateTask(requestBody) {
         if (response.data.code === 200) {
           alert("任务保存成功" + taskId.value)
         }
-        return 0;
       })
       .catch(error => console.error('Error:', error));
 }
@@ -89,7 +89,6 @@ async function createNewTask(requestBody) {
           alert("任务保存成功" + response.data.data)
           taskId.value = response.data.data
         }
-        return 0;
       })
       .catch(error => console.error('Error:', error));
 }

@@ -6,7 +6,7 @@
       <task-card
           v-for="task in tasks"
           :title="task.title"
-          :created-at="task.createdAt"
+          :created-at="task.createdAt.replace(/\.0$/, '')"
           @click.prevent="gotoShowCase(task.taskId)"
       />
     </div>

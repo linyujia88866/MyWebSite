@@ -12,6 +12,7 @@ const props = defineProps({
 });
 
 let activeTab= ref('首页');
+let authority= ref('');
 let tabs= ref(['首页', '通知', '设置']);
 let isLogin= false;
 const router = useRouter();
@@ -25,21 +26,19 @@ function toggleMenu() {
 }
 
 async function verify() {
+  authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
       .then(response => {
         if (response.data.success === "200") {
           isLogin = true;
+          authority.value = response.data.data;
+          localStorage.setItem('curAuth', authority.value);
         }
-        return 0;
       })
       .catch(error => console.error('Error:', error));
-  return 1;
 }
 
 onMounted( async () => {
-  if(props.originTab==='功能'){
-    tabs.value=['首页', '功能', '通知', '设置']
-  }
   activeTab.value = props.originTab;
   isLogin=false;
   await verify();
@@ -47,6 +46,7 @@ onMounted( async () => {
     // 要执行的代码;
     await router.push({name: 'login'});
   }
+
 })
 
 function changeTab(tab){
@@ -57,6 +57,8 @@ function changeTab(tab){
     router.push({name: 'message'});
   }else if(tab==="设置"){
     router.push({name: 'setting'});
+  }else if(tab==="管理中心"){
+    router.push({name: 'manager'});
   }
 }
 
@@ -89,8 +91,23 @@ defineExpose({
       <!-- 页签内容 -->
       <div class="nav-bar">
         <ul>
-          <li v-for="(tab, index) in tabs" :key="index" :class="{active: activeTab === tab}">
-            <a @click="changeTab(tab)">{{ tab }}</a>
+<!--          <li v-for="(tab, index) in tabs" :key="index" :class="{active: activeTab === tab}">-->
+<!--            <a @click="changeTab(tab)">{{ tab }}</a>-->
+<!--          </li>-->
+          <li :class="{active: activeTab === '首页'}">
+            <a @click="changeTab('首页')">首页</a>
+          </li>
+          <li :class="{active: activeTab === '功能'}" v-if="props.originTab==='功能'">
+            <a @click="changeTab('功能')">功能</a>
+          </li>
+          <li :class="{active: activeTab === '通知'}">
+            <a @click="changeTab('通知')">通知</a>
+          </li>
+          <li :class="{active: activeTab === '设置'}">
+            <a @click="changeTab('设置')">设置</a>
+          </li>
+          <li :class="{active: activeTab === '管理中心'}" v-if="authority === '0'">
+            <a @click="changeTab('管理中心')">管理中心</a>
           </li>
         </ul>
       </div>

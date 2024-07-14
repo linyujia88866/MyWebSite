@@ -23,9 +23,12 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
+import { getGlobalData, setGlobalData } from '@/store';
+
 const router = useRouter();
 let user = ref('LiYan');
 let pwd = ref('9802');
+let authority = ref("")
 import {myHttp} from "@/request/myrequest";
 
 

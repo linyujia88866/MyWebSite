@@ -7,6 +7,7 @@ import Message from "@/components/Message.vue";
 import Setting from "@/components/Setting.vue";
 import Login from "@/components/Login.vue";
 import Registry from "@/components/Registry.vue";
+import UserManager from "@/components/UserManager.vue";
 
 const routes = [
   {
@@ -43,13 +44,16 @@ const routes = [
     path: '/setting',
     name: 'setting',
     component: Setting
-  }
-  // register
-  ,
+  },
   {
     path: '/registry',
     name: 'registry',
     component: Registry
+  },
+  {
+    path: '/manager',
+    name: 'manager',
+    component: UserManager
   }
 ]
 
