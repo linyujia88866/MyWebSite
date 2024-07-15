@@ -16,29 +16,44 @@
         <button type="submit" @click.prevent="onShowDialog" style="margin-left: 10px">注册</button>
       </div>
     </form>
-    <a style="text-align: right;float: right;" href="https://www.baidu.com">使用访客身份登录</a>
+    <div style="display: flex">
+      <div style="display: flex; ">
+        <input type="checkbox" id="checkbox" v-model="isChecked">
+<!--        <label for="checkbox">{{ isChecked ? 'Checked' : 'Not Checked' }}</label>-->
+        <label for="checkbox">记住登录名</label>
+      </div>
+      <div style="width: 60%; display: flex; margin-left: auto">
+        <a style="text-align: right;float: right; margin-left: auto" href="https://www.baidu.com">使用访客身份登录</a>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
-import { getGlobalData, setGlobalData } from '@/store';
 
 const router = useRouter();
-let user = ref('LiYan');
-let pwd = ref('9802');
-let authority = ref("")
+let user = ref('1111111');
+let pwd = ref('11111111');
 import {myHttp} from "@/request/myrequest";
-
-
+const isChecked = ref(false);
 const isShow = ref(false);
+
+let rememberStatus = localStorage.getItem('remember')
+user.value = ''
+pwd.value = ''
+if(rememberStatus === 'true'){
+  isChecked.value = true;
+  user.value = localStorage.getItem('curUser')
+  pwd.value = localStorage.getItem('curPwd')
+}
+
 const onShowDialog = (show) => {
   isShow.value = show;
   router.push({name: 'registry'});
 };
 
-ref({ name: '', email: '' });
 const url = '/login';
 
 
@@ -51,6 +66,11 @@ const postData = async () => {
       .then(response => {
         if (response.data.success === "200") {
           router.push({name: 'home'});
+          localStorage.setItem('remember', isChecked.value.toString())
+          if(isChecked.value){
+            localStorage.setItem('curUser', user.value)
+            localStorage.setItem('curPwd', pwd.value)
+          }
         } else if(response.data.success === "500"){
           alert("账号或密码错误")
         }

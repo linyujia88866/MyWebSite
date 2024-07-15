@@ -27,8 +27,8 @@
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
 const router = useRouter();
-let user = ref('LiYan');
-let pwd = ref('9802');
+let user = ref('');
+let pwd = ref('');
 let userid = ref('');
 import {myHttp} from "@/request/myrequest";
 ref({ name: '', email: '' });
