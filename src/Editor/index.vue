@@ -33,15 +33,15 @@ const data = reactive({
     modules: {
       toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
-        [{ 'size': ['small', false, 'large', 'huge'] }],
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        [{ 'indent': '-1' }, { 'indent': '+1' }],
-        [{ 'header': 1 }, { 'header': 2 }],
+        [{'size': ['small', false, 'large', 'huge']}],
+        [{'font': []}],
+        [{'align': []}],
+        [{'list': 'ordered'}, {'list': 'bullet'}],
+        [{'indent': '-1'}, {'indent': '+1'}],
+        [{'header': 1}, {'header': 2}],
         ['image'],
-        [{ 'direction': 'rtl' }],
-        [{ 'color': [] }, { 'background': [] }]
+        [{'direction': 'rtl'}],
+        [{'color': []}, {'background': []}]
       ]
     },
     placeholder: '请输入内容...'
@@ -55,7 +55,6 @@ const imgHandler = (state) => {
 // 抛出更改内容，此处避免出错直接使用文档提供的getHTML方法
 const setValue = () => {
   const text = toRaw(myQuillEditor.value).getHTML()
-  emit('updateValue', text)
 }
 const handleUpload = (e) => {
   const files = Array.prototype.slice.call(e.target.files)
@@ -81,7 +80,6 @@ onMounted(() => {
   if (myQuillEditor.value) {
     quill.getModule('toolbar').addHandler('image', imgHandler)
   }
-  toRaw(myQuillEditor.value).setHTML(props.value)
 })
 </script>
 <style scoped lang="scss">
@@ -89,6 +87,7 @@ onMounted(() => {
 :deep(.ql-editor) {
   min-height: 180px;
 }
+
 :deep(.ql-formats) {
   height: 21px;
   line-height: 21px;
