@@ -60,7 +60,7 @@ span{
   height: 100%;
   z-index: -1;
   background-image: url('../assets/bianli.png') ;
-  //opacity: 0.5;
+  opacity: 0.2;
   background-size: cover;
   position: absolute;
 }

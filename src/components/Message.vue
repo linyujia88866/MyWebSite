@@ -6,7 +6,7 @@ import Navigate from "@/components/Navigate.vue";
 <template>
 <div>
   <navigate  :origin-tab="'通知'"></navigate>
-  <h1>暂无消息</h1>
+  <h1 style="padding-top: 60px">暂无消息</h1>
 </div>
 </template>
 

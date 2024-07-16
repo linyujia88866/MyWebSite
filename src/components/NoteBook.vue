@@ -1,7 +1,7 @@
 <template>
   <div>
     <navigate ref="childRef" :origin-tab="'功能'"></navigate>
-    <div style="margin-top: 10px">
+    <div style="margin-top: 60px">
       <input v-model="newNote" placeholder="Add note" />
       <button @click="addNote">Add</button>
       <div v-for="(note, index) in notes" :key="index">

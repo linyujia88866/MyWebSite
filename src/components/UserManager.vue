@@ -3,7 +3,7 @@
     <navigate ref="childRef" :origin-tab="'管理中心'"></navigate>
 <!--    <h1>管理员页面</h1>-->
     <button @click="openCreateUserDialog"
-            style="background-color: green;float: left; margin: 10px 0">创建用户</button>
+            style="background-color: green;float: left; margin: 10px 0; margin-top: 60px">创建用户</button>
     <table>
       <thead>
       <tr>

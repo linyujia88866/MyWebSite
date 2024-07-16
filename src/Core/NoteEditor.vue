@@ -3,7 +3,7 @@
 
   <header >
     <h4 style="text-align: left;
-    padding-top: 10px;
+    padding-top: 60px;
     padding-left: 10px;
     text-decoration: underline;
     cursor: pointer;
@@ -14,6 +14,11 @@
   </header>
   <div class="page">
     <Editor :value="emailForm.test_msg" @updateValue="getMsg" />
+  </div>
+  <div class="fixed-bar">
+    <button>按钮1</button>
+    <button>按钮2</button>
+    <button>按钮3</button>
   </div>
 </template>
 
@@ -62,5 +67,31 @@ function gotoMemoryCards() {
   font-weight: 400;
   line-height: 60px;
   max-width: 500px;
+}
+
+.fixed-bar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(135, 206, 235);
+  color: white;
+  padding: 10px;
+}
+
+.fixed-bar button {
+  margin: 0 5px;
+  padding: 10px 20px;
+  background-color: #555;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.fixed-bar button:hover {
+  background-color: #666;
 }
 </style>

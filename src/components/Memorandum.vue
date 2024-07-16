@@ -78,7 +78,6 @@ async function saveTask() {
   } else {
     await createNewTask(requestBody)
   }
-  await router.push({name: 'memoryCards'})
 }
 
 async function updateTask(requestBody) {
@@ -86,6 +85,7 @@ async function updateTask(requestBody) {
       .then(response => {
         if (response.data.code === 200) {
           alert("任务保存成功" + taskId.value)
+          router.push({name: 'memoryCards'})
         }
       })
       .catch(error => console.error('Error:', error));
@@ -97,6 +97,7 @@ async function createNewTask(requestBody) {
         if (response.data.code === 200) {
           alert("任务保存成功" + response.data.data)
           taskId.value = response.data.data
+          router.push({name: 'memoryCards'})
         }
       })
       .catch(error => console.error('Error:', error));
@@ -110,7 +111,7 @@ function gotoMemoryCards(){
 <template>
   <div>
     <navigate ref="childRef" :origin-tab="originTab"></navigate>
-    <h4 style="text-align: left; padding-top: 10px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
+    <h4 style="text-align: left; padding-top: 60px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
         @click="gotoMemoryCards">返回任务清单列表</h4>
     <header>
       <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">

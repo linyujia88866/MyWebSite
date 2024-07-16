@@ -117,13 +117,13 @@ defineExpose({
       <!-- 帮助图标 -->
       <img src="../assets/help.jpg" alt="Help Icon" class="help-icon">
       <!-- 用户头像 -->
-      <div class="avatar" @click="toggleMenu">
+      <div class="avatar" @click="toggleMenu" >
         <!-- 头像内容，可以是图片或者其他元素 -->
         <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
       </div>
       <div class="user-menu">
 
-        <ul v-if="menuVisible" class="menu">
+        <ul v-if="menuVisible" class="menu" >
           <!-- 菜单项 -->
           <li><a href="#">个人信息</a></li>
           <li><a href="#">设置</a></li>
@@ -142,7 +142,11 @@ defineExpose({
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  margin: 0;
+
+  position: fixed;
+  width: 100%;
+  top:0;
+  left: 0;
   background-color: rgb(135, 206, 235);
 }
 
@@ -198,11 +202,12 @@ defineExpose({
 }
 .avatar {
   cursor: pointer;
+  margin-right: 20px;
 }
 .menu {
   position: absolute;
   top: 20px;
-  right: -10px;
+  right: 25px;
   list-style: none;
   padding: 0;
   margin: 0;

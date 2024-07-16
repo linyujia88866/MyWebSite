@@ -5,8 +5,8 @@ import Navigate from "@/components/Navigate.vue";
 
 <template>
   <div>
-    <navigate  :origin-tab="'设置'"></navigate>
-    <h1>设置</h1>
+    <navigate  :origin-tab="'设置'" ></navigate>
+    <h1 style="padding-top: 60px">设置</h1>
   </div>
 </template>
 

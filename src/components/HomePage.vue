@@ -58,6 +58,7 @@ function gotoMemory() {
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 10px;
   padding: 10px;
+  padding-top: 60px;
   flex-grow: 1;
 }
 

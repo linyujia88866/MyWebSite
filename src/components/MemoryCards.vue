@@ -50,6 +50,7 @@ myHttp.get(url)
   grid-template-columns: repeat(6, 1fr);
   grid-gap: 5px;
   padding: 5px;
+  padding-top: 60px;
   flex-grow: 1;
 }
 </style>
