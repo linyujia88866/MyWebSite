@@ -41,7 +41,7 @@ function getTaskInfo() {
 const childRef = ref(null);
 
 function add(){
-  if(msg.value!=="")
+  if(msg.value!=="" )
   {
     items.push({content: msg.value});
     msg.value="";
@@ -55,6 +55,14 @@ function clear(){
 }
 
 async function saveTask() {
+  if(title.value===""){
+    alert("请填写标题")
+    return
+  }
+  if(items.length === 0){
+    alert("请添加至少一个任务")
+    return
+  }
   let newItems = []
   for(let i = 0; i < items.length; i++){
     newItems.push(items[i].content)
@@ -109,6 +117,7 @@ function gotoMemoryCards(){
     <section >
       <div class="title">
         <input type="text" placeholder="请输入待做事项(按ENTER键添加任务)" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
+        <button style="margin: 0 12px ; width: 80px; height: 32px; text-align: center; padding: 0" @click="add">添加</button>
       </div>
       <div class="items">
         <ul type="1">
@@ -189,6 +198,7 @@ section{
 }
 .title{
   border-bottom: 1px solid #ccc;
+  display: flex;
 }
 input{
   width:100%;

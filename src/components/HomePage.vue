@@ -6,7 +6,7 @@
     </div>
     <div class="card-container">
         <!-- 卡片内容 -->
-        <div class="card card1">
+        <div class="card card-table">
 
         </div>
         <div class="card card-notebook" @click="gotoNotebook">
@@ -34,7 +34,7 @@ const router = useRouter();
 const childRef = ref(null);
 
 function gotoNotebook() {
-  router.push({name: 'notebook'});
+  router.push({name: 'edit'});
 }
 
 function gotoMemory() {
@@ -75,20 +75,20 @@ function gotoMemory() {
   background-repeat: no-repeat;
 }
 
-.card1{
-   background-image: url('../assets/quick.png');
+.card-table{
+   background-image: url('../assets/table.png');
    background-size: cover;
-   background-position: center;
+   background-position: 0 -20px;
    background-repeat: no-repeat;
  }
 .card-notebook{
-  background-image: url('../assets/notebook.png');
+  background-image: url('../assets/note.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 .card-memory{
-  background-image: url('../assets/seven.png');
+  background-image: url('../assets/remember.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -48,8 +48,8 @@ myHttp.get(url)
 .card-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-gap: 10px;
-  padding: 10px;
+  grid-gap: 5px;
+  padding: 5px;
   flex-grow: 1;
 }
 </style>

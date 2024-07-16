@@ -8,6 +8,7 @@ import Setting from "@/components/Setting.vue";
 import Login from "@/components/Login.vue";
 import Registry from "@/components/Registry.vue";
 import UserManager from "@/components/UserManager.vue";
+import EDITOR from "@/Core/EDITOR.vue";
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: '/manager',
     name: 'manager',
     component: UserManager
+  },
+  {
+    path: '/edit',
+    name: 'edit',
+    component: EDITOR
   }
 ]
 
