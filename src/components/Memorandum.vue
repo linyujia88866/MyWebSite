@@ -3,6 +3,7 @@ import {reactive, ref} from "vue";
 import Navigate from "@/components/Navigate.vue";
 import {useRoute, useRouter} from 'vue-router';
 const route=useRoute()
+const router = useRouter();
 import {myHttp} from "@/request/myrequest";
 
 let url ="/task"
@@ -13,7 +14,7 @@ if(taskId.value){
   getTaskInfo()
 }
 let items=reactive([]);
-const router = useRouter();
+
 let msg=ref("");
 const originTab=ref("功能");
 let title = ref("")

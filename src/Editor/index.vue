@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- 此处注意写法v-model:content -->
     <QuillEditor ref="myQuillEditor"
                  theme="snow"
                  v-model:content="content"
@@ -16,6 +15,7 @@
 <script setup>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+// import { backsite } from '@/api'
 import { reactive, onMounted, ref, toRaw, watch } from 'vue'
 
 const props = defineProps(['value'])
@@ -33,15 +33,15 @@ const data = reactive({
     modules: {
       toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
-        [{'size': ['small', false, 'large', 'huge']}],
-        [{'font': []}],
-        [{'align': []}],
-        [{'list': 'ordered'}, {'list': 'bullet'}],
-        [{'indent': '-1'}, {'indent': '+1'}],
-        [{'header': 1}, {'header': 2}],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'indent': '-1' }, { 'indent': '+1' }],
+        [{ 'header': 1 }, { 'header': 2 }],
         ['image'],
-        [{'direction': 'rtl'}],
-        [{'color': []}, {'background': []}]
+        [{ 'direction': 'rtl' }],
+        [{ 'color': [] }, { 'background': [] }]
       ]
     },
     placeholder: '请输入内容...'
@@ -52,9 +52,9 @@ const imgHandler = (state) => {
     fileBtn.value.click()
   }
 }
-// 抛出更改内容，此处避免出错直接使用文档提供的getHTML方法
 const setValue = () => {
   const text = toRaw(myQuillEditor.value).getHTML()
+  emit('updateValue', text)
 }
 const handleUpload = (e) => {
   const files = Array.prototype.slice.call(e.target.files)
@@ -64,30 +64,32 @@ const handleUpload = (e) => {
   }
   const formdata = new FormData()
   formdata.append('file', files[0])
-  backsite.uploadFile(formdata)  // 此处使用服务端提供上传接口
-      .then(res => {
-        if (res.data.url) {
-          const quill = toRaw(myQuillEditor.value).getQuill()
-          const length = quill.getSelection().index
-          quill.insertEmbed(length, 'image', res.data.url)
-          quill.setSelection(length + 1)
-        }
-      })
+
+  // backsite.uploadFile(formdata)
+  //   .then(res => {
+  //     if (res.data.url) {
+        const quill = toRaw(myQuillEditor.value).getQuill()
+        const length = quill.getSelection().index
+        // 插入图片，res为服务器返回的图片链接地址
+        // quill.insertEmbed(length, 'image', res.data.url)
+        quill.insertEmbed(length, 'image', 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png')
+        // 调整光标到最后
+        quill.setSelection(length + 1)
+  //     }
+  //   })
 }
-// 初始化编辑器
 onMounted(() => {
   const quill = toRaw(myQuillEditor.value).getQuill()
   if (myQuillEditor.value) {
     quill.getModule('toolbar').addHandler('image', imgHandler)
   }
+  toRaw(myQuillEditor.value).setHTML(props.value)
 })
 </script>
 <style scoped lang="scss">
-// 调整样式
 :deep(.ql-editor) {
   min-height: 180px;
 }
-
 :deep(.ql-formats) {
   height: 21px;
   line-height: 21px;
