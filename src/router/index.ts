@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
 import HomePage from "@/components/HomePage.vue";
-import NoteBook from "@/components/NoteBook.vue";
+
 import Memorandum from "@/components/Memorandum.vue";
 import MemoryCards from "@/components/MemoryCards.vue";
 import Message from "@/components/Message.vue";
@@ -9,6 +9,8 @@ import Login from "@/components/Login.vue";
 import Registry from "@/components/Registry.vue";
 import UserManager from "@/components/UserManager.vue";
 import NoteEditor from "@/Core/NoteEditor.vue";
+import Articles from "@/Core/Articles.vue";
+import NotePage from "@/Core/NotePage.vue";
 
 const routes = [
   {
@@ -20,11 +22,6 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login
-  },
-  {
-    path: '/notebook',
-    name: 'notebook',
-    component: NoteBook
   },
   {
     path: '/memory',
@@ -60,6 +57,16 @@ const routes = [
     path: '/edit',
     name: 'edit',
     component: NoteEditor
+  },
+  {
+    path: '/articles',
+    name: 'articles',
+    component: Articles
+  },
+  {
+    path: '/notes',
+    name: 'notes',
+    component: NotePage
   }
 ]
 

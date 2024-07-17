@@ -34,7 +34,7 @@ const router = useRouter();
 const childRef = ref(null);
 
 function gotoNotebook() {
-  router.push({name: 'edit'});
+  router.push({name: 'notes'});
 }
 
 function gotoMemory() {
