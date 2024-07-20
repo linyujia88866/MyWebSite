@@ -6,18 +6,43 @@
     </div>
     <div class="card-container">
         <!-- 卡片内容 -->
-        <div class="card card-table">
+        <div>
+          <div class="card card-fileTrans" @click="gotoTrans">
 
+          </div>
+          <p style="margin: 0; padding: 0; font-weight: bold;">
+            文件传输助手
+          </p>
         </div>
+
+      <div>
         <div class="card card-notebook" @click="gotoNotebook">
 
         </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          文章博客日记
+        </p>
+      </div>
+
+      <div>
         <div class="card card-memory" @click="gotoMemory">
 
         </div>
-        <div class="card">
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          待办任务清单管理
+        </p>
+      </div>
+
+      <div>
+        <div class="card card-table" >
 
         </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          表格快捷变换
+        </p>
+      </div>
+
+
         <div class="card">
 
         </div>
@@ -39,6 +64,10 @@ function gotoNotebook() {
 
 function gotoMemory() {
   router.push({name: 'memoryCards'});
+}
+
+function gotoTrans() {
+  router.push({name: 'fileTrans'});
 }
 
 </script>
@@ -90,6 +119,13 @@ function gotoMemory() {
 }
 .card-memory{
   background-image: url('../assets/remember.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-fileTrans{
+  background-image: url('../assets/filetrans.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -11,6 +11,7 @@ import UserManager from "@/components/UserManager.vue";
 import NoteEditor from "@/Core/NoteEditor.vue";
 import Articles from "@/Core/Articles.vue";
 import NotePage from "@/Core/NotePage.vue";
+import Trans from "@/Core/Trans.vue";
 
 const routes = [
   {
@@ -67,6 +68,11 @@ const routes = [
     path: '/notes',
     name: 'notes',
     component: NotePage
+  },
+  {
+    path: '/fileTrans',
+    name: 'fileTrans',
+    component: Trans
   }
 ]
 

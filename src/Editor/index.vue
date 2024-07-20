@@ -58,7 +58,6 @@ const setValue = () => {
 }
 const handleUpload = (e) => {
   const files = Array.prototype.slice.call(e.target.files)
-  // console.log(files, "files")
   if (!files) {
     return
   }
