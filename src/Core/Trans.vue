@@ -55,9 +55,42 @@
     <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
   </div>
   <div>
-    <Folder v-for="folder in folders" :key="folder.name" :name="folder.name"
-            @click="gointodir(folder.name)"
-            style="padding: 0; margin: 0 0 0 12px;" />
+<!--    <Folder v-for="folder in folders" :key="folder.name" :name="folder.name"-->
+<!--            @click="gointodir(folder.name)"-->
+<!--            style="padding: 0; margin: 0 0 0 12px;" />-->
+
+    <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
+         @click="gointodir(folder.name)">
+      <div @mouseover="handleFileHover(folder)"
+           @mouseleave="handleFileLeave(folder)"
+           style="display: flex;
+          align-items: center;
+          align-content: center;
+          padding: 0; margin: 0;
+          height: 32px;">
+        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+        <h3 >{{ folder.name }}</h3>
+        <h3 style=" color: #42b983;
+          text-align: center;
+          align-content: center;
+          padding: 0;
+          height: 32px;
+         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>
+        <h3 style=" color: #42b983;
+          text-align: center;
+          align-content: center;
+          padding: 0;
+          height: 32px;
+         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>
+        <button v-if="folder.show"
+                style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                @click.stop="downloadFile(folder.name, 'folder')">下载</button>
+        <button v-if="folder.show"
+                style=" border: #333333 1px solid;
+                margin: 0 0 0 12px;"
+                @click.stop="deleteFolder(folder.name)">删除</button>
+      </div>
+    </div>
   </div>
   <div>
 <!--    <File v-for="fileName in fileNames" :key="fileName.name" :name="fileName.name" style="margin: 0;padding: 0; margin-left: 12px;" />-->
@@ -70,14 +103,26 @@
           padding: 0; margin: 0;
           height: 32px;">
         <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-        <h3 >{{ fileName.name }}</h3>
+        <h3  style="height: 32px;align-content: center;">{{ fileName.name }}</h3>
+        <h3 style=" color: #42b983;
+          text-align: center;
+          align-content: center;
+          padding: 0;
+          height: 32px;
+         margin: 0 0 0 20px;"  >{{ fileName.size }}</h3>
+        <h3 style=" color: #42b983;
+          text-align: center;
+          align-content: center;
+          padding: 0;
+          height: 32px;
+         margin: 0 0 0 20px;"  >{{ fileName.time }}</h3>
         <button v-if="fileName.show"
-                style=" border: #333333 1px solid; margin: 0 0 0 12px;"
+                style=" border: #333333 1px solid; margin: 0 0 0 20px;"
                 @click="downloadFile(fileName.name)">下载</button>
         <button v-if="fileName.show"
                 style=" border: #333333 1px solid;
                 margin: 0 0 0 12px;"
-                @click="downloadFile(fileName.name)">删除</button>
+                @click.stop="deleteFile(fileName.name)">删除</button>
       </div>
 
     </div>
@@ -89,14 +134,14 @@
 
 <script setup>
 import {ref} from 'vue';
-import Folder from '@/Comps/Folder.vue';
 import {useRouter} from 'vue-router';
+import {myHttp} from "@/request/myrequest";
+import Navigate from "@/components/Navigate.vue";
+
 const router = useRouter();
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)
 
-import {myHttp} from "@/request/myrequest";
-import Navigate from "@/components/Navigate.vue";
 let curPath = ref('')
 
 const fileInput = ref(null);
@@ -163,10 +208,100 @@ function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
 
-function downloadFile(filename) {
-  console.log("下载文件")
-  console.log(filename)
+async function downloadFile(filename, type) {
+  let finalPath;
+  let url = "/minio/download"
+  let resName= type === 'folder' ? filename + '.zip' : filename
+  if(curPath.value.length > 0){
+    finalPath = curPath.value + '/' + filename + '/'
+  } else {
+    finalPath = filename
+  }
+  if(type==='folder'){
+    finalPath = finalPath + '/'
+    url = "/minio/downloadDir"
+  }
+  try {
+    await myHttp.get(url, {
+      params: {
+        fileName: finalPath
+      },
+      responseType: 'blob'
+    })
+      .then(response => {
+        if (response.status === 200) {
+          //浏览器下载
+          const myBlob = response.data
+          const qrUrl = window.URL.createObjectURL(myBlob);
+          let fileLink = document.createElement("a");
+          fileLink.href = qrUrl;
+          fileLink.setAttribute("download", resName);
+          document.body.appendChild(fileLink);
+          fileLink.click();
+        } else if (response.status === 222) {
+          alert("文件夹为空")
+        }
+      });
+
+  } catch (error) {
+    console.error(error);
+  }
 }
+
+
+
+async function deleteFile(filename) {
+  let removePath;
+  if(curPath.value === ''){
+    removePath = filename
+  } else {
+    removePath = curPath.value + '/' + filename
+  }
+  const formData = new FormData();
+  formData.append('filepath', removePath);
+
+  try {
+    await myHttp.post("/minio/removeObject", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(response => {
+        if(response.status === 200 && response.data === true){
+          getFileList()
+        }
+      });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteFolder(dirName) {
+  let removePath;
+  if (curPath.value === '') {
+    removePath = dirName
+  } else {
+    removePath = curPath.value + '/' + dirName
+  }
+  const formData = new FormData();
+  formData.append('filepath', removePath);
+
+  try {
+    await myHttp.post("/minio/removeDir", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+        .then(response => {
+          if (response.status === 200 && response.data === true) {
+            getFileList()
+          }
+        });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 const createDir = async () =>
     {
@@ -229,7 +364,6 @@ const uploadFile = async () =>
               getFileList()
               fileObject.value=null
               files.value = []
-              alert('上传成功')
             });
 
       } catch (error) {
@@ -258,9 +392,27 @@ function replaceSuffix(str, prefix='\/') {
   return str.replace(regex, '');
 }
 
+function timePatternChange(dateStr){
+  if(dateStr === null){
+    return ""
+  }
+  // const dateStr = '2024-07-21T06:08:50.86Z';
+  const date = new Date(dateStr);
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+}
+
 
 function getFileList(){
   let url = "/minio/listObjectNamesInDir/test"
+  url = "/minio/listObjectsInDir/test"
 
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
@@ -273,14 +425,25 @@ function getFileList(){
         fileNames.value = []
         let array = response.data;
         for (let i = 0; i < array.length; i++) {
-          let item_temp = removePrefix(array[i],'.*?\/')
-          let item = removePrefix(item_temp, curPath.value + '\/')
-          if(item.endsWith('/')){
-            folders.value.push({name: replaceSuffix(item)})
-          } else {
-            if(!item.endsWith("_#*#*dirMask")){
+          let json_item = array[i]
+          let item_name_temp = removePrefix(json_item.name,'.*?\/')
+          let item_size_temp = json_item.size
+          let item_time_temp = json_item.time
+          let item_name = removePrefix(item_name_temp, curPath.value + '\/')
+          if(item_name.endsWith('/')){
+            folders.value.push({
+              name: replaceSuffix(item_name),
+              size: calSize(item_size_temp),
+              time: timePatternChange(item_time_temp),
+              show: false,
+            })
+          }
+          else {
+            if(!item_name.endsWith("_#*#*dirMask")){
               fileNames.value.push({
-                name: item,
+                name: item_name,
+                size: calSize(item_size_temp),
+                time: timePatternChange(item_time_temp),
                 show: false,
               })
             }
@@ -291,6 +454,16 @@ function getFileList(){
       }
     })
     .catch(error => console.error('Error:', error));
+}
+
+function calSize(size){
+  if(size<1024){
+    return size + 'B'
+  } else if(size<1024*1024){
+    return size / 1024 + 'KB'
+  } else {
+    return size / 1024 /1024 + 'MB'
+  }
 }
 
 getFileList()
@@ -310,10 +483,4 @@ const fileNames = ref([
 <style scoped>
 
 
-.custom-file-upload {
-  padding: 10px;
-  background: #f0f0f0;
-  display: inline-block;
-  cursor: pointer;
-}
 </style>
