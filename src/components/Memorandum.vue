@@ -5,6 +5,7 @@ import {useRoute, useRouter} from 'vue-router';
 const route=useRoute()
 const router = useRouter();
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 
 let url ="/task"
 let taskId = ref("")
@@ -31,7 +32,10 @@ function getTaskInfo() {
             items.push({content: things[i]})
           }
         } else {
-          alert("获取任务信息失败")
+          ElMessage({
+            message: "获取任务信息失败",
+            type: 'error',
+          });
         }
       })
 }
@@ -57,11 +61,17 @@ function clear(){
 
 async function saveTask() {
   if(title.value===""){
-    alert("请填写标题")
+    ElMessage({
+      message: "请填写标题",
+      type: 'warning',
+    });
     return
   }
   if(items.length === 0){
-    alert("请添加至少一个任务")
+    ElMessage({
+      message: "请添加至少一个任务",
+      type: 'warning',
+    });
     return
   }
   let newItems = []
@@ -84,7 +94,10 @@ async function updateTask(requestBody) {
   await myHttp.post("/task/update/" + taskId.value, requestBody)
       .then(response => {
         if (response.data.code === 200) {
-          alert("任务保存成功" + taskId.value)
+          ElMessage({
+            message: "任务保存成功" + taskId.value,
+            type: 'info',
+          });
           router.push({name: 'memoryCards'})
         }
       })
@@ -95,7 +108,10 @@ async function createNewTask(requestBody) {
   await myHttp.post("/task/save", requestBody)
       .then(response => {
         if (response.data.code === 200) {
-          alert("任务保存成功" + response.data.data)
+          ElMessage({
+            message: "任务保存成功" + response.data.data,
+            type: 'info',
+          });
           taskId.value = response.data.data
           router.push({name: 'memoryCards'})
         }

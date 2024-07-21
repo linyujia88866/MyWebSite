@@ -37,6 +37,7 @@ const router = useRouter();
 let user = ref('1111111');
 let pwd = ref('11111111');
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 const isChecked = ref(false);
 const isShow = ref(false);
 
@@ -72,7 +73,10 @@ const postData = async () => {
             localStorage.setItem('curPwd', pwd.value)
           }
         } else if(response.data.success === "500"){
-          alert("账号或密码错误")
+          ElMessage({
+            message: "账号或密码错误",
+            type: 'error',
+          });
         }
       })
       .catch(error => console.error('Error:', error));

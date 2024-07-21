@@ -42,6 +42,7 @@ import Navigate from "@/components/Navigate.vue";
 import {myHttp} from "@/request/myrequest";
 import DialogCreateUser from "@/components/DialogCreateUser.vue";
 import DialogUpdateUser from "@/components/DialogUpdateUser.vue";
+import {ElMessage} from "element-plus";
 const url = '/user/all';
 defineComponent({
   DialogUpdateUser
@@ -72,7 +73,10 @@ async function getUsersInfo() {
         }
       })
       .catch(error => {
-        alert("你没有这个操作权限！")
+        ElMessage({
+          message: "你没有这个操作权限！",
+          type: 'error',
+        });
       });
 }
 

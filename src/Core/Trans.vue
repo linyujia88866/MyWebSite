@@ -27,15 +27,18 @@
   <div v-if="files.length > 0" style="display: flex;  width: 100%; align-content: center; align-items: center; padding: 0; margin: 0 0 0 12px; min-height: 0; ">
     <ul style="display: flex; margin-bottom: 0; padding: 0; margin-left: 12px;  min-height: 0;">
       <li v-for="file in files" :key="file.name" style="height: 28px; text-align: center; align-content: center; align-items: center">
-        {{ file.name }} - {{ file.size }} bytes
+<!--        {{ file.name }} - {{ file.size }} bytes-->
+        <h4 style="height: 28px; text-align: center; align-content: center; align-items: center; margin: 0; padding: 0;">
+          文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>
       </li>
-      <button @click="uploadFile" v-if="files.length>0"
-              style="margin: 0 0 0 10px;height: 28px; ">上传</button>
-      <button @click="removeFile" v-if="files.length>0"
-              style="margin: 0 0 0 10px;height: 28px; ">移除</button>
+<!--      <h4>文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>-->
+<!--      <button @click="uploadFile" v-if="files.length>0"-->
+<!--              style="margin: 0 0 0 10px;height: 28px; ">上传</button>-->
+<!--      <button @click="removeFile" v-if="files.length>0"-->
+<!--              style="margin: 0 0 0 10px;height: 28px; ">移除</button>-->
     </ul>
   </div>
-  <hr style=" margin: 20px 0 8px 12px;">
+  <hr style=" margin: 20px 0 12px 12px;">
 <!--  <p style="text-align: left;padding: 0; margin: 0 0 0 12px;vertical-align: top; ">{{topLine}}</p>-->
   <div style="display: flex; margin-left: 12px; margin-top: 0; margin-bottom: 12px; ">
     <button v-if="curPath !== ''"
@@ -58,72 +61,186 @@
 <!--    <Folder v-for="folder in folders" :key="folder.name" :name="folder.name"-->
 <!--            @click="gointodir(folder.name)"-->
 <!--            style="padding: 0; margin: 0 0 0 12px;" />-->
-
-    <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
-         @click="gointodir(folder.name)">
-      <div @mouseover="handleFileHover(folder)"
-           @mouseleave="handleFileLeave(folder)"
-           style="display: flex;
+<!--    ================================================================================================================-->
+    <tr style="display: flex;
           align-items: center;
           align-content: center;
           padding: 0; margin: 0;
           height: 32px;">
-        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-        <h3 >{{ folder.name }}</h3>
+      <td style="display: flex;align-items: center;
+          align-content: center;
+          padding: 0;
+          margin: 0 0 0 12px;
+          width: 500px;
+          height: 32px;">
+        <h3>文件名</h3>
+      </td>
+      <td style="width: 200px; text-align: left">
         <h3 style=" color: #42b983;
-          text-align: center;
+          /*text-align: center;*/
           align-content: center;
           padding: 0;
           height: 32px;
-         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>
+         margin: 0 0 0 20px;"  >大小</h3>
+      </td>
+      <td style="width: 200px;text-align: left">
         <h3 style=" color: #42b983;
-          text-align: center;
+          /*text-align: center;*/
           align-content: center;
           padding: 0;
           height: 32px;
-         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>
-        <button v-if="folder.show"
-                style=" border: #333333 1px solid; margin: 0 0 0 20px;"
-                @click.stop="downloadFile(folder.name, 'folder')">下载</button>
-        <button v-if="folder.show"
-                style=" border: #333333 1px solid;
-                margin: 0 0 0 12px;"
-                @click.stop="deleteFolder(folder.name)">删除</button>
-      </div>
-    </div>
-  </div>
-  <div>
-<!--    <File v-for="fileName in fileNames" :key="fileName.name" :name="fileName.name" style="margin: 0;padding: 0; margin-left: 12px;" />-->
-    <div style="padding: 0; margin: 0 0 0 12px;" v-for="fileName in fileNames" >
-      <div @mouseover="handleFileHover(fileName)"
-           @mouseleave="handleFileLeave(fileName)"
+         margin: 0 0 0 20px;"  >修改时间</h3>
+      </td>
+    </tr>
+    <!--    ================================================================================================================-->
+    <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
+         @click="gointodir(folder.name)">
+      <tr @mouseover="handleFileHover(folder)"
+          @mouseleave="handleFileLeave(folder)"
           style="display: flex;
           align-items: center;
           align-content: center;
           padding: 0; margin: 0;
           height: 32px;">
-        <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-        <h3  style="height: 32px;align-content: center;">{{ fileName.name }}</h3>
-        <h3 style=" color: #42b983;
-          text-align: center;
+        <td style="display: flex;align-items: center;
           align-content: center;
-          padding: 0;
-          height: 32px;
-         margin: 0 0 0 20px;"  >{{ fileName.size }}</h3>
-        <h3 style=" color: #42b983;
-          text-align: center;
-          align-content: center;
-          padding: 0;
-          height: 32px;
-         margin: 0 0 0 20px;"  >{{ fileName.time }}</h3>
-        <button v-if="fileName.show"
-                style=" border: #333333 1px solid; margin: 0 0 0 20px;"
-                @click="downloadFile(fileName.name)">下载</button>
-        <button v-if="fileName.show"
-                style=" border: #333333 1px solid;
+          padding: 0; margin: 0;
+          width: 500px;
+          height: 32px;">
+          <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+          <h3 >{{ folder.name }}</h3>
+          <button v-if="folder.show"
+                  style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                  @click.stop="downloadFile(folder.name, 'folder')">下载</button>
+          <button v-if="folder.show"
+                  style=" border: #333333 1px solid;
                 margin: 0 0 0 12px;"
-                @click.stop="deleteFile(fileName.name)">删除</button>
-      </div>
+                  @click.stop="deleteFolder(folder.name)">删除</button>
+        </td>
+        <td style="width: 200px; text-align: left;">
+<!--          <h3 style=" color: #42b983;-->
+<!--          /*text-align: center;*/-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>-->
+        </td>
+        <td style="width: 200px;">
+<!--          <h3 style=" color: #42b983;-->
+<!--          text-align: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>-->
+        </td>
+      </tr>
+<!--      <div @mouseover="handleFileHover(folder)"-->
+<!--           @mouseleave="handleFileLeave(folder)"-->
+<!--           style="display: flex;-->
+<!--          align-items: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0; margin: 0;-->
+<!--          height: 32px;">-->
+<!--        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">-->
+<!--        <h3 >{{ folder.name }}</h3>-->
+<!--        <h3 style=" color: #42b983;-->
+<!--          text-align: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>-->
+<!--        <h3 style=" color: #42b983;-->
+<!--          text-align: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>-->
+<!--        <button v-if="folder.show"-->
+<!--                style=" border: #333333 1px solid; margin: 0 0 0 20px;"-->
+<!--                @click.stop="downloadFile(folder.name, 'folder')">下载</button>-->
+<!--        <button v-if="folder.show"-->
+<!--                style=" border: #333333 1px solid;-->
+<!--                margin: 0 0 0 12px;"-->
+<!--                @click.stop="deleteFolder(folder.name)">删除</button>-->
+<!--      </div>-->
+    </div>
+    <!--    ================================================================================================================-->
+  </div>
+  <div>
+<!--    <File v-for="fileName in fileNames" :key="fileName.name" :name="fileName.name" style="margin: 0;padding: 0; margin-left: 12px;" />-->
+    <div style="padding: 0; margin: 0 0 0 12px;" v-for="fileName in fileNames" >
+
+      <tr @mouseover="handleFileHover(fileName)"
+          @mouseleave="handleFileLeave(fileName)"
+          style="display: flex;
+          align-items: center;
+          align-content: center;
+          padding: 0; margin: 0;
+          height: 32px;">
+        <td style="display: flex;align-items: center;
+          align-content: center;
+          padding: 0; margin: 0;
+          width: 500px;
+          height: 32px;">
+          <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+          <h3 >{{ fileName.name }}</h3>
+          <button v-if="fileName.show"
+                  style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                  @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>
+          <button v-if="fileName.show"
+                  style=" border: #333333 1px solid;
+                margin: 0 0 0 12px;"
+                  @click.stop="deleteFile(fileName.name)">删除</button>
+        </td>
+        <td style="width: 200px; text-align: left;">
+          <h3 style=" color: #42b983;
+          /*text-align: center;*/
+          align-content: center;
+          padding: 0;
+          height: 32px;
+         margin: 0 0 0 20px;">{{ fileName.size }}</h3>
+        </td>
+        <td style="width: 200px;">
+          <h3 style=" color: #42b983;
+          text-align: center;
+          align-content: center;
+          padding: 0;
+          height: 32px;
+          margin: 0 0 0 20px;">{{ fileName.time }}</h3>
+        </td>
+      </tr>
+
+
+
+<!--      <div @mouseover="handleFileHover(fileName)"-->
+<!--           @mouseleave="handleFileLeave(fileName)"-->
+<!--          style="display: flex;-->
+<!--          align-items: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0; margin: 0;-->
+<!--          height: 32px;">-->
+<!--        <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">-->
+<!--        <h3  style="height: 32px;align-content: center;">{{ fileName.name }}</h3>-->
+<!--        <h3 style=" color: #42b983;-->
+<!--          text-align: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ fileName.size }}</h3>-->
+<!--        <h3 style=" color: #42b983;-->
+<!--          text-align: center;-->
+<!--          align-content: center;-->
+<!--          padding: 0;-->
+<!--          height: 32px;-->
+<!--         margin: 0 0 0 20px;"  >{{ fileName.time }}</h3>-->
+<!--        <button v-if="fileName.show"-->
+<!--                style=" border: #333333 1px solid; margin: 0 0 0 20px;"-->
+<!--                @click="downloadFile(fileName.name)">下载</button>-->
+<!--        <button v-if="fileName.show"-->
+<!--                style=" border: #333333 1px solid;-->
+<!--                margin: 0 0 0 12px;"-->
+<!--                @click.stop="deleteFile(fileName.name)">删除</button>-->
+<!--      </div>-->
 
     </div>
   </div>
@@ -137,6 +254,7 @@ import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {myHttp} from "@/request/myrequest";
 import Navigate from "@/components/Navigate.vue";
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const topLine = ref('-')
@@ -239,7 +357,10 @@ async function downloadFile(filename, type) {
           document.body.appendChild(fileLink);
           fileLink.click();
         } else if (response.status === 222) {
-          alert("文件夹为空")
+          ElMessage({
+            message: '文件夹为空！',
+            type: 'warning',
+          });
         }
       });
 
@@ -306,12 +427,18 @@ async function deleteFolder(dirName) {
 const createDir = async () =>
     {
       if(!dirName.value){
-        alert("请输入文件夹名称")
+        ElMessage({
+          message: '请输入文件夹名称！',
+          type: 'warning',
+        });
         return
       }
 
       if(hasElementWithName(folders.value, dirName.value)){
-        alert("文件夹名称重复")
+        ElMessage({
+          message: '文件夹名称重复！',
+          type: 'warning',
+        });
         return
       }
       const formData = new FormData();
@@ -330,7 +457,10 @@ const createDir = async () =>
             });
 
       } catch (error) {
-        alert("创建文件夹失败")
+        ElMessage({
+          message: '创建文件夹失败！',
+          type: 'error',
+        });
       }
     }
 ;
@@ -346,7 +476,10 @@ const uploadFile = async () =>
     {
 
       if (!fileObject.value) {
-        alert('Please select a file to upload.');
+        ElMessage({
+          message: '请选择要上传的文件！',
+          type: 'warning',
+        });
         return;
       }
 
@@ -368,13 +501,29 @@ const uploadFile = async () =>
 
       } catch (error) {
         console.error(error);
+        fileObject.value=null
+        files.value = []
       }
     }
 ;
 const handleFileChange = (event) => {
   fileObject.value = event.target.files[0];
+  if(hasName(fileObject.value.name)){
+    ElMessage({
+      message: '文件名已存在',
+      type: 'warning',
+    });
+    return
+  }
   files.value = [...files.value, ...event.target.files];
   event.target.value = '';
+  uploadFile()
+};
+
+
+// 使用计算属性
+const hasName = (target) => {
+  return fileNames.value.some(item => item.name === target);
 };
 
 function removePrefix(str, prefix) {
@@ -450,7 +599,10 @@ function getFileList(){
           }
         }
       }else {
-        alert("获取文件列表失败！")
+        ElMessage({
+          message: '获取文件列表失败！',
+          type: 'error',
+        });
       }
     })
     .catch(error => console.error('Error:', error));

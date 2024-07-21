@@ -31,6 +31,7 @@ let user = ref('');
 let pwd = ref('');
 let userid = ref('');
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 ref({ name: '', email: '' });
 const url = '/user/register';
 
@@ -44,9 +45,15 @@ const postData = async () => {
   myHttp.post(url, requestBody)
       .then(response => {
         if (response.data.code === 333) {
-          alert(response.data.message)
+          ElMessage({
+            message: response.data.message,
+            type: 'warning',
+          });
         }else {
-          alert("注册成功")
+          ElMessage({
+            message: "注册成功",
+            type: 'info',
+          });
           router.push({name: 'login'});
         }
       })

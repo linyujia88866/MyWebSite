@@ -76,6 +76,7 @@ const searchQuery = ref('');
 const articles = ref([]);
 
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 
 myHttp.get('/article/articles')
     .then(response => {
@@ -92,7 +93,10 @@ myHttp.get('/article/articles')
             date: item.createdAt.replace(/\.0$/, '')})
         }
       }else {
-        alert("获取文章列表失败！")
+        ElMessage({
+          message: '获取文章列表失败！',
+          type: 'error',
+        });
       }
     })
     .catch(error => console.error('Error:', error));

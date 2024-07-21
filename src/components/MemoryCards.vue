@@ -26,6 +26,7 @@ function gotoShowCase(taskId){
 const tasks = reactive([])
 let url = "/task/tasks"
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 
 myHttp.get(url)
     .then(response => {
@@ -35,7 +36,10 @@ myHttp.get(url)
           tasks.push(array[i])
         }
       }else {
-        alert("获取任务列表失败！")
+        ElMessage({
+          message: '获取任务列表失败！',
+          type: 'error',
+        });
       }
     })
     .catch(error => console.error('Error:', error));

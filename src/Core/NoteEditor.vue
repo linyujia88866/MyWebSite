@@ -28,6 +28,7 @@ import {reactive, ref} from "vue";
 import {useRouter} from 'vue-router';
 const router = useRouter();
 import {myHttp} from "@/request/myrequest";
+import {ElMessage} from "element-plus";
 
 const emit = defineEmits(['save-event']);
 
@@ -51,11 +52,17 @@ function gotoMemoryCards() {
 
 async function save() {
   if (title.value === "") {
-    alert("请输入标题")
+    ElMessage({
+      message: '请输入标题！',
+      type: 'warning',
+    });
     return
   }
   if (emailForm.msg.length === 0) {
-    alert("请输入文章内容")
+    ElMessage({
+      message: '请输入文章内容！',
+      type: 'warning',
+    });
     return
   }
   let requestBody = {
@@ -66,7 +73,10 @@ async function save() {
   await myHttp.post("/article/save", requestBody)
       .then(response => {
         if (response.data.code === 200) {
-          alert("文章保存成功" + response.data.data)
+          ElMessage({
+            message: "文章保存成功" + response.data.data,
+            type: 'info',
+          });
           emit('save-event', 'Hello from child with Composition API');
         }
       })

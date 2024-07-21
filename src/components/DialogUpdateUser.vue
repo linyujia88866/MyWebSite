@@ -28,6 +28,7 @@
 import { ref, reactive } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {useRouter} from "vue-router";
+import {ElMessage} from "element-plus";
 let user = ref('');
 let pwd = ref('');
 let userid = ref('');
@@ -80,9 +81,15 @@ const postData = async () => {
   myHttp.post(url, requestBody)
       .then(response => {
         if (response.data.code === 333) {
-          alert(response.data.message)
+          ElMessage({
+            message: response.data.message,
+            type: 'warning',
+          });
         }else {
-          alert("注册成功")
+          ElMessage({
+            message: "注册成功",
+            type: 'info',
+          });
           closeDialog()
         }
       })
