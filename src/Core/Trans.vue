@@ -1,252 +1,194 @@
-
-
 <template>
-<div @click="reset" style="height: 100%;">
-  <navigate ref="childRef" :origin-tab="'功能'"></navigate>
-  <div style="margin-bottom: 0; padding-bottom: 0;">
-    <div  style="display: flex; margin-top: 60px; margin-bottom: 0; padding-bottom: 0;">
-      <!-- 隐藏的文件上传input -->
-      <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">
-      <!-- 点击按钮触发文件上传 -->
-      <button @click="selectFile"
-              style="margin-left: 12px;
-              margin-top: 12px;
-              height: 32px; width: 108px;
-              border-radius: 5px;
-              border: #888888 1px solid;
-              background-color: deepskyblue;">选择文件上传</button>
-      <button style="float: left; margin-left: 12px; margin-top: 12px;
-              height: 32px; width: 108px;
-              border-radius: 5px;
-              border: #888888 1px solid;
-              background-color: deepskyblue;"
-              @click.stop="makeDir">新建文件夹</button>
+  <navigate ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate>
+  <div @click="reset" style="height: 98vh; display: flex; ">
+    <div>
+      <div style="margin-bottom: 0; padding-bottom: 0; ">
+
+        <div  style=" margin: 60px 0 0;padding: 0;display: flex">
+          <div style="margin-left: 12px; margin-right: 12px; padding: 0;">
+            <el-upload
+                action=""
+                :http-request="customUpload"
+                ref="upload_top"
+                multiple
+                :limit="3"
+                :on-exceed="handleExceed"
+                :show-file-list="false"
+                :file-list="fileList_top">
+              <el-button size="large" type="primary">点击上传</el-button>
+            </el-upload>
+          </div>
+          <el-button type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
+        </div>
+      </div>
+
+      <div v-if="files.length > 0"
+           style="display: flex;
+                  width: 100%;
+                  padding: 0;
+
+                  margin: 12px 0 0 12px;">
+        <ul>
+          <li v-for="file in files" :key="file.name"
+              style="height: 28px;">
+            <h4 style="height: 28px;
+                        margin: 0; padding: 0;">
+              文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>
+          </li>
+        </ul>
+      </div>
+
+
+
+
+
+      <div style="display: flex; margin-left: 12px; margin-top: 12px; margin-bottom: 12px; ">
+        <button v-if="curPath !== ''"
+                style="margin-right: 8px; display: flex;" @click="changePath">
+          <p style="margin: 0; padding: 0">↑</p>
+          <p style="margin: 0; padding: 0">返回上一层</p>
+        </button>
+        <p style="margin: 0; padding: 0; ">当前文件夹路径:</p>
+        <p style="margin: 0; padding: 0;font-weight: bold; vertical-align: bottom; text-decoration-line: underline; ">/全部文件/</p>
+        <p style="margin: 0; padding: 0; font-weight: bold; vertical-align: bottom; text-decoration-line: underline;">{{curPath}}</p>
+      </div>
+      <div v-if="makingDir"
+           style="display: flex; align-items: center; align-content: center; padding: 0; margin: 0 0 0 12px;height: 32px;">
+        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+        <input v-model="dirName" @click.stop>
+        <button style="margin-left: 12px;" @click.stop="createDir">确定</button>
+        <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
+      </div>
+      <div>
+        <tr style="display: flex;
+            align-items: center;
+            align-content: center;
+            padding: 0; margin: 0;
+            height: 32px;">
+          <td style="display: flex;align-items: center;
+            align-content: center;
+            padding: 0;
+            margin: 0 0 0 12px;
+            width: 700px;
+            height: 32px;">
+            <h3>文件名</h3>
+          </td>
+          <td style="width: 200px; text-align: left">
+            <h3 style=" color: #42b983;
+            /*text-align: center;*/
+            align-content: center;
+            padding: 0;
+            height: 32px;
+           margin: 0 0 0 20px;"  >大小</h3>
+          </td>
+          <td style="width: 200px;text-align: left">
+            <h3 style=" color: #42b983;
+            /*text-align: center;*/
+            align-content: center;
+            padding: 0;
+            height: 32px;
+           margin: 0 0 0 20px;"  >修改时间</h3>
+          </td>
+        </tr>
+        <!--    ================================================================================================================-->
+        <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
+             @click="goIntoDir(folder.name)">
+          <tr @mouseover="handleFileHover(folder)"
+              @mouseleave="handleFileLeave(folder)"
+              style="display: flex;
+            align-items: center;
+            align-content: center;
+            padding: 0; margin: 0;
+            height: 32px;">
+            <td style="display: flex;align-items: center;
+            align-content: center;
+            padding: 0; margin: 0;
+            width: 700px;
+            height: 32px;">
+              <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+              <h3 >{{ folder.name }}</h3>
+              <button v-if="folder.show"
+                      style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                      @click.stop="downloadFile(folder.name, 'folder')">下载</button>
+              <button v-if="folder.show"
+                      style=" border: #333333 1px solid;
+                  margin: 0 0 0 12px;"
+                      @click.stop="deleteFolder(folder.name)">删除</button>
+            </td>
+            <td style="width: 200px; text-align: left;">
+            </td>
+            <td style="min-width: 200px;">
+            </td>
+          </tr>
+        </div>
+        <!--    ================================================================================================================-->
+      </div>
+      <div>
+        <div style="padding: 0; margin: 0 0 0 12px;" v-for="fileName in fileNames" >
+
+          <tr @mouseover="handleFileHover(fileName)"
+              @mouseleave="handleFileLeave(fileName)"
+              style="display: flex;
+            align-items: center;
+            align-content: center;
+            padding: 0; margin: 0;
+            height: 32px;">
+            <td style="display: flex;align-items: center;
+                align-content: center;
+                padding: 0; margin: 0;
+                width: 700px;
+                height: 32px;">
+              <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+              <h3 >{{ getFirstAndLastChars(fileName.name) }}</h3>
+              <button v-if="fileName.show"
+                      style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                      @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>
+              <button v-if="fileName.show"
+                      style=" border: #333333 1px solid;
+                  margin: 0 0 0 12px;"
+                      @click.stop="deleteFile(fileName.name)">删除</button>
+            </td>
+            <td style="width: 200px; text-align: left;">
+              <h3 style=" color: #42b983;
+            /*text-align: center;*/
+            align-content: center;
+            padding: 0;
+            height: 32px;
+           margin: 0 0 0 20px;">{{ fileName.size }}</h3>
+            </td>
+            <td style="min-width: 200px;">
+              <h3 style=" color: #42b983;
+            text-align: center;
+            align-content: center;
+            padding: 0;
+            height: 32px;
+            margin: 0 0 0 20px;">{{ fileName.time }}</h3>
+            </td>
+          </tr>
+        </div>
+        <div v-if="progressVisible">
+          <el-progress :percentage="progressPercent"></el-progress>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;  width: 100%; margin: 70px 8px 8px; align-content: center; align-items: center">
+      <el-upload
+          class="custom-upload"
+          :append-to-body="false"
+          ref="upload"
+          :http-request="customUpload"
+          :file-list="fileList"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          drag
+          multiple>
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip" slot="tip">文件大小不要超过40m</div>
+      </el-upload>
     </div>
   </div>
-
-  <div v-if="files.length > 0" style="display: flex;  width: 100%; align-content: center; align-items: center; padding: 0; margin: 0 0 0 12px; min-height: 0; ">
-    <ul style="display: flex; margin-bottom: 0; padding: 0; margin-left: 12px;  min-height: 0;">
-      <li v-for="file in files" :key="file.name" style="height: 28px; text-align: center; align-content: center; align-items: center">
-<!--        {{ file.name }} - {{ file.size }} bytes-->
-        <h4 style="height: 28px; text-align: center; align-content: center; align-items: center; margin: 0; padding: 0;">
-          文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>
-      </li>
-<!--      <h4>文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>-->
-<!--      <button @click="uploadFile" v-if="files.length>0"-->
-<!--              style="margin: 0 0 0 10px;height: 28px; ">上传</button>-->
-<!--      <button @click="removeFile" v-if="files.length>0"-->
-<!--              style="margin: 0 0 0 10px;height: 28px; ">移除</button>-->
-    </ul>
-  </div>
-  <hr style=" margin: 20px 0 12px 12px;">
-<!--  <p style="text-align: left;padding: 0; margin: 0 0 0 12px;vertical-align: top; ">{{topLine}}</p>-->
-  <div style="display: flex; margin-left: 12px; margin-top: 0; margin-bottom: 12px; ">
-    <button v-if="curPath !== ''"
-        style="margin-right: 8px; display: flex;" @click="changePath">
-      <p style="margin: 0; padding: 0">↑</p>
-      <p style="margin: 0; padding: 0">返回上一层</p>
-    </button>
-    <p style="margin: 0; padding: 0; ">当前文件夹路径:</p>
-    <p style="margin: 0; padding: 0;font-weight: bold; vertical-align: bottom; text-decoration-line: underline; ">/全部文件/</p>
-    <p style="margin: 0; padding: 0; font-weight: bold; vertical-align: bottom; text-decoration-line: underline;">{{curPath}}</p>
-  </div>
-  <div v-if="makingDir"
-       style="display: flex; align-items: center; align-content: center; padding: 0; margin: 0 0 0 12px;height: 32px;">
-    <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-    <input v-model="dirName" @click.stop>
-    <button style="margin-left: 12px;" @click.stop="createDir">确定</button>
-    <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
-  </div>
-  <div>
-<!--    <Folder v-for="folder in folders" :key="folder.name" :name="folder.name"-->
-<!--            @click="gointodir(folder.name)"-->
-<!--            style="padding: 0; margin: 0 0 0 12px;" />-->
-<!--    ================================================================================================================-->
-    <tr style="display: flex;
-          align-items: center;
-          align-content: center;
-          padding: 0; margin: 0;
-          height: 32px;">
-      <td style="display: flex;align-items: center;
-          align-content: center;
-          padding: 0;
-          margin: 0 0 0 12px;
-          width: 500px;
-          height: 32px;">
-        <h3>文件名</h3>
-      </td>
-      <td style="width: 200px; text-align: left">
-        <h3 style=" color: #42b983;
-          /*text-align: center;*/
-          align-content: center;
-          padding: 0;
-          height: 32px;
-         margin: 0 0 0 20px;"  >大小</h3>
-      </td>
-      <td style="width: 200px;text-align: left">
-        <h3 style=" color: #42b983;
-          /*text-align: center;*/
-          align-content: center;
-          padding: 0;
-          height: 32px;
-         margin: 0 0 0 20px;"  >修改时间</h3>
-      </td>
-    </tr>
-    <!--    ================================================================================================================-->
-    <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
-         @click="gointodir(folder.name)">
-      <tr @mouseover="handleFileHover(folder)"
-          @mouseleave="handleFileLeave(folder)"
-          style="display: flex;
-          align-items: center;
-          align-content: center;
-          padding: 0; margin: 0;
-          height: 32px;">
-        <td style="display: flex;align-items: center;
-          align-content: center;
-          padding: 0; margin: 0;
-          width: 500px;
-          height: 32px;">
-          <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-          <h3 >{{ folder.name }}</h3>
-          <button v-if="folder.show"
-                  style=" border: #333333 1px solid; margin: 0 0 0 20px;"
-                  @click.stop="downloadFile(folder.name, 'folder')">下载</button>
-          <button v-if="folder.show"
-                  style=" border: #333333 1px solid;
-                margin: 0 0 0 12px;"
-                  @click.stop="deleteFolder(folder.name)">删除</button>
-        </td>
-        <td style="width: 200px; text-align: left;">
-<!--          <h3 style=" color: #42b983;-->
-<!--          /*text-align: center;*/-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>-->
-        </td>
-        <td style="width: 200px;">
-<!--          <h3 style=" color: #42b983;-->
-<!--          text-align: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>-->
-        </td>
-      </tr>
-<!--      <div @mouseover="handleFileHover(folder)"-->
-<!--           @mouseleave="handleFileLeave(folder)"-->
-<!--           style="display: flex;-->
-<!--          align-items: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0; margin: 0;-->
-<!--          height: 32px;">-->
-<!--        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">-->
-<!--        <h3 >{{ folder.name }}</h3>-->
-<!--        <h3 style=" color: #42b983;-->
-<!--          text-align: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ folder.size }}</h3>-->
-<!--        <h3 style=" color: #42b983;-->
-<!--          text-align: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ folder.time }}</h3>-->
-<!--        <button v-if="folder.show"-->
-<!--                style=" border: #333333 1px solid; margin: 0 0 0 20px;"-->
-<!--                @click.stop="downloadFile(folder.name, 'folder')">下载</button>-->
-<!--        <button v-if="folder.show"-->
-<!--                style=" border: #333333 1px solid;-->
-<!--                margin: 0 0 0 12px;"-->
-<!--                @click.stop="deleteFolder(folder.name)">删除</button>-->
-<!--      </div>-->
-    </div>
-    <!--    ================================================================================================================-->
-  </div>
-  <div>
-<!--    <File v-for="fileName in fileNames" :key="fileName.name" :name="fileName.name" style="margin: 0;padding: 0; margin-left: 12px;" />-->
-    <div style="padding: 0; margin: 0 0 0 12px;" v-for="fileName in fileNames" >
-
-      <tr @mouseover="handleFileHover(fileName)"
-          @mouseleave="handleFileLeave(fileName)"
-          style="display: flex;
-          align-items: center;
-          align-content: center;
-          padding: 0; margin: 0;
-          height: 32px;">
-        <td style="display: flex;align-items: center;
-          align-content: center;
-          padding: 0; margin: 0;
-          width: 500px;
-          height: 32px;">
-          <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-          <h3 >{{ fileName.name }}</h3>
-          <button v-if="fileName.show"
-                  style=" border: #333333 1px solid; margin: 0 0 0 20px;"
-                  @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>
-          <button v-if="fileName.show"
-                  style=" border: #333333 1px solid;
-                margin: 0 0 0 12px;"
-                  @click.stop="deleteFile(fileName.name)">删除</button>
-        </td>
-        <td style="width: 200px; text-align: left;">
-          <h3 style=" color: #42b983;
-          /*text-align: center;*/
-          align-content: center;
-          padding: 0;
-          height: 32px;
-         margin: 0 0 0 20px;">{{ fileName.size }}</h3>
-        </td>
-        <td style="width: 200px;">
-          <h3 style=" color: #42b983;
-          text-align: center;
-          align-content: center;
-          padding: 0;
-          height: 32px;
-          margin: 0 0 0 20px;">{{ fileName.time }}</h3>
-        </td>
-      </tr>
-
-
-
-<!--      <div @mouseover="handleFileHover(fileName)"-->
-<!--           @mouseleave="handleFileLeave(fileName)"-->
-<!--          style="display: flex;-->
-<!--          align-items: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0; margin: 0;-->
-<!--          height: 32px;">-->
-<!--        <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">-->
-<!--        <h3  style="height: 32px;align-content: center;">{{ fileName.name }}</h3>-->
-<!--        <h3 style=" color: #42b983;-->
-<!--          text-align: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ fileName.size }}</h3>-->
-<!--        <h3 style=" color: #42b983;-->
-<!--          text-align: center;-->
-<!--          align-content: center;-->
-<!--          padding: 0;-->
-<!--          height: 32px;-->
-<!--         margin: 0 0 0 20px;"  >{{ fileName.time }}</h3>-->
-<!--        <button v-if="fileName.show"-->
-<!--                style=" border: #333333 1px solid; margin: 0 0 0 20px;"-->
-<!--                @click="downloadFile(fileName.name)">下载</button>-->
-<!--        <button v-if="fileName.show"-->
-<!--                style=" border: #333333 1px solid;-->
-<!--                margin: 0 0 0 12px;"-->
-<!--                @click.stop="deleteFile(fileName.name)">删除</button>-->
-<!--      </div>-->
-
-    </div>
-  </div>
-  <div style="height: 500px; width: 100%;  display: flex;"
-       v-if="fileNames.length === 0 && folders.length ===0"><h3 style="margin: auto; ">暂无文件</h3></div>
-</div>
 </template>
 
 <script setup>
@@ -255,36 +197,102 @@ import {useRouter} from 'vue-router';
 import {myHttp} from "@/request/myrequest";
 import Navigate from "@/components/Navigate.vue";
 import { ElMessage } from 'element-plus';
+import {
+  calSize,
+  getFirstAndLastChars,
+  getParentDirectory,
+  removePrefix,
+  replaceSuffix,
+  timePatternChange
+} from "../utils/stringutils";
 
 const router = useRouter();
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)
 
 let curPath = ref('')
+let fileList = ref([])
+let fileList_top = ref([])
+const upload = ref(null)
+const upload_top = ref(null)
 
 const fileInput = ref(null);
+const files = ref([]);
+
+const folders = ref([
+  // 更多文件夹...
+]);
+
+const fileObject = ref(null)
+const fileNames = ref([
+  // 更多文件夹...
+]);
+let dirName = ref('')
+let makingDir=ref(false)
+
+let progressVisible = ref(false)
+let progressPercent = ref(0)
+
+function handleProgress(event) {
+  console.log("11111")
+  // 显示进度条
+  progressVisible.value = true;
+  // 计算进度百分比
+  progressPercent.value = Math.floor((event.loaded / event.total) * 100);
+}
 
 const selectFile = () => {
   if(fileObject.value){return}
   fileInput.value.click(); // 触发文件选择
 };
 
-let dirName = ref('')
-let makingDir=ref(false)
 
+function handleRemove(file, fileList) {
+  console.log(file, fileList);
+}
+function handlePreview(file) {
+  console.log(file);
+}
+function handleExceed(files, fileList) {
+  this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+}
+function beforeRemove(file, fileList) {
+  return this.$confirm(`确定移除 ${ file.name }？`);
+}
+
+function  customUpload(request) {
+  fileObject.value = request.file;
+  files.value = [...files.value, {name: request.filename, size: request.size}];
+  afterFileSelected()
+}
+function  handleSuccess(response, file, fileList) {
+  // 成功处理逻辑
+  console.log('Upload success:', response);
+}
+function  handleError(err, file, fileList) {
+  // 错误处理逻辑
+  console.error('Upload failed:', err);
+}
+
+
+
+// 创建文件夹
 function makeDir() {
   makingDir.value = true
   dirName.value = "新建文件夹"
 }
 
+// 文件鼠标移动上去触发事件
 function handleFileHover(fileObject){
     fileObject.show = true
 }
 
+// 文件鼠标失焦事件
 function handleFileLeave(fileObject){
   fileObject.show = false
 }
 
+// 返回上一层
 function changePath() {
   if(curPath.value === ''){
     return
@@ -294,16 +302,8 @@ function changePath() {
   getFileList()
 }
 
-function getParentDirectory(filePath) {
-  // 移除尾部的斜杠，以确保正则表达式工作正常
-  filePath = filePath.replace(/\/$/, '');
-
-  // 匹配最后一个斜杠前的部分
-  const match = filePath.match(/^(.*)\/[^\/]*$/);
-  return match ? match[1] : '';
-}
-
-function gointodir(dir){
+// 进入文件夹
+function goIntoDir(dir){
   if(curPath.value === ''){
     curPath.value = dir
   } else {
@@ -312,16 +312,17 @@ function gointodir(dir){
   getFileList()
 }
 
+// 取消创建文件夹输入文件夹名称状态
 function reset(){
   makingDir.value = false
   dirName.value = ""
 }
-
+// 取消创建文件夹输入文件夹名称状态
 function cancelMakeDir() {
   makingDir.value = false
   dirName.value = ""
 }
-
+// 判断文件名是否存在
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
@@ -331,7 +332,7 @@ async function downloadFile(filename, type) {
   let url = "/minio/download"
   let resName= type === 'folder' ? filename + '.zip' : filename
   if(curPath.value.length > 0){
-    finalPath = curPath.value + '/' + filename + '/'
+    finalPath = curPath.value + '/' + filename
   } else {
     finalPath = filename
   }
@@ -369,8 +370,6 @@ async function downloadFile(filename, type) {
   }
 }
 
-
-
 async function deleteFile(filename) {
   let removePath;
   if(curPath.value === ''){
@@ -397,6 +396,7 @@ async function deleteFile(filename) {
   }
 }
 
+// 删除文件夹
 async function deleteFolder(dirName) {
   let removePath;
   if (curPath.value === '') {
@@ -465,12 +465,6 @@ const createDir = async () =>
     }
 ;
 
-const fileObject = ref(null)
-
-function removeFile() {
-  fileObject.value=null
-  files.value = []
-}
 
 const uploadFile = async () =>
     {
@@ -495,30 +489,41 @@ const uploadFile = async () =>
         })
             .then(() =>{
               getFileList()
-              fileObject.value=null
-              files.value = []
+              clearFileObjects()
             });
 
       } catch (error) {
         console.error(error);
-        fileObject.value=null
-        files.value = []
+        clearFileObjects()
       }
     }
 ;
+
+function clearFileObjects(){
+  fileObject.value=null
+  files.value = []
+  upload.value.clearFiles()
+  upload_top.value.clearFiles()
+}
 const handleFileChange = (event) => {
   fileObject.value = event.target.files[0];
+
+  files.value = [...files.value, ...event.target.files];
+  event.target.value = '';
+  afterFileSelected()
+};
+
+function afterFileSelected() {
   if(hasName(fileObject.value.name)){
     ElMessage({
       message: '文件名已存在',
       type: 'warning',
     });
+    clearFileObjects()
     return
   }
-  files.value = [...files.value, ...event.target.files];
-  event.target.value = '';
   uploadFile()
-};
+}
 
 
 // 使用计算属性
@@ -526,43 +531,8 @@ const hasName = (target) => {
   return fileNames.value.some(item => item.name === target);
 };
 
-function removePrefix(str, prefix) {
-  // 创建一个正则表达式，它将匹配以prefix变量开头的字符串
-  const regex = new RegExp('^' + prefix);
-
-  // 使用replace方法移除匹配到的前缀
-  return str.replace(regex, '');
-}
-
-function replaceSuffix(str, prefix='\/') {
-  // 正则表达式匹配字符串末尾的后缀
-  const regex = new RegExp(prefix + '$');
-  // 使用replace方法替换后缀
-  return str.replace(regex, '');
-}
-
-function timePatternChange(dateStr){
-  if(dateStr === null){
-    return ""
-  }
-  // const dateStr = '2024-07-21T06:08:50.86Z';
-  const date = new Date(dateStr);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-}
-
-
 function getFileList(){
-  let url = "/minio/listObjectNamesInDir/test"
-  url = "/minio/listObjectsInDir/test"
-
+  let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -608,31 +578,30 @@ function getFileList(){
     .catch(error => console.error('Error:', error));
 }
 
-function calSize(size){
-  if(size<1024){
-    return size + 'B'
-  } else if(size<1024*1024){
-    return size / 1024 + 'KB'
-  } else {
-    return size / 1024 /1024 + 'MB'
-  }
-}
 
+// 刚进入页面时获取文件列表
 getFileList()
-
-const files = ref([]);
-
-const folders = ref([
-  // 更多文件夹...
-]);
-
-
-const fileNames = ref([
-  // 更多文件夹...
-]);
 
 </script>
 <style scoped>
 
 
+/deep/ .custom-upload{
+  width: 100%;
+}
+/deep/ .custom-upload .el-upload-dragger{
+  width: 100%;
+  height: 90vh;
+  align-content: center;
+}
+
+tr{
+  width: 70vw;
+}
+
+ul {
+  list-style-type: none; /* 移除列表的标记，可选 */
+  margin: 0; /* 移除默认的列表内边距，可选 */
+  padding: 0; /* 移除默认的列表内边距，可选 */
+}
 </style>

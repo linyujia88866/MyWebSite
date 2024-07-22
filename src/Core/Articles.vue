@@ -1,52 +1,3 @@
-<!--<template>-->
-<!--  <div class="article-list">-->
-<!--    <h1>文章列表</h1>-->
-<!--    <ul>-->
-<!--      <li v-for="article in articles" :key="article.id">-->
-<!--        <h2>{{ article.title }}</h2>-->
-<!--        <p>{{ article.summary }}</p>-->
-<!--      </li>-->
-<!--    </ul>-->
-<!--    <button @click="addArticle">新增文章</button>-->
-<!--  </div>-->
-<!--</template>-->
-
-<!--<script setup>-->
-<!--import { ref } from 'vue';-->
-<!--const articles = ref([-->
-<!--  { id: 1, title: '文章标题1', summary: '文章摘要1' },-->
-<!--  { id: 2, title: '文章标题2', summary: '文章摘要2' },-->
-<!--  // 更多文章...-->
-<!--]);-->
-
-<!--function addArticle() {-->
-<!--  // 添加文章的逻辑，例如弹窗输入标题和摘要-->
-<!--  // articles.value.push({ id: 新ID, title: 新标题, summary: 新摘要 });-->
-<!--}-->
-
-<!--</script>-->
-
-<!--<style>-->
-<!--.article-list {-->
-<!--  max-width: 600px;-->
-<!--  margin: 0 auto;-->
-<!--  padding: 20px;-->
-<!--}-->
-
-<!--ul {-->
-<!--  list-style-type: none;-->
-<!--  padding: 0;-->
-<!--}-->
-
-<!--li {-->
-<!--  border-bottom: 1px solid #eee;-->
-<!--  margin-bottom: 20px;-->
-<!--  padding-bottom: 20px;-->
-<!--}-->
-<!--</style>-->
-
-
-
 <template>
   <navigate  :origin-tab="'功能'"></navigate>
   <div class="article-list">
@@ -116,8 +67,7 @@ const formatDate = (date) => {
 <style>
 .article-list {
   max-width: 800px;
-  margin: auto;
-  margin-top: 70px;
+  margin: 70px auto auto;
 }
 .article-list input {
   width: 100%;

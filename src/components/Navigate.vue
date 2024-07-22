@@ -214,7 +214,7 @@ defineExpose({
   background: #fff;
   border: 1px solid #eee;
   width: 200px;
-  z-index: 99;
+  z-index: 1000;
 }
 .menu li {
   padding: 5px 10px;
