@@ -140,10 +140,16 @@
               <h3 >{{ getFirstAndLastChars(fileName.name) }}</h3>
               <button v-if="fileName.show"
                       style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                      @click.stop="moveTheFile(fileName.name)">移动</button>
+              <button v-if="fileName.show"
+                      style=" border: #333333 1px solid; margin: 0 0 0 12px;"
+                      @click.stop="showTheFile(fileName.name)">预览</button>
+              <button v-if="fileName.show"
+                      style=" border: #333333 1px solid; margin: 0 0 0 12px;"
                       @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>
               <button v-if="fileName.show"
                       style=" border: #333333 1px solid;
-                  margin: 0 0 0 12px;"
+                      margin: 0 0 0 12px;"
                       @click.stop="deleteFile(fileName.name)">删除</button>
             </td>
             <td style="width: 200px; text-align: left;">
@@ -187,6 +193,8 @@
       </el-upload>
     </div>
   </div>
+<MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
+          ref="moveFile"></MoveFile>
 </template>
 
 <script setup>
@@ -202,60 +210,32 @@ import {
   removePrefix,
   replaceSuffix,
   timePatternChange
-} from "../utils/stringutils";
+} from "@/utils/stringutils";
+import MoveFile from "@/Core/MoveFile.vue";
 
 const router = useRouter();
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)
-
 let curPath = ref('')
 let fileList = ref([])
 let fileList_top = ref([])
 const upload = ref(null)
 const upload_top = ref(null)
 
-const fileInput = ref(null);
+const moveFile = ref(null);
 const files = ref([]);
-
-const folders = ref([
-  // 更多文件夹...
-]);
-
+const folders = ref([]);
 const fileObject = ref(null)
-const fileNames = ref([
-  // 更多文件夹...
-]);
+const fileNames = ref([]);
 let dirName = ref('')
 let makingDir=ref(false)
 
 let progressVisible = ref(false)
 let progressPercent = ref(0)
 
-function handleProgress(event) {
-  console.log("11111")
-  // 显示进度条
-  progressVisible.value = true;
-  // 计算进度百分比
-  progressPercent.value = Math.floor((event.loaded / event.total) * 100);
-}
 
-const selectFile = () => {
-  if(fileObject.value){return}
-  fileInput.value.click(); // 触发文件选择
-};
-
-
-function handleRemove(file, fileList) {
-  console.log(file, fileList);
-}
-function handlePreview(file) {
-  console.log(file);
-}
 function handleExceed(files, fileList) {
   this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-}
-function beforeRemove(file, fileList) {
-  return this.$confirm(`确定移除 ${ file.name }？`);
 }
 
 function  customUpload(request) {
@@ -271,7 +251,6 @@ function  handleError(err, file, fileList) {
   // 错误处理逻辑
   console.error('Upload failed:', err);
 }
-
 
 
 // 创建文件夹
@@ -323,6 +302,14 @@ function cancelMakeDir() {
 // 判断文件名是否存在
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
+}
+
+function showTheFile(filename) {
+
+}
+
+function moveTheFile(filename) {
+  moveFile.value.changeVisibleStatus(curPath.value, filename)
 }
 
 async function downloadFile(filename, type) {
