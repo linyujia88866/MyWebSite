@@ -35,7 +35,6 @@ let userid = ref('');
 const router = useRouter();
 
 const emit = defineEmits(['close-event']);
-const isVisible = ref(true); // 控制弹窗显示隐藏
 const style = reactive({
   top: '200px',
   left: '500px'

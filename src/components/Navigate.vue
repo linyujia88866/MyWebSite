@@ -10,10 +10,11 @@ const props = defineProps({
     default: "首页",
   }
 });
-
+function handleMouseLeave(){
+  menuVisible.value = false
+}
 let activeTab= ref('首页');
 let authority= ref('');
-let tabs= ref(['首页', '通知', '设置']);
 let isLogin= false;
 const router = useRouter();
 useRoute();
@@ -91,9 +92,6 @@ defineExpose({
       <!-- 页签内容 -->
       <div class="nav-bar">
         <ul>
-<!--          <li v-for="(tab, index) in tabs" :key="index" :class="{active: activeTab === tab}">-->
-<!--            <a @click="changeTab(tab)">{{ tab }}</a>-->
-<!--          </li>-->
           <li :class="{active: activeTab === '首页'}">
             <a @click="changeTab('首页')">首页</a>
           </li>
@@ -121,7 +119,7 @@ defineExpose({
         <!-- 头像内容，可以是图片或者其他元素 -->
         <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
       </div>
-      <div class="user-menu">
+      <div class="user-menu" @mouseleave="handleMouseLeave">
 
         <ul v-if="menuVisible" class="menu" >
           <!-- 菜单项 -->
@@ -134,6 +132,8 @@ defineExpose({
     </div>
   </div>
 </template>
+
+
 
 <style scoped>
 

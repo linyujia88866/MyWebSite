@@ -40,8 +40,6 @@
 
 
 
-
-
       <div style="display: flex; margin-left: 12px; margin-top: 12px; margin-bottom: 12px; ">
         <button v-if="curPath !== ''"
                 style="margin-right: 8px; display: flex;" @click="changePath">
@@ -262,7 +260,7 @@ function beforeRemove(file, fileList) {
 
 function  customUpload(request) {
   fileObject.value = request.file;
-  files.value = [...files.value, {name: request.filename, size: request.size}];
+  files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
   afterFileSelected()
 }
 function  handleSuccess(response, file, fileList) {

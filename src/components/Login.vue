@@ -19,7 +19,6 @@
     <div style="display: flex">
       <div style="display: flex; ">
         <input type="checkbox" id="checkbox" v-model="isChecked">
-<!--        <label for="checkbox">{{ isChecked ? 'Checked' : 'Not Checked' }}</label>-->
         <label for="checkbox">记住登录名</label>
       </div>
       <div style="width: 60%; display: flex; margin-left: auto">

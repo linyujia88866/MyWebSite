@@ -236,8 +236,7 @@ input{
 li{
   width:100%;
   box-sizing: border-box;
-  padding-left: 0;
-  padding:10px 10px;
+  padding: 10px;
   border-bottom: 1px solid #ccc;
   color:#666;
   position: relative;
