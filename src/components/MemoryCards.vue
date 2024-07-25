@@ -1,21 +1,49 @@
 <template>
   <div>
     <navigate  :origin-tab="'功能'"></navigate>
-    <div class="card-container">
-      <task-card  @click.prevent="gotoShowCase()" />
-      <task-card
-          v-for="task in tasks"
-          :title="task.title"
-          :created-at="task.createdAt.replace(/\.0$/, '')"
-          @click.prevent="gotoShowCase(task.taskId)"
+    <div style="margin: 60px 0 0 5px;padding: 0; display: flex ">
+      <el-button type="primary"  @click.prevent="gotoShowCase()"  size="large">创建任务清单</el-button>
+      <el-button type="primary" v-if="showMode==='2'"  @click.prevent="showMode='1'"  size="large">卡片式显示</el-button>
+      <el-button type="primary" v-if="showMode==='1'"  @click.prevent="showMode='2'"  size="large">列表式显示</el-button>
+    </div>
+    <div class="card-container" v-if="showMode==='1'">
+
+      <Card v-for="task in tasks"
+            :title="task.title"
+            :date="task.createdAt.replace(/\.0$/, '')"
+            @click.prevent="gotoShowCase(task.taskId)"
       />
+<!--      <task-card-->
+<!--          v-for="task in tasks"-->
+<!--          :title="task.title"-->
+<!--          :created-at="task.createdAt.replace(/\.0$/, '')"-->
+<!--          @click.prevent="gotoShowCase(task.taskId)"-->
+<!--      />-->
+    </div>
+    <div class="card-container2" v-if="showMode==='2'">
+      <ul>
+        <li style="display: flex;">
+          <h3 style="width: 700px; line-height: 28px;text-align: left;">任务标题</h3>
+          <h3 style="width: 200px; line-height: 28px;text-align: left;">创建时间</h3>
+          <h3 style="width: 200px; line-height: 28px; text-align: left;">操作按钮</h3>
+        </li>
+        <li v-for="task in tasks" style="display: flex;">
+          <h4 style="width: 700px; line-height: 28px;text-align: left;margin: 0; padding: 0; ">{{task.title}}</h4>
+          <p style="width: 200px; line-height: 28px;text-align: left;
+          margin: 0; padding: 0;">{{task.createdAt.replace(/\.0$/, '')}}</p>
+
+          <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >编辑</el-button>
+          <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >删除</el-button>
+<!--          <button style="width: 100px; height: 28px;margin: 0 0 0 8px;padding: 0;">编辑</button>-->
+<!--          <button style="width: 100px; height: 28px;margin: 0 0 0 8px;padding: 0;">删除</button>-->
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import TaskCard from "@/components/TaskCard.vue";
+import {reactive, ref} from 'vue';
 import Navigate from "@/components/Navigate.vue";
 
 import {useRouter} from 'vue-router';
@@ -25,8 +53,10 @@ function gotoShowCase(taskId){
 }
 const tasks = reactive([])
 let url = "/task/tasks"
+let showMode = ref('1')
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import Card from "@/Comps/Card.vue";
 
 myHttp.get(url)
     .then(response => {
@@ -53,8 +83,11 @@ myHttp.get(url)
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-gap: 5px;
-  padding: 5px;
-  padding-top: 60px;
+  margin: 5px 5px 5px;
   flex-grow: 1;
+}
+
+.card-container2 {
+  margin: 5px 5px 5px;
 }
 </style>

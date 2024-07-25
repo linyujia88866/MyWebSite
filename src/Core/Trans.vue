@@ -67,9 +67,16 @@
             align-content: center;
             padding: 0;
             margin: 0 0 0 12px;
-            width: 700px;
+            width: 400px;
             height: 32px;">
             <h3>文件名</h3>
+          </td>
+          <td style="display: flex;align-items: center;
+            align-content: center;
+            padding: 0;
+            width: 300px;
+            height: 32px;">
+            <h3 style="color: #42b983;margin-left: auto; " v-if="showHead">文件操作</h3>
           </td>
           <td style="width: 200px; text-align: left">
             <h3 style=" color: #42b983;
@@ -104,9 +111,10 @@
             width: 700px;
             height: 32px;">
               <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-              <h3 >{{ folder.name }}</h3>
+              <h3 style="width: 400px; text-align: left;" >{{ folder.name }}</h3>
               <button v-if="folder.show"
-                      style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                      style=" border: #333333 1px solid;
+                      margin-left: auto;"
                       @click.stop="downloadFile(folder.name, 'folder')">下载</button>
               <button v-if="folder.show"
                       style=" border: #333333 1px solid;
@@ -137,9 +145,9 @@
                 width: 700px;
                 height: 32px;">
               <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-              <h3 >{{ getFirstAndLastChars(fileName.name) }}</h3>
+              <h3 style="width: 400px;text-align: left;" >{{ getFirstAndLastChars(fileName.name) }}</h3>
               <button v-if="fileName.show"
-                      style=" border: #333333 1px solid; margin: 0 0 0 20px;"
+                      style=" border: #333333 1px solid; margin-left: auto;"
                       @click.stop="moveTheFile(fileName.name)">移动</button>
               <button v-if="fileName.show"
                       style=" border: #333333 1px solid; margin: 0 0 0 12px;"
@@ -195,6 +203,10 @@
   </div>
 <MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
           ref="moveFile"></MoveFile>
+
+  <div class="status-bar">
+    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！
+  </div>
 </template>
 
 <script setup>
@@ -213,6 +225,7 @@ import {
 } from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 
+let showHead = ref(false)
 const router = useRouter();
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)
@@ -232,7 +245,6 @@ let makingDir=ref(false)
 
 let progressVisible = ref(false)
 let progressPercent = ref(0)
-
 
 function handleExceed(files, fileList) {
   this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -262,11 +274,13 @@ function makeDir() {
 // 文件鼠标移动上去触发事件
 function handleFileHover(fileObject){
     fileObject.show = true
+  showHead.value = true
 }
 
 // 文件鼠标失焦事件
 function handleFileLeave(fileObject){
   fileObject.show = false
+  showHead.value = false
 }
 
 // 返回上一层
@@ -303,9 +317,48 @@ function cancelMakeDir() {
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
+let supportList = ['.pdf', '.docx']
+async function showTheFile(filename) {
+  if(filename.endsWith(supportList[0]) || filename.endsWith(supportList[1])){
 
-function showTheFile(filename) {
+  } else {
+    ElMessage({
+      message: '该文件类型暂不支持预览！',
+      type: 'warning',
+    });
+    return
+  }
+  let finalPath;
+  let url = "/minio/preview"
 
+  if (curPath.value.length > 0) {
+    finalPath = curPath.value + '/' + filename
+  } else {
+    finalPath = filename
+  }
+
+  try {
+    await myHttp.get(url, {
+      params: {
+        fileName: finalPath
+      },
+      responseType: 'blob'
+    })
+        .then(response => {
+          if (response.status === 200) {
+            //浏览器下载
+            const myBlob = response.data
+            const qrUrl = window.URL.createObjectURL(myBlob);
+            window.open(qrUrl, '_blank');
+          }
+        });
+
+  } catch (error) {
+    ElMessage({
+      message: '获取文件失败！',
+      type: 'warning',
+    });
+  }
 }
 
 function moveTheFile(filename) {
@@ -337,6 +390,7 @@ async function downloadFile(filename, type) {
           //浏览器下载
           const myBlob = response.data
           const qrUrl = window.URL.createObjectURL(myBlob);
+          console.log(qrUrl)
           let fileLink = document.createElement("a");
           fileLink.href = qrUrl;
           fileLink.setAttribute("download", resName);
@@ -588,5 +642,16 @@ ul {
   list-style-type: none; /* 移除列表的标记，可选 */
   margin: 0; /* 移除默认的列表内边距，可选 */
   padding: 0; /* 移除默认的列表内边距，可选 */
+}
+
+.status-bar {
+  position: fixed;      /* 固定位置 */
+  left: 0;              /* 左边距为0 */
+  bottom: 0;            /* 底部边距为0 */
+  width: 100%;          /* 宽度为100% */
+  height: 40px;         /* 高度设置为你需要的值 */
+  background-color: #333; /* 背景颜色 */
+  color: white;         /* 文字颜色 */
+  /* 其他样式 */
 }
 </style>

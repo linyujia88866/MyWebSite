@@ -43,7 +43,7 @@
       </div>
 
 
-        <div class="card">
+        <div class="card" @click.stop="gotoTest()">
 
         </div>
     </div>
@@ -60,6 +60,10 @@ const childRef = ref(null);
 
 function gotoNotebook() {
   router.push({name: 'notes'});
+}
+
+function gotoTest() {
+  router.push({name: 'test'});
 }
 
 function gotoMemory() {
