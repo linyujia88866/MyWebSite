@@ -30,7 +30,7 @@ const showDialogPDF = () => {
     <p-d-f :src="dySrc"></p-d-f>
   </el-dialog>
 </template>
-<style>
+<style scoped>
 .el-dialog {
   width: 1000px;
   height: 800px;

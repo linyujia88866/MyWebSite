@@ -13,6 +13,7 @@ import Articles from "@/Core/Articles.vue";
 import NotePage from "@/Core/NotePage.vue";
 import Trans from "@/Core/Trans.vue";
 import TestView from "@/Comps/TestView.vue";
+import ViewWord from "@/ViewFile/ViewWord.vue";
 
 const routes = [
   {
@@ -76,9 +77,14 @@ const routes = [
     component: Trans
   },
   {
+    path: '/viewWord',
+    name: 'viewWord',
+    component: ViewWord
+  },
+  {
     path: '/test',
     name: 'test',
-    component: TestView
+    component: ViewWord
   }
 ]
 

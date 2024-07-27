@@ -40,7 +40,7 @@ function whenSave(){
 
 </script>
 
-<style>
+<style scoped>
 .container{
   margin-top: 60px;
 }

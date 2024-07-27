@@ -64,7 +64,7 @@ const formatDate = (date) => {
 
 </script>
 
-<style>
+<style scoped>
 .article-list {
   max-width: 800px;
   margin: 70px auto auto;

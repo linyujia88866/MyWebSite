@@ -13,12 +13,6 @@
             :date="task.createdAt.replace(/\.0$/, '')"
             @click.prevent="gotoShowCase(task.taskId)"
       />
-<!--      <task-card-->
-<!--          v-for="task in tasks"-->
-<!--          :title="task.title"-->
-<!--          :created-at="task.createdAt.replace(/\.0$/, '')"-->
-<!--          @click.prevent="gotoShowCase(task.taskId)"-->
-<!--      />-->
     </div>
     <div class="card-container2" v-if="showMode==='2'">
       <ul>
@@ -77,7 +71,7 @@ myHttp.get(url)
 
 </script>
 
-<style>
+<style scoped>
 /* 在这里添加全局样式 */
 .card-container {
   display: grid;

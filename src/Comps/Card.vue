@@ -34,7 +34,7 @@ const props = defineProps({
 // const currentDate = ref(new Date())
 </script>
 
-<style>
+<style scoped>
 .time {
   font-size: 12px;
   color: #999;

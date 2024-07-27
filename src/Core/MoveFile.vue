@@ -15,26 +15,28 @@
       <p style="margin: 0; padding: 0;font-weight: bold;  text-decoration-line: underline; ">/全部文件/</p>
       <p style="margin: 0; padding: 0; font-weight: bold;  text-decoration-line: underline;">{{curPath}}</p>
     </div>
-    <div style="padding: 0; margin: 0 0 0 12px; " v-for="folder in folders"
-         @click="goIntoDir(folder.name)">
-      <tr style="display: flex;
+    <div style="min-height: 400px;">
+      <div style="padding: 0; margin: 0 0 0 12px;margin-bottom: auto; " v-for="folder in folders"
+           @click="goIntoDir(folder.name)">
+        <tr style="display: flex;
             align-items: center;
             align-content: center;
             padding: 0; margin: 0;
             height: 32px;">
-        <td style="display: flex;align-items: center;
+          <td style="display: flex;align-items: center;
             align-content: center;
             padding: 0; margin: 0;
             width: 700px;
             height: 32px;">
-          <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-          <h3 >{{ folder.name }}</h3>
-        </td>
-        <td style="width: 200px; text-align: left;">
-        </td>
-        <td style="min-width: 200px;">
-        </td>
-      </tr>
+            <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
+            <h3 >{{ folder.name }}</h3>
+          </td>
+          <td style="width: 200px; text-align: left;">
+          </td>
+          <td style="min-width: 200px;">
+          </td>
+        </tr>
+      </div>
     </div>
     <template #footer>
       <span class="dialog-footer">
@@ -223,4 +225,5 @@ defineExpose({
 .dialog-footer button:first-child {
   margin-right: 10px;
 }
+
 </style>

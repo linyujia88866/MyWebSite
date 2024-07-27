@@ -79,12 +79,12 @@
             <h3 style="color: #42b983;margin-left: auto; " v-if="showHead">文件操作</h3>
           </td>
           <td style="width: 200px; text-align: left">
-            <h3 style=" color: #42b983;
+            <h3 style="color: #42b983;
             /*text-align: center;*/
             align-content: center;
             padding: 0;
             height: 32px;
-           margin: 0 0 0 20px;"  >大小</h3>
+           margin: 0 0 0 20px;">大小</h3>
           </td>
           <td style="width: 200px;text-align: left">
             <h3 style=" color: #42b983;
@@ -92,7 +92,7 @@
             align-content: center;
             padding: 0;
             height: 32px;
-           margin: 0 0 0 20px;"  >修改时间</h3>
+           margin: 0 0 0 20px;">修改时间</h3>
           </td>
         </tr>
         <!--    ================================================================================================================-->
@@ -122,8 +122,19 @@
                       @click.stop="deleteFolder(folder.name)">删除</button>
             </td>
             <td style="width: 200px; text-align: left;">
+              <h3 style=" color: #42b983;
+                /*text-align: center;*/
+                align-content: center;
+                padding: 0;
+                height: 32px;
+                margin: 0 0 0 20px;">-</h3>
             </td>
             <td style="min-width: 200px;">
+              <h3 style=" color: #42b983;
+                text-align: left;
+                padding: 2px;
+                height: 32px;
+                margin: 0 0 0 20px;">-</h3>
             </td>
           </tr>
         </div>
@@ -135,10 +146,10 @@
           <tr @mouseover="handleFileHover(fileName)"
               @mouseleave="handleFileLeave(fileName)"
               style="display: flex;
-            align-items: center;
-            align-content: center;
-            padding: 0; margin: 0;
-            height: 32px;">
+              align-items: center;
+              align-content: center;
+              padding: 0; margin: 0;
+              height: 32px;">
             <td style="display: flex;align-items: center;
                 align-content: center;
                 padding: 0; margin: 0;
@@ -162,19 +173,19 @@
             </td>
             <td style="width: 200px; text-align: left;">
               <h3 style=" color: #42b983;
-            /*text-align: center;*/
-            align-content: center;
-            padding: 0;
-            height: 32px;
-           margin: 0 0 0 20px;">{{ fileName.size }}</h3>
+                /*text-align: center;*/
+                align-content: center;
+                padding: 0;
+                height: 32px;
+                margin: 0 0 0 20px;">{{ fileName.size }}</h3>
             </td>
             <td style="min-width: 200px;">
               <h3 style=" color: #42b983;
-            text-align: center;
-            align-content: center;
-            padding: 0;
-            height: 32px;
-            margin: 0 0 0 20px;">{{ fileName.time }}</h3>
+                text-align: center;
+                align-content: center;
+                padding: 0;
+                height: 32px;
+                margin: 0 0 0 20px;">{{ fileName.time }}</h3>
             </td>
           </tr>
         </div>
@@ -204,6 +215,13 @@
 <MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
           ref="moveFile"></MoveFile>
 
+  <!-- 图片预览 -->
+  <el-image-viewer
+      v-if="showImagePreview"
+      :zoom-rate="1.2"
+      @close="closePreview"
+      :url-list="imgPreviewList"
+  />
   <div class="status-bar">
     注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！
   </div>
@@ -216,7 +234,7 @@ import {myHttp} from "@/request/myrequest";
 import Navigate from "@/components/Navigate.vue";
 import { ElMessage } from 'element-plus';
 import {
-  calSize,
+  calSize, getExtension,
   getFirstAndLastChars,
   getParentDirectory,
   removePrefix,
@@ -225,7 +243,15 @@ import {
 } from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 
+function gotoWordView(docxUrl){
+  router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
+}
+
 let showHead = ref(false)
+// docx作为参数通过父组件传参
+let imgPreviewList = ref([])
+const showImagePreview = ref(false)
+const showWordPreview = ref(false)
 const router = useRouter();
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)
@@ -250,6 +276,11 @@ function handleExceed(files, fileList) {
   this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
 }
 
+const closePreview = () => {
+  imgPreviewList.value = []
+  showImagePreview.value = false
+}
+
 function  customUpload(request) {
   fileObject.value = request.file;
   files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
@@ -257,11 +288,11 @@ function  customUpload(request) {
 }
 function  handleSuccess(response, file, fileList) {
   // 成功处理逻辑
-  console.log('Upload success:', response);
+  console.log('Upload success:');
 }
 function  handleError(err, file, fileList) {
   // 错误处理逻辑
-  console.error('Upload failed:', err);
+  console.error('Upload failed:');
 }
 
 
@@ -274,13 +305,13 @@ function makeDir() {
 // 文件鼠标移动上去触发事件
 function handleFileHover(fileObject){
     fileObject.show = true
-  showHead.value = true
+  // showHead.value = true
 }
 
 // 文件鼠标失焦事件
 function handleFileLeave(fileObject){
   fileObject.show = false
-  showHead.value = false
+  // showHead.value = false
 }
 
 // 返回上一层
@@ -317,9 +348,10 @@ function cancelMakeDir() {
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
-let supportList = ['.pdf', '.docx']
+let supportList = ['pdf', 'docx', 'jpg', 'png']
 async function showTheFile(filename) {
-  if(filename.endsWith(supportList[0]) || filename.endsWith(supportList[1])){
+
+  if(supportList.includes(getExtension(filename))){
 
   } else {
     ElMessage({
@@ -349,7 +381,20 @@ async function showTheFile(filename) {
             //浏览器下载
             const myBlob = response.data
             const qrUrl = window.URL.createObjectURL(myBlob);
-            window.open(qrUrl, '_blank');
+            // pdf文件类型
+            if(filename.endsWith('.pdf')){
+              window.open(qrUrl, '_blank');
+            }
+            // 图片文件类型
+            else if(filename.endsWith('.png') || filename.endsWith('.jpg')){
+              showImagePreview.value = true
+              imgPreviewList.value = [qrUrl]
+            }
+            // word文档文件类型
+            else if(filename.endsWith('.docx')){
+              gotoWordView(qrUrl)
+            }
+
           }
         });
 
@@ -390,7 +435,6 @@ async function downloadFile(filename, type) {
           //浏览器下载
           const myBlob = response.data
           const qrUrl = window.URL.createObjectURL(myBlob);
-          console.log(qrUrl)
           let fileLink = document.createElement("a");
           fileLink.href = qrUrl;
           fileLink.setAttribute("download", resName);

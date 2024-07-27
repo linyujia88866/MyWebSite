@@ -25,6 +25,12 @@ function getFirstAndLastChars(str) {
     return first+ '...' + last
 }
 
+
+function getExtension(fileName) {
+    let dotIndex = fileName.lastIndexOf('.');
+    return fileName.substring(dotIndex + 1);
+}
+
 // 上一层路径
 function getParentDirectory(filePath) {
     // 移除尾部的斜杠，以确保正则表达式工作正常
@@ -81,5 +87,6 @@ export  {
     removePrefix,
     replaceSuffix,
     getParentDirectory,
-    calSize
+    calSize,
+    getExtension
 }
