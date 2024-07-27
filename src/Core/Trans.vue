@@ -244,6 +244,7 @@ import {
 import MoveFile from "@/Core/MoveFile.vue";
 
 function gotoWordView(docxUrl){
+  console.log('打开预览页面')
   router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
 }
 
@@ -392,6 +393,8 @@ async function showTheFile(filename) {
             }
             // word文档文件类型
             else if(filename.endsWith('.docx')){
+              console.log('预览word文档')
+              console.log(filename)
               gotoWordView(qrUrl)
             }
 

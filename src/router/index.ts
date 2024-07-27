@@ -12,7 +12,6 @@ import NoteEditor from "@/Core/NoteEditor.vue";
 import Articles from "@/Core/Articles.vue";
 import NotePage from "@/Core/NotePage.vue";
 import Trans from "@/Core/Trans.vue";
-import TestView from "@/Comps/TestView.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
 
 const routes = [

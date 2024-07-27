@@ -2,7 +2,6 @@
 FROM nginx:alpine
 
 # 将dist文件夹内容复制到Nginx服务器的html目录
-#COPY /dist/ /usr/share/nginx/html/
 COPY dist/. /etc/nginx/html/
 
 # 如果需要修改Nginx配置，可以复制自定义配置文件
