@@ -133,8 +133,6 @@ defineExpose({
   </div>
 </template>
 
-
-
 <style scoped>
 
 .top-bar {

@@ -13,6 +13,8 @@ import Articles from "@/Core/Articles.vue";
 import NotePage from "@/Core/NotePage.vue";
 import Trans from "@/Core/Trans.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
+import ViewExcel from "@/ViewFile/ViewExcel.vue";
+import ViewPPT from "@/ViewFile/ViewPPT.vue";
 
 const routes = [
   {
@@ -81,9 +83,19 @@ const routes = [
     component: ViewWord
   },
   {
+    path: '/viewExcel',
+    name: 'viewExcel',
+    component: ViewExcel
+  },
+  {
+    path: '/viewPPT',
+    name: 'viewPPT',
+    component: ViewPPT
+  },
+  {
     path: '/test',
     name: 'test',
-    component: ViewWord
+    component: ViewPPT
   }
 ]
 

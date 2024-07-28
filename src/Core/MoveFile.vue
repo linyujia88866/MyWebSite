@@ -47,43 +47,24 @@
       </span>
     </template>
   </el-dialog>
-
-
-
-  <!-- Form -->
-<!--  <el-button text @click="dialogFormVisible = true"-->
-<!--  >open a Form nested Dialog</el-button-->
-<!--  >-->
-
-<!--  <el-dialog v-model="dialogFormVisible" title="Shipping address">-->
-<!--    <el-form :model="form">-->
-<!--      <el-form-item label="Promotion name" :label-width="formLabelWidth">-->
-<!--        <el-input v-model="form.name" autocomplete="off" />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="Zones" :label-width="formLabelWidth">-->
-<!--        <el-select v-model="form.region" placeholder="Please select a zone">-->
-<!--          <el-option label="Zone No.1" value="shanghai" />-->
-<!--          <el-option label="Zone No.2" value="beijing" />-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
-<!--    </el-form>-->
-<!--    <template #footer>-->
-<!--      <span class="dialog-footer">-->
-<!--        <el-button @click="dialogFormVisible = false">Cancel</el-button>-->
-<!--        <el-button type="primary" @click="dialogFormVisible = false"-->
-<!--        >Confirm</el-button-->
-<!--        >-->
-<!--      </span>-->
-<!--    </template>-->
-<!--  </el-dialog>-->
 </template>
 
 <script setup>
-import {defineProps, reactive, ref} from 'vue'
+import {defineProps, nextTick, reactive, ref} from 'vue'
 import {calSize, getParentDirectory, removePrefix, replaceSuffix, timePatternChange} from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
-import {ElMessage} from "element-plus";
-
+import {ElLoading, ElMessage} from "element-plus";
+let loading = null;
+const openFullScreen2 = (text) => {
+  if(text === undefined){
+    text = '正在移动文件...'
+  }
+  loading = ElLoading.service({
+    lock: true,
+    text: text,
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+}
 
 const props = defineProps({
   curDir: {
@@ -99,7 +80,6 @@ let operationFileName = ref('')
 
 const dialogTableVisible = ref(false)
 
-getFileList()
 // 进入文件夹
 function goIntoDir(dir){
   if(curPath.value === ''){
@@ -113,7 +93,10 @@ function changeVisibleStatus(curDir, filename) {
   dialogTableVisible.value = true
   originPath.value = curDir
   operationFileName.value = filename
-
+  curPath.value = ""
+  nextTick(()=>{
+    getFileList()
+  })
 }
 
 curPath.value = props.curDir
@@ -126,7 +109,6 @@ function changePath() {
   getFileList()
 }
 const folders = ref([]);
-const fileObject = ref(null)
 const fileNames = ref([]);
 
 function  handleConfirm(){
@@ -134,6 +116,7 @@ function  handleConfirm(){
 }
 
 function moveObject(){
+  openFullScreen2()
   let url = "/minio/moveObject"
   const formData = new FormData();
   formData.append('srcpath', originPath.value+'/' + operationFileName.value);
@@ -159,8 +142,10 @@ function moveObject(){
           type: 'error',
         });
       });
+      loading.close()
 }
 function getFileList(){
+  openFullScreen2('正在加载文件夹目录信息...')
   let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
@@ -205,6 +190,7 @@ function getFileList(){
         }
       })
       .catch(error => console.error('Error:', error));
+  loading.close()
 }
 
 defineExpose({

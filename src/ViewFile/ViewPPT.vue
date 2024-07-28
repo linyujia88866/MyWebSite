@@ -1,7 +1,12 @@
-<script setup lang="ts" name="home">
+<script setup>
 import { computed, nextTick, ref, onMounted } from 'vue';
-const pptx = ref('/file/test.pptx'); //设置ppt网络地址，可以是相对地址
+let pptx = ref(''); //设置ppt网络地址，可以是相对地址
+import {useRoute, useRouter} from 'vue-router';
+const route=useRoute()
+const router = useRouter();
 
+const excel=ref("") //设置文档网络地址，可以是相对地址
+pptx.value = route.query.pptUrl
 const renderedHandler = () => {
   console.log('渲染完成');
 };
@@ -13,8 +18,7 @@ const errorHandler = () => {
 <template>
   <div>
     <h1>PPT文档预览</h1>
-    <iframe :src="`/PPTXjs-1.21.1/index.html?file=` + pptx" width="100%" height="900" frameborder="0">
-
+    <iframe id="pptViewer" :src="`/PPTXjs-1.21.1/index.html?file=` + pptx" width="100%" height="900" frameborder="0">
     </iframe>
   </div>
 </template>

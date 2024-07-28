@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>PPTXjs - Meshesha</title>
+
+<link rel="stylesheet" href="./css/pptxjs.css">
+<link rel="stylesheet" href="./css/nv.d3.min.css">
+
+<script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/jszip.min.js"></script>
+<script type="text/javascript" src="./js/filereader.js"></script>
+<script type="text/javascript" src="./js/d3.min.js"></script>
+<script type="text/javascript" src="./js/nv.d3.min.js"></script>
+<script type="text/javascript" src="./js/pptxjs.js"></script>
+<script type="text/javascript" src="./js/divs2slides.js"></script>
+
+<script type="text/javascript" src="./js/jquery.fullscreen-min.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+		var oldWidth, oldMargin ,isFullscreenMode=false;
+		$("#fullscreen-btn").on("click", function(){
+			 			
+			if(!isFullscreenMode){
+				oldWidth = $("#result .slide").css("width");
+				oldMargin = $("#result .slide").css("margin");
+				$("#result .slide").css({
+					"width": "99%",
+					"margin": "0 auto"
+				})
+				$("#result").toggleFullScreen();
+				isFullscreenMode = true;
+			}else{
+				$("#result .slide").css({
+					"width": oldWidth,
+					"margin": oldMargin
+				})
+				$("#result").toggleFullScreen();
+				isFullscreenMode = false;
+			}		
+		});
+		$(document).bind("fullscreenchange", function() {
+			if(!$(document).fullScreen()){
+				$("#result .slide").css({
+					"width": oldWidth,
+  					"margin": oldMargin
+				})
+			}
+		});
+    });
+</script>
+<style>
+	html, body { margin: 0; padding: 0; }
+	#warper { margin-right: auto; margin-left: auto; width: 900px; }
+</style>
+</head>
+<body>
+    <div style="margin-top: 100px;margin-bottom: 150px;" id="result"></div>
+<script type="text/javascript">
+
+function getUrlParams(url, paramName) {
+    // 从 URL 中提取查询参数部分
+    let queryString = url.split('?')[1];
+
+    // 如果没有查询参数，返回空对象
+    if (!queryString) {
+        return {};
+    }
+
+    // 处理带有 hash 地址的情况
+    const hashIndex = queryString.indexOf('#');
+    if (hashIndex !== -1) {
+        queryString = queryString.substring(0, hashIndex);
+    }
+
+    // 将查询参数字符串解析为键值对
+    const queryParams = {};
+    queryString.split('&').forEach(param => {
+        const [key, value] = param.split('=');
+        // 如果值已经存在，则将其转换为数组存储
+        if (queryParams[key]) {
+            if (Array.isArray(queryParams[key])) {
+                queryParams[key].push(decodeURIComponent(value));
+            } else {
+                queryParams[key] = [queryParams[key], decodeURIComponent(value)];
+            }
+        } else {
+            queryParams[key] = decodeURIComponent(value);
+        }
+    });
+
+    // 如果没有指定参数名称，则返回包含所有查询参数的对象
+    if (!paramName) {
+        return queryParams;
+    }
+
+    // 如果指定了参数名称
+    if (queryParams[paramName]) {
+        return queryParams[paramName];
+    } else {
+        // 参数不存在，返回空字符串
+        return '';
+    }
+}
+$("#result").pptxToHtml({
+	pptxFileUrl: getUrlParams(window.location.href, 'file'),
+    slideMode: true,
+    slidesScale: "100%",
+    keyBoardShortCut: true,
+    mediaProcess: true, /** true,false: if true then process video and audio files */
+    slideModeConfig: { //on slide mode (slideMode: true)
+        first: 1,
+        nav: true, /** true,false : show or not nav buttons*/
+        navTxtColor: "white", /** color */
+        showPlayPauseBtn: true,/** true,false */
+        showSlideNum: true, /** true,false */
+        showTotalSlideNum: true, /** true,false */
+        autoSlide: 2, /** false or seconds (the pause time between slides) , F8 to active(keyBoardShortCut: true) */
+        randomAutoSlide: false, /** true,false ,autoSlide:true */
+        loop: false, /** true,false */
+        background: "white", /** false or color*/
+        transition: "slid", /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */
+        transitionTime: 1 /** transition time in seconds */
+    }
+    // slideModeConfig: {  //on slide mode (slideMode: true)
+	//     first: 1,
+	//     nav: false, /** true,false : show or not nav buttons*/
+	//     navTxtColor: "white", /** color */
+	//     navNextTxt:"&#8250;", //">"
+	//     navPrevTxt: "&#8249;", //"<"
+	//     showPlayPauseBtn: false,/** true,false */
+	//     keyBoardShortCut: false, /** true,false */
+	//     showSlideNum: false, /** true,false */
+	//     showTotalSlideNum: false, /** true,false */
+	//     autoSlide: false, /** false or seconds (the pause time between slides) , F8 to active(keyBoardShortCut: true) */
+	//     randomAutoSlide: false, /** true,false ,autoSlide:true */
+	//     loop: false,  /** true,false */
+	//     background: "black", /** false or color*/
+	//     transition: "default", /** transition type: "slid","fade","default","random" , to show transition efects :transitionTime > 0.5 */
+	//     transitionTime: 1 /** transition time in seconds */
+	// }
+});
+</script>
+
+</body>
+</html>

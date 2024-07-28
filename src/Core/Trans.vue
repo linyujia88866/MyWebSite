@@ -15,7 +15,8 @@
                 :on-exceed="handleExceed"
                 :show-file-list="false"
                 :file-list="fileList_top">
-              <el-button size="large" type="primary">点击上传</el-button>
+
+              <el-button size="large" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
             </el-upload>
           </div>
           <el-button type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
@@ -112,14 +113,40 @@
             height: 32px;">
               <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
               <h3 style="width: 400px; text-align: left;" >{{ folder.name }}</h3>
-              <button v-if="folder.show"
-                      style=" border: #333333 1px solid;
-                      margin-left: auto;"
-                      @click.stop="downloadFile(folder.name, 'folder')">下载</button>
-              <button v-if="folder.show"
-                      style=" border: #333333 1px solid;
-                  margin: 0 0 0 12px;"
-                      @click.stop="deleteFolder(folder.name)">删除</button>
+              <el-tooltip
+                  effect="dark"
+                  content="下载"
+                  placement="top"
+              >
+                <el-button v-if="folder.show"
+                           style="margin: 0 0 0 auto;"
+                           @click.stop="downloadFile(folder.name, 'folder')"
+                           type="warning"
+                           size="small"
+                           circle
+                           :icon="Download" ></el-button>
+              </el-tooltip>
+              <el-tooltip
+                  effect="dark"
+                  content="删除"
+                  placement="top"
+              >
+                <el-button v-if="folder.show"  circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="deleteFolder(folder.name)"
+                           type="danger"
+                           size="small"
+                           :icon="Delete" ></el-button>
+              </el-tooltip>
+
+<!--              <button v-if="folder.show"-->
+<!--                      style=" border: #333333 1px solid;-->
+<!--                      margin-left: auto;"-->
+<!--                      @click.stop="downloadFile(folder.name, 'folder')">下载</button>-->
+<!--              <button v-if="folder.show"-->
+<!--                      style=" border: #333333 1px solid;-->
+<!--                  margin: 0 0 0 12px;"-->
+<!--                      @click.stop="deleteFolder(folder.name)">删除</button>-->
             </td>
             <td style="width: 200px; text-align: left;">
               <h3 style=" color: #42b983;
@@ -157,19 +184,84 @@
                 height: 32px;">
               <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
               <h3 style="width: 400px;text-align: left;" >{{ getFirstAndLastChars(fileName.name) }}</h3>
-              <button v-if="fileName.show"
-                      style=" border: #333333 1px solid; margin-left: auto;"
-                      @click.stop="moveTheFile(fileName.name)">移动</button>
-              <button v-if="fileName.show"
-                      style=" border: #333333 1px solid; margin: 0 0 0 12px;"
-                      @click.stop="showTheFile(fileName.name)">预览</button>
-              <button v-if="fileName.show"
-                      style=" border: #333333 1px solid; margin: 0 0 0 12px;"
-                      @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>
-              <button v-if="fileName.show"
-                      style=" border: #333333 1px solid;
-                      margin: 0 0 0 12px;"
-                      @click.stop="deleteFile(fileName.name)">删除</button>
+              <el-tooltip
+                  effect="dark"
+                  content="复制"
+                  placement="top"
+              >
+                <el-button v-if="fileName.show"  circle
+                           style="margin: 0 0 0 auto;"
+                           @click.stop="copyTheFile(fileName.name)"
+                           type="primary"
+                           size="small"
+                           :icon="CopyDocument"></el-button>
+              </el-tooltip>
+
+              <el-tooltip
+                  effect="dark"
+                  content="移动"
+                  placement="top"
+              >
+                <el-button v-if="fileName.show"  circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="moveTheFile(fileName.name)"
+                           type="primary"
+                           size="small"
+                           :icon="DocumentRemove" ></el-button>
+              </el-tooltip>
+
+<!--              <button v-if="fileName.show"-->
+<!--                      style=" border: #333333 1px solid; margin-left: auto;"-->
+<!--                      @click.stop="moveTheFile(fileName.name)">移动</button>-->
+              <el-tooltip
+                  effect="dark"
+                  content="预览"
+                  placement="top"
+              >
+                <el-button v-if="fileName.show"  circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="showTheFile(fileName.name)"
+                           type="success"
+                           size="small"
+                           :icon="View" ></el-button>
+              </el-tooltip>
+
+<!--              <button v-if="fileName.show"-->
+<!--                      style=" border: #333333 1px solid; margin: 0 0 0 8px;"-->
+<!--                      @click.stop="showTheFile(fileName.name)">预览</button>-->
+              <el-tooltip
+                  effect="dark"
+                  content="下载"
+                  placement="top"
+              >
+                <el-button v-if="fileName.show"  circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="downloadFile(fileName.name, 'fileName')"
+                           type="warning"
+                           size="small"
+                           :icon="Download" ></el-button>
+              </el-tooltip>
+
+<!--              <button v-if="fileName.show"-->
+<!--                      style=" border: #333333 1px solid; margin: 0 0 0 8px;"-->
+<!--                      @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>-->
+              <el-tooltip
+                  effect="dark"
+                  content="删除"
+                  placement="top"
+              >
+                <el-button v-if="fileName.show"  circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="deleteFile(fileName.name)"
+                           type="danger"
+                           size="small"
+                           :icon="Delete" ></el-button>
+              </el-tooltip>
+
+<!--              <button v-if="fileName.show"-->
+<!--                      style=" border: #333333 1px solid;-->
+<!--                      margin: 0 0 0 12px;"-->
+<!--                      @click.stop="deleteFile(fileName.name)">删除</button>-->
             </td>
             <td style="width: 200px; text-align: left;">
               <h3 style=" color: #42b983;
@@ -215,6 +307,9 @@
 <MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
           ref="moveFile"></MoveFile>
 
+  <CopyFile :cur-dir="curPath.value"  @update-value="getFileList"
+            ref="copyFile"></CopyFile>
+
   <!-- 图片预览 -->
   <el-image-viewer
       v-if="showImagePreview"
@@ -242,39 +337,100 @@ import {
   timePatternChange
 } from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
+import CopyFile from "@/Core/CopyFile.vue";
+import { ElLoading } from 'element-plus'
+import { Delete, Edit, Search, Share,CopyDocument, DocumentRemove, View, Upload, Download } from '@element-plus/icons-vue'
+import { h } from 'vue'
+import { ElNotification } from 'element-plus'
 
-function gotoWordView(docxUrl){
-  console.log('打开预览页面')
-  router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
+// ==============================================================================================================
+
+let showHead = ref(false)           // 文件操作表头显示开关
+// docx作为参数通过父组件传参
+let imgPreviewList = ref([])           //预览图片列表
+const showImagePreview = ref(false)    //预览图片开关
+const router = useRouter();           // 理由处理
+const topLine = ref('-')
+topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
+let curPath = ref('')     // 当前文件路径
+let fileList = ref([])    // 右边的上传文件拖动区文件列表
+let fileList_top = ref([])   // 顶部的上传文件操作区文件列表
+const upload = ref(null)       // 右边的上传文件拖动区对象
+const upload_top = ref(null)   // 顶部的上传文件操作区对象
+const moveFile = ref(null);    // 移动文件夹弹窗对象
+const copyFile = ref(null);    // 移动文件夹弹窗对象
+const files = ref([]);       // 上传文件时提示
+const folders = ref([]);     // 当前页面的文件夹名称列表
+const fileObject = ref(null)   // 正在上传或处理的文件对象
+const fileNames = ref([]);    // 当前页面的文件名列表
+let dirName = ref('')      // 新建文件夹名称
+let makingDir=ref(false)   // 正在创建  文件夹
+let progressVisible = ref(false)    //显示进度条
+let progressPercent = ref(0)         // 进度条百分比
+let loading = null;
+// ==============================================================================================================
+const openFullScreen2 = (text) => {
+  if(text === undefined){
+    text = '正在上传文件...'
+  }
+  loading = ElLoading.service({
+    lock: true,
+    text: text,
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
 }
 
-let showHead = ref(false)
-// docx作为参数通过父组件传参
-let imgPreviewList = ref([])
-const showImagePreview = ref(false)
-const showWordPreview = ref(false)
-const router = useRouter();
-const topLine = ref('-')
-topLine.value = topLine.value.repeat(200)
-let curPath = ref('')
-let fileList = ref([])
-let fileList_top = ref([])
-const upload = ref(null)
-const upload_top = ref(null)
+function gotoWordView(docxUrl){
+  const queryParams = {docxUrl: docxUrl};
+  // 将query参数转换为查询字符串
+  const queryString = new URLSearchParams(queryParams).toString();
+  // 创建新标签页的URL，并附加query参数
+  const urlWithQuery = `/viewWord?${queryString}`;
 
-const moveFile = ref(null);
-const files = ref([]);
-const folders = ref([]);
-const fileObject = ref(null)
-const fileNames = ref([]);
-let dirName = ref('')
-let makingDir=ref(false)
+  // 使用window.open在新标签页中打开URL
+  window.open(router.resolve(urlWithQuery).href, '_blank');
+  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
+}
 
-let progressVisible = ref(false)
-let progressPercent = ref(0)
+function gotoPPTView(pptUrl){
+
+  // const queryParams = {pptUrl: pptUrl};
+  // // 将query参数转换为查询字符串
+  // const queryString = new URLSearchParams(queryParams).toString();
+  // // 创建新标签页的URL，并附加query参数
+  // const urlWithQuery = `/viewPPT?${queryString}`;
+  //
+  // // 使用window.open在新标签页中打开URL
+  // window.open(router.resolve(urlWithQuery).href, '_blank');
+  window.open(`/PPTXjs-1.21.1/index.html?file=` + pptUrl, '_blank');
+  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
+}
+
+
+function gotoExcelView(excelUrl){
+  const queryParams = {excelUrl: excelUrl};
+  // 将query参数转换为查询字符串
+  const queryString = new URLSearchParams(queryParams).toString();
+  // 创建新标签页的URL，并附加query参数
+  const urlWithQuery = `/viewExcel?${queryString}`;
+
+  // 使用window.open在新标签页中打开URL
+  window.open(router.resolve(urlWithQuery).href, '_blank');
+  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
+}
 
 function handleExceed(files, fileList) {
-  this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+  ElNotification({
+    title: '文件数量限制',
+    // message: `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`,
+    message: `当前限制选择 3 个文件，本次选择了 ${files.length + fileList.length} 个文件`,
+    duration: 10000,
+    type: 'warning',
+  })
+  // ElMessage({
+  //   message: `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`,
+  //   type: 'warning',
+  // });
 }
 
 const closePreview = () => {
@@ -284,6 +440,19 @@ const closePreview = () => {
 
 function  customUpload(request) {
   fileObject.value = request.file;
+  if(request.file.size === 0){
+    ElNotification({
+      title: '文件格式错误',
+      message: `【${request.file.name}】是一个空文件， 请上传有效的文件！`,
+      duration: 10000,
+      type: 'warning',
+    })
+    // ElMessage({
+    //   message: `文件【${request.file.name}】大小为【${request.file.size}】字节， 请上传有效的文件！`,
+    //   type: 'warning',
+    // });
+    return
+  }
   files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
   afterFileSelected()
 }
@@ -349,7 +518,7 @@ function cancelMakeDir() {
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
-let supportList = ['pdf', 'docx', 'jpg', 'png']
+let supportList = ['pdf', 'docx', 'jpg', 'png', 'pptx', 'xlsx']
 async function showTheFile(filename) {
 
   if(supportList.includes(getExtension(filename))){
@@ -363,7 +532,7 @@ async function showTheFile(filename) {
   }
   let finalPath;
   let url = "/minio/preview"
-
+  openFullScreen2('正在加载文件内容...')
   if (curPath.value.length > 0) {
     finalPath = curPath.value + '/' + filename
   } else {
@@ -386,6 +555,9 @@ async function showTheFile(filename) {
             if(filename.endsWith('.pdf')){
               window.open(qrUrl, '_blank');
             }
+            else if(filename.endsWith('.pptx')){
+              gotoPPTView(qrUrl)
+            }
             // 图片文件类型
             else if(filename.endsWith('.png') || filename.endsWith('.jpg')){
               showImagePreview.value = true
@@ -393,9 +565,10 @@ async function showTheFile(filename) {
             }
             // word文档文件类型
             else if(filename.endsWith('.docx')){
-              console.log('预览word文档')
-              console.log(filename)
               gotoWordView(qrUrl)
+            }
+            else if(filename.endsWith('.xlsx')){
+              gotoExcelView(qrUrl)
             }
 
           }
@@ -407,13 +580,19 @@ async function showTheFile(filename) {
       type: 'warning',
     });
   }
+  loading.close()
 }
 
 function moveTheFile(filename) {
   moveFile.value.changeVisibleStatus(curPath.value, filename)
 }
 
+function copyTheFile(filename) {
+  copyFile.value.changeVisibleStatus(curPath.value, filename)
+}
+
 async function downloadFile(filename, type) {
+  openFullScreen2('正在下载文件夹...')
   let finalPath;
   let url = "/minio/download"
   let resName= type === 'folder' ? filename + '.zip' : filename
@@ -454,9 +633,11 @@ async function downloadFile(filename, type) {
   } catch (error) {
     console.error(error);
   }
+  loading.close()
 }
 
 async function deleteFile(filename) {
+  openFullScreen2('正在删除文件...')
   let removePath;
   if(curPath.value === ''){
     removePath = filename
@@ -480,10 +661,12 @@ async function deleteFile(filename) {
   } catch (error) {
     console.error(error);
   }
+  loading.close()
 }
 
 // 删除文件夹
 async function deleteFolder(dirName) {
+  openFullScreen2("正在删除文件夹...")
   let removePath;
   if (curPath.value === '') {
     removePath = dirName
@@ -507,6 +690,7 @@ async function deleteFolder(dirName) {
   } catch (error) {
     console.error(error);
   }
+  loading.close()
 }
 
 
@@ -554,7 +738,6 @@ const createDir = async () =>
 
 const uploadFile = async () =>
     {
-
       if (!fileObject.value) {
         ElMessage({
           message: '请选择要上传的文件！',
@@ -566,7 +749,7 @@ const uploadFile = async () =>
       const formData = new FormData();
       formData.append('file', fileObject.value);
       formData.append('filepath', curPath.value + '/');
-
+      openFullScreen2()
       try {
         await myHttp.post("/minio/upload", formData, {
           headers: {
@@ -582,6 +765,7 @@ const uploadFile = async () =>
         console.error(error);
         clearFileObjects()
       }
+      loading.close();
     }
 ;
 
@@ -591,13 +775,6 @@ function clearFileObjects(){
   upload.value.clearFiles()
   upload_top.value.clearFiles()
 }
-const handleFileChange = (event) => {
-  fileObject.value = event.target.files[0];
-
-  files.value = [...files.value, ...event.target.files];
-  event.target.value = '';
-  afterFileSelected()
-};
 
 function afterFileSelected() {
   if(hasName(fileObject.value.name)){
@@ -618,6 +795,7 @@ const hasName = (target) => {
 };
 
 function getFileList(){
+  openFullScreen2('正在获取文件列表...')
   let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
@@ -662,6 +840,7 @@ function getFileList(){
       }
     })
     .catch(error => console.error('Error:', error));
+    loading.close()
 }
 
 
