@@ -22,7 +22,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 const searchQuery = ref('');
 const articles = ref([]);
 

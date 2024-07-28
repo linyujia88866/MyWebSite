@@ -37,11 +37,11 @@
 
 <script setup>
 import {defineComponent, nextTick, onMounted, ref} from 'vue';
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 
 import {myHttp} from "@/request/myrequest";
-import DialogCreateUser from "@/components/DialogCreateUser.vue";
-import DialogUpdateUser from "@/components/DialogUpdateUser.vue";
+import DialogCreateUser from "@/components/Manage/DialogCreateUser.vue";
+import DialogUpdateUser from "@/components/Manage/DialogUpdateUser.vue";
 import {ElMessage} from "element-plus";
 const url = '/user/all';
 defineComponent({

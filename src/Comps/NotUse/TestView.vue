@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import PDF from '@/components/PDF.vue'
+import PDF from '@/Comps/NotUse/PDF.vue'
 let dySrc = ref('')
 const dialogVisible = ref(false)
 //? 打开新页面预览

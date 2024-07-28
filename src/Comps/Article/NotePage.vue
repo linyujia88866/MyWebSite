@@ -23,11 +23,11 @@
 </template>
 
 <script setup>
-import VerticalTab from '@/Comps/VerticalTab.vue';
+import VerticalTab from '@/Comps/Article/VerticalTab.vue';
 import {ref} from "vue";
-import Navigate from "@/components/Navigate.vue";
-import NoteEditor from "@/Core/NoteEditor.vue";
-import Articles from "@/Core/Articles.vue";
+import Navigate from "@/components/Common/Navigate.vue";
+import NoteEditor from "@/Comps/Article/NoteEditor.vue";
+import Articles from "@/Comps/Article/Articles.vue";
 
 
 const tabs = ref(['未发布文章', '已公开文章', '创建新的文章'])

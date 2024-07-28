@@ -1,6 +1,6 @@
 <script setup>
 import {reactive, ref} from "vue";
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 import {useRoute, useRouter} from 'vue-router';
 const route=useRoute()
 const router = useRouter();

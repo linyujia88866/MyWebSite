@@ -38,7 +38,7 @@
 
 <script setup>
 import {reactive, ref} from 'vue';
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 
 import {useRouter} from 'vue-router';
 const router = useRouter();
@@ -50,7 +50,7 @@ let url = "/task/tasks"
 let showMode = ref('1')
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
-import Card from "@/Comps/Card.vue";
+import Card from "@/Comps/Tasks/Card.vue";
 
 myHttp.get(url)
     .then(response => {

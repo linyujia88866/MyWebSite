@@ -53,7 +53,7 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 const router = useRouter();
 
 const childRef = ref(null);

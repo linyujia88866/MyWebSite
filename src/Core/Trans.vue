@@ -7,14 +7,19 @@
         <div  style=" margin: 60px 0 0;padding: 0;display: flex">
           <div style="margin-left: 12px; margin-right: 12px; padding: 0;">
             <el-upload
+                @click="clearFiles"
                 action=""
                 :http-request="customUpload"
                 ref="upload_top"
                 multiple
                 :limit="3"
+                :auto-upload="false"
+                :on-change="handleChange"
                 :on-exceed="handleExceed"
+                :on-success="handleSuccess"
+                :on-error="handleError"
                 :show-file-list="false"
-                :file-list="fileList_top">
+                >
 
               <el-button size="large" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
             </el-upload>
@@ -117,6 +122,7 @@
                   effect="dark"
                   content="下载"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="folder.show"
                            style="margin: 0 0 0 auto;"
@@ -130,6 +136,7 @@
                   effect="dark"
                   content="删除"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="folder.show"  circle
                            style="margin: 0 0 0 8px;"
@@ -188,6 +195,7 @@
                   effect="dark"
                   content="复制"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
                            style="margin: 0 0 0 auto;"
@@ -201,6 +209,7 @@
                   effect="dark"
                   content="移动"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
                            style="margin: 0 0 0 8px;"
@@ -217,6 +226,7 @@
                   effect="dark"
                   content="预览"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
                            style="margin: 0 0 0 8px;"
@@ -233,6 +243,7 @@
                   effect="dark"
                   content="下载"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
                            style="margin: 0 0 0 8px;"
@@ -249,6 +260,7 @@
                   effect="dark"
                   content="删除"
                   placement="top"
+                  :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
                            style="margin: 0 0 0 8px;"
@@ -294,6 +306,7 @@
           ref="upload"
           :http-request="customUpload"
           :file-list="fileList"
+          :limit="3"
           :on-success="handleSuccess"
           :on-error="handleError"
           drag
@@ -317,16 +330,16 @@
       @close="closePreview"
       :url-list="imgPreviewList"
   />
-  <div class="status-bar">
-    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！
-  </div>
+<!--  <div class="status-bar">-->
+<!--    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！-->
+<!--  </div>-->
 </template>
 
 <script setup>
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {myHttp} from "@/request/myrequest";
-import Navigate from "@/components/Navigate.vue";
+import Navigate from "@/components/Common/Navigate.vue";
 import { ElMessage } from 'element-plus';
 import {
   calSize, getExtension,
@@ -342,6 +355,26 @@ import { ElLoading } from 'element-plus'
 import { Delete, Edit, Search, Share,CopyDocument, DocumentRemove, View, Upload, Download } from '@element-plus/icons-vue'
 import { h } from 'vue'
 import { ElNotification } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
+
+const  checkDelete = async () => {
+  ElMessageBox.confirm(
+      '确认是否删除文件?',
+      'Warning',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+        return true
+      })
+      .catch(() => {
+        return false
+      })
+  return false
+}
 
 // ==============================================================================================================
 
@@ -368,16 +401,25 @@ let makingDir=ref(false)   // 正在创建  文件夹
 let progressVisible = ref(false)    //显示进度条
 let progressPercent = ref(0)         // 进度条百分比
 let loading = null;
+let uploading = ref(false)
+let fileNamesToUpload = ref([])
+let filesToUpload = ref([])
+let sameFilesToUpload = ref([])
 // ==============================================================================================================
 const openFullScreen2 = (text) => {
-  if(text === undefined){
-    text = '正在上传文件...'
+  if(loading === null){
+    if(text === undefined){
+      text = '正在上传文件...'
+    }
+    loading = ElLoading.service({
+      lock: true,
+      text: text,
+      background: 'rgba(0, 0, 0, 0.7)',
+    })
+  } else {
+    loading.setText(text)
   }
-  loading = ElLoading.service({
-    lock: true,
-    text: text,
-    background: 'rgba(0, 0, 0, 0.7)',
-  })
+
 }
 
 function gotoWordView(docxUrl){
@@ -423,7 +465,7 @@ function handleExceed(files, fileList) {
   ElNotification({
     title: '文件数量限制',
     // message: `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`,
-    message: `当前限制选择 3 个文件，本次选择了 ${files.length + fileList.length} 个文件`,
+    message: `最多同时只能上传 10 个文件，本次选择了 ${files.length + fileList.length} 个文件`,
     duration: 10000,
     type: 'warning',
   })
@@ -433,13 +475,77 @@ function handleExceed(files, fileList) {
   // });
 }
 
+function handleChange(file, fileList) {
+// 文件状态变化时的处理逻辑
+  console.log('文件状态变化', file, fileList);
+  fileNamesToUpload.value.push(file.name)
+  filesToUpload.value.push(file.raw)
+  if(!uploading.value){
+    setTimeout(function() {
+      customUpload2()
+    }, 100);
+    uploading.value = true
+  }
+}
+
+async function customUpload2() {
+  console.log(fileNamesToUpload.value)
+  for (let i = 0; i < fileNamesToUpload.value.length; i++) {
+    let file = filesToUpload.value[i]
+    if (file.size === 0) {
+      ElNotification({
+        title: '文件格式错误',
+        message: `【${file.name}】是一个空文件， 请上传有效的文件！`,
+        duration: 10000,
+        type: 'warning',
+      })
+      continue
+    }
+    if (hasName(file.name)) {
+      sameFilesToUpload.value.push(file)
+      continue
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('filepath', curPath.value + '/');
+    openFullScreen2(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
+    await myHttp.post("/minio/upload", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(() => {
+
+    }).catch(() => {
+      ElNotification({
+        title: '错误',
+        message: `文件【${file.name}】上传失败！`,
+        duration: 10000,
+        type: 'error',
+      })
+    });
+  }
+  getFileList()
+  loading?.close()
+  if (sameFilesToUpload.value.length > 0) {
+    ElMessageBox.confirm(
+        `文件已经存在，是否覆盖？`,
+        'Warning',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+    )
+  }
+
+}
+
 const closePreview = () => {
   imgPreviewList.value = []
   showImagePreview.value = false
 }
 
 function  customUpload(request) {
-  fileObject.value = request.file;
   if(request.file.size === 0){
     ElNotification({
       title: '文件格式错误',
@@ -447,14 +553,10 @@ function  customUpload(request) {
       duration: 10000,
       type: 'warning',
     })
-    // ElMessage({
-    //   message: `文件【${request.file.name}】大小为【${request.file.size}】字节， 请上传有效的文件！`,
-    //   type: 'warning',
-    // });
     return
   }
-  files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
-  afterFileSelected()
+  // files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
+  afterFileSelected(request)
 }
 function  handleSuccess(response, file, fileList) {
   // 成功处理逻辑
@@ -464,7 +566,6 @@ function  handleError(err, file, fileList) {
   // 错误处理逻辑
   console.error('Upload failed:');
 }
-
 
 // 创建文件夹
 function makeDir() {
@@ -580,7 +681,8 @@ async function showTheFile(filename) {
       type: 'warning',
     });
   }
-  loading.close()
+    loading?.close()
+    loading = null
 }
 
 function moveTheFile(filename) {
@@ -633,13 +735,33 @@ async function downloadFile(filename, type) {
   } catch (error) {
     console.error(error);
   }
-  loading.close()
+    loading?.close()
+    loading = null
 }
 
 async function deleteFile(filename) {
+
+  ElMessageBox.confirm(
+      '确认是否删除文件?',
+      'Warning',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+        doDeleteFile(filename)
+      })
+      .catch(() => {
+        return false
+      })
+}
+
+async function doDeleteFile(filename) {
   openFullScreen2('正在删除文件...')
   let removePath;
-  if(curPath.value === ''){
+  if (curPath.value === '') {
     removePath = filename
   } else {
     removePath = curPath.value + '/' + filename
@@ -653,19 +775,38 @@ async function deleteFile(filename) {
         'Content-Type': 'multipart/form-data',
       },
     })
-      .then(response => {
-        if(response.status === 200 && response.data === true){
-          getFileList()
-        }
-      });
+        .then(response => {
+          if (response.status === 200 && response.data === true) {
+            getFileList()
+          }
+        });
   } catch (error) {
     console.error(error);
   }
-  loading.close()
+    loading?.close()
+    loading = null
+}
+
+async function deleteFolder(dirName) {
+  ElMessageBox.confirm(
+      '确认是否删除文件夹?',
+      'Warning',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(() => {
+        doDeleteFolder(dirName)
+      })
+      .catch(() => {
+        return false
+      })
 }
 
 // 删除文件夹
-async function deleteFolder(dirName) {
+async function doDeleteFolder(dirName) {
   openFullScreen2("正在删除文件夹...")
   let removePath;
   if (curPath.value === '') {
@@ -690,7 +831,8 @@ async function deleteFolder(dirName) {
   } catch (error) {
     console.error(error);
   }
-  loading.close()
+    loading?.close()
+    loading = null
 }
 
 
@@ -736,56 +878,63 @@ const createDir = async () =>
 ;
 
 
-const uploadFile = async () =>
+const uploadFile = (request) =>
     {
-      if (!fileObject.value) {
-        ElMessage({
-          message: '请选择要上传的文件！',
-          type: 'warning',
-        });
-        return;
-      }
-
       const formData = new FormData();
-      formData.append('file', fileObject.value);
+      formData.append('file', request.file);
       formData.append('filepath', curPath.value + '/');
-      openFullScreen2()
+      openFullScreen2(`文件正在努力上传中，请耐心等待。。。`)
       try {
-        await myHttp.post("/minio/upload", formData, {
+        myHttp.post("/minio/upload", formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         })
             .then(() =>{
               getFileList()
-              clearFileObjects()
+              loading?.close()
+              loading = null;
             });
-
       } catch (error) {
-        console.error(error);
-        clearFileObjects()
+        loading?.close()
+        loading = null;
       }
-      loading.close();
     }
 ;
 
 function clearFileObjects(){
   fileObject.value=null
-  files.value = []
-  upload.value.clearFiles()
-  upload_top.value.clearFiles()
+  // files.value = []
 }
 
-function afterFileSelected() {
-  if(hasName(fileObject.value.name)){
-    ElMessage({
-      message: '文件名已存在',
-      type: 'warning',
-    });
-    clearFileObjects()
-    return
+function clearFiles(){
+  fileObject.value=null
+  // files.value = []
+  upload.value.clearFiles()
+  upload_top.value.clearFiles()
+  uploading.value = false
+}
+
+function afterFileSelected(request) {
+  if(hasName(request.file.name)){
+    ElMessageBox.confirm(
+        `文件【${request.file.name}】已经存在，是否覆盖？`,
+        'Warning',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+    )
+        .then(() => {
+          uploadFile(request)
+        })
+        .catch(() => {
+        })
   }
-  uploadFile()
+  else {
+    uploadFile(request)
+  }
 }
 
 
@@ -795,7 +944,7 @@ const hasName = (target) => {
 };
 
 function getFileList(){
-  openFullScreen2('正在获取文件列表...')
+  openFullScreen2('正在获取文件列表信息...')
   let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
@@ -840,7 +989,8 @@ function getFileList(){
       }
     })
     .catch(error => console.error('Error:', error));
-    loading.close()
+    loading?.close()
+    loading = null
 }
 
 

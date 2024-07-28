@@ -3,7 +3,7 @@
 
       <el-card :body-style="{ padding: '0px' }">
         <img
-            src="@/bianlitie/1.png"
+            src="../../bianlitie/1.png"
             class="image"
         />
         <div style="padding: 14px; height: 120px; ">

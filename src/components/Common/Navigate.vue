@@ -113,11 +113,11 @@ defineExpose({
     <div class="user-actions">
 
       <!-- 帮助图标 -->
-      <img src="../assets/help.jpg" alt="Help Icon" class="help-icon">
+      <img src="../../assets/help.jpg" alt="Help Icon" class="help-icon">
       <!-- 用户头像 -->
       <div class="avatar" @click="toggleMenu" >
         <!-- 头像内容，可以是图片或者其他元素 -->
-        <img src="../assets/logo.png" alt="User Avatar" class="user-avatar">
+        <img src="../../assets/logo.png" alt="User Avatar" class="user-avatar">
       </div>
       <div class="user-menu" @mouseleave="handleMouseLeave">
 
