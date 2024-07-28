@@ -145,15 +145,6 @@
                            size="small"
                            :icon="Delete" ></el-button>
               </el-tooltip>
-
-<!--              <button v-if="folder.show"-->
-<!--                      style=" border: #333333 1px solid;-->
-<!--                      margin-left: auto;"-->
-<!--                      @click.stop="downloadFile(folder.name, 'folder')">下载</button>-->
-<!--              <button v-if="folder.show"-->
-<!--                      style=" border: #333333 1px solid;-->
-<!--                  margin: 0 0 0 12px;"-->
-<!--                      @click.stop="deleteFolder(folder.name)">删除</button>-->
             </td>
             <td style="width: 200px; text-align: left;">
               <h3 style=" color: #42b983;
@@ -330,6 +321,8 @@
       @close="closePreview"
       :url-list="imgPreviewList"
   />
+
+  <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" ></Repeat>
 <!--  <div class="status-bar">-->
 <!--    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！-->
 <!--  </div>-->
@@ -356,6 +349,7 @@ import { Delete, Edit, Search, Share,CopyDocument, DocumentRemove, View, Upload,
 import { h } from 'vue'
 import { ElNotification } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
+import Repeat from "@/Core/Repeat.vue";
 
 const  checkDelete = async () => {
   ElMessageBox.confirm(
@@ -379,6 +373,7 @@ const  checkDelete = async () => {
 // ==============================================================================================================
 
 let showHead = ref(false)           // 文件操作表头显示开关
+let hasSameFiles = ref(false)           // 文件操作表头显示开关
 // docx作为参数通过父组件传参
 let imgPreviewList = ref([])           //预览图片列表
 const showImagePreview = ref(false)    //预览图片开关
@@ -392,6 +387,7 @@ const upload = ref(null)       // 右边的上传文件拖动区对象
 const upload_top = ref(null)   // 顶部的上传文件操作区对象
 const moveFile = ref(null);    // 移动文件夹弹窗对象
 const copyFile = ref(null);    // 移动文件夹弹窗对象
+const repeatFiledDialog = ref(null);    // 移动文件夹弹窗对象
 const files = ref([]);       // 上传文件时提示
 const folders = ref([]);     // 当前页面的文件夹名称列表
 const fileObject = ref(null)   // 正在上传或处理的文件对象
@@ -469,10 +465,6 @@ function handleExceed(files, fileList) {
     duration: 10000,
     type: 'warning',
   })
-  // ElMessage({
-  //   message: `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`,
-  //   type: 'warning',
-  // });
 }
 
 function handleChange(file, fileList) {
@@ -488,6 +480,7 @@ function handleChange(file, fileList) {
   }
 }
 
+// 原本的挨个处理同名文件改成批量处理同名文件，所以这里有了方法2
 async function customUpload2() {
   console.log(fileNamesToUpload.value)
   for (let i = 0; i < fileNamesToUpload.value.length; i++) {
@@ -527,17 +520,19 @@ async function customUpload2() {
   getFileList()
   loading?.close()
   if (sameFilesToUpload.value.length > 0) {
-    ElMessageBox.confirm(
-        `文件已经存在，是否覆盖？`,
-        'Warning',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-    )
+    repeatFiledDialog.value.changeVisibleStatus()
+    console.log(sameFilesToUpload.value)
+    repeatFiledDialog.value.transData(sameFilesToUpload.value)
   }
+}
 
+function handleCloseSameFileDialog(){
+  console.log("关闭弹窗")
+  repeatFiledDialog.value.changeVisibleStatus()
+  sameFilesToUpload.value = []
+  fileNamesToUpload.value = []
+  filesToUpload.value = []
+  console.log(sameFilesToUpload.value)
 }
 
 const closePreview = () => {

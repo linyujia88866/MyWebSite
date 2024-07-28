@@ -33,7 +33,7 @@
         </p>
       </div>
 
-      <div>
+      <div v-if="false">
         <div class="card card-table" >
 
         </div>
@@ -97,7 +97,7 @@ function gotoTrans() {
 .card {
   /* 卡片样式 */
   border: 1px solid #ddd;
-  height: 90%;
+  height: 44%;
   border-radius: 4px;
   padding: 10px;
   text-align: center;

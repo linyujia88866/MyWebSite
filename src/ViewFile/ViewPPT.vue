@@ -18,7 +18,7 @@ const errorHandler = () => {
 <template>
   <div>
     <h1>PPT文档预览</h1>
-    <iframe id="pptViewer" :src="`/PPTXjs-1.21.1/index.html?file=` + pptx" width="100%" height="900" frameborder="0">
+    <iframe id="pptViewer" :src="`/PPTXjs-1.21.1/index_bak.html?file=` + pptx" width="100%" height="900" frameborder="0">
     </iframe>
   </div>
 </template>
