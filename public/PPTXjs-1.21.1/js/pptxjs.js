@@ -45,8 +45,8 @@
             fileInputId: "",
             slidesScale: "", //Change Slides scale by percent
             slideMode: false, /** true,false*/
-            slideType: "divs2slidesjs",  /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com)  -TODO*/
-            revealjsPath: "", /*path to js file of revealjs - TODO*/
+            slideType: "divs2slidesjs",  /*'divs2slidesjs' (default) , 'revealjs'(https://revealjs.com) */
+            revealjsPath: "", /*path to js file of revealjs*/
             keyBoardShortCut: false,  /** true,false ,condition: slideMode: true XXXXX - need to remove - this is doublcated*/
             mediaProcess: true, /** true,false: if true then process video and audio files */
             jsZipV2: false,
@@ -106,7 +106,6 @@
                     isSlideMode = true;
                     initSlideMode(divId, settings);
                 } else if (key == 116 && isSlideMode) {
-                    //exit slide mode - TODO
 
                 }
             });
@@ -218,7 +217,7 @@
                         }
                         break;
                     case "progress-update":
-                        //console.log(rslt_ary[i]["data"]); //update progress bar - TODO
+                        //console.log(rslt_ary[i]["data"]); //update progress bar
                         updateProgressBar(rslt_ary[i]["data"])
                         break;
                     default:
@@ -309,7 +308,7 @@
                 $.getScript(revealjsPath, function (response, status) {
                     if (status == "success") {
                         // $("section").removeClass("slide");
-                        Reveal.initialize(settings.revealjsConfig); //revealjsConfig - TODO
+                        Reveal.initialize(settings.revealjsConfig); //revealjsConfig
                     }
                 });
             }
@@ -1083,7 +1082,7 @@
                             shapType == "leftBracket" ||
                             shapType == "leftBrace" ||
                             shapType == "rightBrace" ||
-                            shapType == "rightBracket")) { //Temp. solution  - TODO
+                            shapType == "rightBracket")) { //Temp. solution
                         fillColor = "none";
                     }
                 }
@@ -7953,7 +7952,7 @@
                 var cubicBezToNodes = pathNodes["a:cubicBezTo"]; //total a:pt : 3
                 var arcToNodes = pathNodes["a:arcTo"]; //total a:pt : 0?1? ; attrs: ~4 ()
                 var closeNode = getTextByPathList(pathNodes, ["a:close"]); //total a:pt : 0
-                //quadBezTo //total a:pt : 2 - TODO
+                //quadBezTo //total a:pt : 2
                 //console.log("ia moveToNode array: ", Array.isArray(moveToNode))
                 if (!Array.isArray(moveToNode)) {
                     moveToNode = [moveToNode];
@@ -8062,7 +8061,6 @@
                         multiSapeAry.push(ptObj);
 
                     }
-                    //a:quadBezTo - TODO
 
                     //a:close
                     if (closeNode !== undefined) {
@@ -8562,7 +8560,6 @@
             * 2253 </xsd:complexType>
             */
 
-            // TODO:
         }
 
         var is_first_br = false;
@@ -8805,7 +8802,7 @@
                 }
             }
             if (buChar === undefined && buNum === undefined && buPic === undefined) {
-                //check in slidelayout and masterlayout - TODO
+                //check in slidelayout and masterlayout
                 if (pPrNodeLaout !== undefined) {
                     BullNONE = getTextByPathList(pPrNodeLaout, ["a:buNone"]);
                     if (BullNONE !== undefined) {
@@ -8906,7 +8903,7 @@
             //marR?
             var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
             if (marRNode === undefined && marLNode === undefined) {
-                //need to check if this posble - TODO
+                //need to check if this posble
                 marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
                 if (marRNode === undefined) {
                     marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
@@ -9606,17 +9603,16 @@
                 }
                 if (isBullate) {
                     maginVal = Math.abs(0 - indent);
-                    marLStr += maginVal + "px;";  // (minus bullate numeric lenght/size - TODO
+                    marLStr += maginVal + "px;";  // (minus bullate numeric lenght/size
                 } else {
                     maginVal = Math.abs(marginLeft + indent);
-                    marLStr += maginVal + "px;";  // (minus bullate numeric lenght/size - TODO
+                    marLStr += maginVal + "px;";  // (minus bullate numeric lenght/size
                 }
             }
 
             //marR?
             var marRNode = getTextByPathList(pPrNode, ["attrs", "marR"]);
             if (marRNode === undefined && marLNode === undefined) {
-                //need to check if this posble - TODO
                 marRNode = getTextByPathList(pPrNodeLaout, ["attrs", "marR"]);
                 if (marRNode === undefined) {
                     marRNode = getTextByPathList(pPrNodeMaster, ["attrs", "marR"]);
@@ -9653,12 +9649,12 @@
                     ((styleTable[key]["suffix"]) ? styleTable[key]["suffix"] : "") +
                     "{" + styleTable[key]["text"] + "}\n"; //section > div
             }
-            //cssText += " .slide{margin-bottom: 5px;}\n"; // TODO
+            //cssText += " .slide{margin-bottom: 5px;}\n"; //
 
             if (settings.slideMode && settings.slideType == "divs2slidesjs") {
                 //divId
                 //console.log("slideWidth: ", slideWidth)
-                cssText += "#all_slides_warpper{margin-right: auto;margin-left: auto;padding-top:10px;width: " + slideWidth + "px;}\n"; // TODO
+                cssText += "#all_slides_warpper{margin-right: auto;margin-left: auto;padding-top:10px;width: " + slideWidth + "px;}\n";
             }
             return cssText;
         }
@@ -11046,7 +11042,7 @@
             //     if (colorType == "solid") {
             //         textBordr = oShadowStr;
             //     } else {
-            //         //TODO
+            //
             //     }
             // }
             var txtGlowNode = getTextByPathList(node, ["a:rPr", "a:effectLst", "a:glow"]);
@@ -11546,10 +11542,10 @@
                     borderColor = "hidden";
                 }
             } else {
-                borderColor = "#" + borderColor; //wrong if not solid fill - TODO
+                borderColor = "#" + borderColor; //wrong if not solid fill
 
             }
-            cssText += " " + borderColor + " ";//wrong if not solid fill - TODO
+            cssText += " " + borderColor + " ";//wrong if not solid fill
 
             if (isSvgMode) {
                 return { "color": borderColor, "width": borderWidth, "type": borderType, "strokeDasharray": strokeDasharray };
@@ -12111,8 +12107,8 @@
                 var flip = tileNode["flip"]; //none,x,y ,xy
 
                 prop_style += "background-repeat: round;"; //repeat|repeat-x|repeat-y|no-repeat|space|round|initial|inherit;
-                //prop_style += "background-size: 300px 100px;"; size (w,h,sx, sy) -TODO
-                //prop_style += "background-position: 50% 40%;"; //offset (tx, ty) -TODO
+                //prop_style += "background-size: 300px 100px;"; size (w,h,sx, sy)
+                //prop_style += "background-position: 50% 40%;"; //offset (tx, ty)
             }
             //a:srcRect
             //a:stretch => a:fillRect =>attrs (l:-17000, r:-17000)
@@ -12187,7 +12183,7 @@
                 var grpFill = getTextByPathList(node, ["p:spPr", "a:grpFill"]);
                 if (grpFill !== undefined) {
                     //fillColor = getSolidFill(clrName, undefined, undefined, undefined, warpObj);
-                    //get parent fill style - TODO
+                    //get parent fill style
                     //console.log("ShapeFill: grpFill: ", grpFill, ", pNode: ", pNode)
                     var grpShpFill = pNode["p:grpSpPr"];
                     var spShpNode = { "p:spPr": grpShpFill }
@@ -12226,7 +12222,7 @@
                         return "background-image:url(" + fillColor + ");";
                     }
                 } else if (fillType == "PATTERN_FILL") {
-                    /////////////////////////////////////////////////////////////Need to check -----------TODO
+                    /////////////////////////////////////////////////////////////Need to check
                     // if (isSvgMode) {
                     //     var color = tinycolor(fillColor);
                     //     fillColor = color.toRgbString();
@@ -12319,9 +12315,7 @@
             }
         }
         function getPicFill(type, node, warpObj) {
-            //Need to test/////////////////////////////////////////////
-            //rId
-            //TODO - Image Properties - Tile, Stretch, or Display Portion of Image
+
             //(http://officeopenxml.com/drwPic-tile.php)
             var img;
             var rId = node["a:blip"]["attrs"]["r:embed"];
@@ -12729,7 +12723,7 @@
                 //var hslClr = defBultColorVals["hue"] + "," + defBultColorVals["sat"] + "," + defBultColorVals["lum"];
                 var hsl2rgb = hslToRgb(hue, sat, lum);
                 color = toHex(hsl2rgb.r) + toHex(hsl2rgb.g) + toHex(hsl2rgb.b);
-                //defBultColor = cnvrtHslColor2Hex(hslClr); //TODO
+                //defBultColor = cnvrtHslColor2Hex(hslClr);
                 // console.log("hslClr: " + hslClr);
             } else if (node["a:sysClr"] !== undefined) {
                 clrNode = node["a:sysClr"];
@@ -12741,7 +12735,7 @@
             }
             //console.log("color: [%cstart]", "color: #" + color, tinycolor(color).toHslString(), color)
 
-            //fix color -------------------------------------------------------- TODO 
+            //fix color --------------------------------------------------------
             //
             //1. "alpha":
             //Specifies the opacity as expressed by a percentage value.
@@ -12897,7 +12891,7 @@
             //     </a: solidFill >
             //var hueOff = parseInt(getTextByPathList(clrNode, ["a:hueOff", "attrs", "val"])) / 100000;
             // if (!isNaN(hueOff)) {
-            //     //console.log("hueOff: ", hueOff, " (TODO)")
+            //     //console.log("hueOff: ", hueOff, "
             //     //color = applyHueOff(color, hueOff, isAlpha);
             // }
 
@@ -13054,7 +13048,7 @@
             //     </a: solidFill >
             // var satOff = parseInt(getTextByPathList(clrNode, ["a:satOff", "attrs", "val"])) / 100000;
             // if (!isNaN(satOff)) {
-            //     console.log("satOff: ", satOff, " (TODO)")
+            //     console.log("satOff: ", satOff, "
             // }
 
             //26. "shade":
