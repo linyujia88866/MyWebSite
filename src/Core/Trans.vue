@@ -9,18 +9,14 @@
             <el-upload
                 @click="clearFiles"
                 action=""
-                :http-request="customUpload"
                 ref="upload_top"
                 multiple
-                :limit="3"
+                :limit="10"
                 :auto-upload="false"
                 :on-change="handleChange"
                 :on-exceed="handleExceed"
-                :on-success="handleSuccess"
-                :on-error="handleError"
                 :show-file-list="false"
                 >
-
               <el-button size="large" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
             </el-upload>
           </div>
@@ -106,10 +102,10 @@
           <tr @mouseover="handleFileHover(folder)"
               @mouseleave="handleFileLeave(folder)"
               style="display: flex;
-            align-items: center;
-            align-content: center;
-            padding: 0; margin: 0;
-            height: 32px;">
+                    align-items: center;
+                    align-content: center;
+                    padding: 0; margin: 0;
+                    height: 32px;">
             <td style="display: flex;align-items: center;
             align-content: center;
             padding: 0; margin: 0;
@@ -174,13 +170,15 @@
               align-content: center;
               padding: 0; margin: 0;
               height: 32px;">
-            <td style="display: flex;align-items: center;
+            <td
+                class="myTr"
+                style="display: flex;align-items: center;
                 align-content: center;
                 padding: 0; margin: 0;
                 width: 700px;
                 height: 32px;">
               <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-              <h3 style="width: 400px;text-align: left;" >{{ getFirstAndLastChars(fileName.name) }}</h3>
+              <h3 style="width: 400px;text-align: left;" @dblclick="showTheFile(fileName.name)">{{ getFirstAndLastChars(fileName.name) }}</h3>
               <el-tooltip
                   effect="dark"
                   content="复制"
@@ -225,10 +223,6 @@
                            size="small"
                            :icon="View" ></el-button>
               </el-tooltip>
-
-<!--              <button v-if="fileName.show"-->
-<!--                      style=" border: #333333 1px solid; margin: 0 0 0 8px;"-->
-<!--                      @click.stop="showTheFile(fileName.name)">预览</button>-->
               <el-tooltip
                   effect="dark"
                   content="下载"
@@ -242,10 +236,6 @@
                            size="small"
                            :icon="Download" ></el-button>
               </el-tooltip>
-
-<!--              <button v-if="fileName.show"-->
-<!--                      style=" border: #333333 1px solid; margin: 0 0 0 8px;"-->
-<!--                      @click.stop="downloadFile(fileName.name, 'fileName')">下载</button>-->
               <el-tooltip
                   effect="dark"
                   content="删除"
@@ -253,17 +243,12 @@
                   :show-after="500"
               >
                 <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 8px;"
+                           style="margin: 0 8px 0 8px;"
                            @click.stop="deleteFile(fileName.name)"
                            type="danger"
                            size="small"
                            :icon="Delete" ></el-button>
               </el-tooltip>
-
-<!--              <button v-if="fileName.show"-->
-<!--                      style=" border: #333333 1px solid;-->
-<!--                      margin: 0 0 0 12px;"-->
-<!--                      @click.stop="deleteFile(fileName.name)">删除</button>-->
             </td>
             <td style="width: 200px; text-align: left;">
               <h3 style=" color: #42b983;
@@ -289,18 +274,23 @@
       </div>
     </div>
 
-    <div style="display: flex;  width: 100%; margin: 12px 8px 8px; align-content: center; align-items: center">
+    <div
+        style="display: flex;
+                width: 100%;
+                margin: 12px 8px 8px;
+                align-content: center;
+                align-items: center">
       <el-upload
           class="custom-upload"
+          ref="upload_drag"
           :append-to-body="false"
-          ref="upload"
-          :http-request="customUpload"
-          :file-list="fileList"
-          :limit="3"
-          :on-success="handleSuccess"
-          :on-error="handleError"
-          drag
-          multiple>
+          multiple
+          :limit="10"
+          :auto-upload="false"
+          :on-change="handleChange"
+          :on-exceed="handleExceed"
+          :show-file-list="false"
+          drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip" slot="tip">文件大小不要超过40m</div>
@@ -382,8 +372,7 @@ const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
 let curPath = ref('')     // 当前文件路径
 let fileList = ref([])    // 右边的上传文件拖动区文件列表
-let fileList_top = ref([])   // 顶部的上传文件操作区文件列表
-const upload = ref(null)       // 右边的上传文件拖动区对象
+const upload_drag = ref(null)       // 右边的上传文件拖动区对象
 const upload_top = ref(null)   // 顶部的上传文件操作区对象
 const moveFile = ref(null);    // 移动文件夹弹窗对象
 const copyFile = ref(null);    // 移动文件夹弹窗对象
@@ -402,6 +391,8 @@ let fileNamesToUpload = ref([])
 let filesToUpload = ref([])
 let sameFilesToUpload = ref([])
 // ==============================================================================================================
+
+// ==========================================
 const openLoadingDialog = (text) => {
   if(loading === null){
     if(text === undefined){
@@ -472,10 +463,11 @@ function handleChange(file, fileList) {
   fileNamesToUpload.value.push(file.name)
   filesToUpload.value.push(file.raw)
   if(!uploading.value){
+    uploading.value = true
     setTimeout(function() {
       customUpload2()
+
     }, 100);
-    uploading.value = true
   }
 }
 
@@ -522,6 +514,7 @@ async function customUpload2() {
     repeatFiledDialog.value.openDialog()
     repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value)
   }
+  clearFiles()
 }
 
 function handleCloseSameFileDialog(){
@@ -530,6 +523,7 @@ function handleCloseSameFileDialog(){
   fileNamesToUpload.value = []
   filesToUpload.value = []
   getFileList()
+  clearFiles()
 }
 
 const closePreview = () => {
@@ -568,12 +562,14 @@ function makeDir() {
 // 文件鼠标移动上去触发事件
 function handleFileHover(fileObject){
     fileObject.show = true
+    fileObject.lineWidth = 1
   // showHead.value = true
 }
 
 // 文件鼠标失焦事件
 function handleFileLeave(fileObject){
   fileObject.show = false
+  fileObject.lineWidth = 0
   // showHead.value = false
 }
 
@@ -902,9 +898,12 @@ function clearFileObjects(){
 function clearFiles(){
   fileObject.value=null
   // files.value = []
-  upload.value.clearFiles()
+  upload_drag.value.clearFiles()
   upload_top.value.clearFiles()
   uploading.value = false
+  fileNamesToUpload.value = []
+  sameFilesToUpload.value = []
+  filesToUpload.value = []
 }
 
 function afterFileSelected(request) {
@@ -969,6 +968,7 @@ function getFileList(){
                 size: calSize(item_size_temp),
                 time: timePatternChange(item_time_temp),
                 show: false,
+                lineWidth: 0
               })
             }
           }
@@ -1025,5 +1025,16 @@ ul {
   background-color: #333; /* 背景颜色 */
   color: white;         /* 文字颜色 */
   /* 其他样式 */
+}
+
+
+
+/* 设置基本样式 */
+.myTr {
+}
+
+/* 设置悬停时的阴影效果 */
+.myTr:hover {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* 阴影大小、模糊度、扩散距离和颜色 */
 }
 </style>
