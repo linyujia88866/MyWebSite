@@ -1,6 +1,6 @@
 <template>
   <div >
-    <navigate ref="childRef" :origin-tab="'管理中心'"></navigate>
+    <navigate-one ref="childRef" :origin-tab="'管理中心'"></navigate-one>
 <!--    <h1>管理员页面</h1>-->
     <button @click="openCreateUserDialog"
             style="background-color: green;float: left; margin: 60px 0 10px;">创建用户</button>
@@ -37,12 +37,12 @@
 
 <script setup>
 import {defineComponent, nextTick, onMounted, ref} from 'vue';
-import Navigate from "@/components/Common/Navigate.vue";
 
 import {myHttp} from "@/request/myrequest";
 import DialogCreateUser from "@/components/Manage/DialogCreateUser.vue";
 import DialogUpdateUser from "@/components/Manage/DialogUpdateUser.vue";
 import {ElMessage} from "element-plus";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 const url = '/user/all';
 defineComponent({
   DialogUpdateUser

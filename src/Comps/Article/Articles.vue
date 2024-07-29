@@ -1,5 +1,4 @@
 <template>
-  <navigate  :origin-tab="'功能'"></navigate>
   <div class="article-list">
     <input type="text" v-model="searchQuery" placeholder="Search..." />
     <h1 style="margin: 0;">文章列表</h1>
@@ -22,12 +21,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
-import Navigate from "@/components/Common/Navigate.vue";
 const searchQuery = ref('');
 const articles = ref([]);
 
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 myHttp.get('/article/articles')
     .then(response => {

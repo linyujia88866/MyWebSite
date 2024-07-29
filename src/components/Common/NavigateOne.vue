@@ -3,6 +3,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {onMounted, ref} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
+import {Avatar, Message, HelpFilled, Management, Setting} from "@element-plus/icons-vue";
 
 const props = defineProps({
   originTab: {
@@ -76,11 +77,12 @@ function gotoHelp(){
 }
 
 function gotoMessage(){
-  router.push({name: 'setting'});
+  router.push({name: 'message'});
+
 }
 
 function gotoSetting(){
-  router.push({name: 'message'});
+  router.push({name: 'setting'});
 }
 
 function gotoManage(){
@@ -137,18 +139,11 @@ defineExpose({
       </div>
     </div>
     <div class="user-actions">
-
-      <!-- 通知图标 -->
-      <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoMessage" class="help-icon">
-      <!-- 通知图标 -->
-      <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoSetting" class="help-icon">
-      <!-- 帮助图标 -->
-      <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoHelp" class="help-icon">
-      <!-- 用户头像 -->
-      <div class="avatar" @click="toggleMenu" >
-        <!-- 头像内容，可以是图片或者其他元素 -->
-        <img src="../../assets/logo.png" alt="User Avatar" class="user-avatar">
-      </div>
+      <el-icon color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp"><HelpFilled /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage" v-if="authority === '0'"><Management /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="toggleMenu"><Avatar /></el-icon>
       <div class="user-menu" @mouseleave="handleMouseLeave">
 
         <ul v-if="menuVisible" class="menu" >
@@ -171,11 +166,11 @@ defineExpose({
   align-items: center;
   padding: 10px;
 
-  position: fixed;
+  //position: fixed;
   width: 100%;
   top:0;
   left: 0;
-  background-color: rgb(135, 206, 235);
+  background-color: #42b983;
 }
 
 .tabs {
@@ -220,7 +215,7 @@ defineExpose({
 .nav-bar li.active a {
   font-weight: bold;
   font-size: 24px;
-  color: #008000;
+  color: white;
 }
 
 

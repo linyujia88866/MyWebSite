@@ -1,14 +1,6 @@
 <template>
 <div>
   <header style="margin-top: 70px">
-<!--    <h4 style="text-align: left;-->
-<!--    /*padding-top: 60px;*/-->
-<!--    /*padding-left: 10px;*/-->
-<!--    text-decoration: underline;-->
-<!--    cursor: pointer;-->
-<!--    margin-bottom: 0;-->
-<!--    padding-bottom: 0;"-->
-<!--        @click="gotoMemoryCards"><<<</h4>-->
     <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">
   </header>
   <div style="width: 100%">

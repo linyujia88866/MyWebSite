@@ -43,7 +43,7 @@
       </div>
 
 
-        <div class="card" @click.stop="gotoTest()">
+        <div class="card" @click.stop="gotoTest()" v-if="false">
 
         </div>
     </div>
@@ -89,16 +89,16 @@ function gotoTrans() {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-gap: 10px;
-  padding: 60px 10px 10px;
+  padding: 12px 10px 10px;
   flex-grow: 1;
 }
 
 .card {
   /* 卡片样式 */
   border: 1px solid #ddd;
-  height: 44%;
+  height: 30%;
   border-radius: 4px;
   padding: 10px;
   text-align: center;
@@ -156,7 +156,6 @@ function gotoTrans() {
 .menu li {
   padding: 5px 10px;
   border-bottom: 1px solid #eee;
-  //width: 500px;
 }
 .menu li:last-child {
   border-bottom: none;

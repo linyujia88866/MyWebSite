@@ -15,7 +15,6 @@
 <script setup>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-// import { backsite } from '@/api'
 import { reactive, onMounted, ref, toRaw, watch } from 'vue'
 
 const props = defineProps(['value'])

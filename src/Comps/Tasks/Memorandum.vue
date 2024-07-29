@@ -6,6 +6,7 @@ const route=useRoute()
 const router = useRouter();
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 let url ="/task"
 let taskId = ref("")
@@ -126,8 +127,8 @@ function gotoMemoryCards(){
 
 <template>
   <div>
-    <navigate ref="childRef" :origin-tab="originTab"></navigate>
-    <h4 style="text-align: left; padding-top: 60px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
+    <navigate-one ref="childRef" :origin-tab="originTab"></navigate-one>
+    <h4 style="text-align: left; padding-top: 12px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
         @click="gotoMemoryCards">返回任务清单列表</h4>
     <header>
       <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">

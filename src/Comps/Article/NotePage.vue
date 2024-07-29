@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navigate  :origin-tab="'功能'"></navigate>
+    <navigate-one  :origin-tab="'功能'"></navigate-one>
     <VerticalTab
         :tabs="tabs"
         :activeTab="activeTab"
@@ -25,9 +25,9 @@
 <script setup>
 import VerticalTab from '@/Comps/Article/VerticalTab.vue';
 import {ref} from "vue";
-import Navigate from "@/components/Common/Navigate.vue";
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
 import Articles from "@/Comps/Article/Articles.vue";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 
 const tabs = ref(['未发布文章', '已公开文章', '创建新的文章'])

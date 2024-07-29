@@ -8,6 +8,7 @@
     "hcso": "vue-cli-service serve --mode hcso"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vue-office/docx": "^1.6.2",
     "@vue-office/excel": "^1.7.11",
     "@vueup/vue-quill": "^1.0.0-alpha.40",

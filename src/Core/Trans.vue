@@ -1,10 +1,10 @@
 <template>
-  <navigate ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate>
+  <navigate-one ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate-one>
   <div @click="reset" style="height: 98vh; display: flex; ">
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">
 
-        <div  style=" margin: 60px 0 0;padding: 0;display: flex">
+        <div  style=" margin: 12px 0 0;padding: 0;display: flex">
           <div style="margin-left: 12px; margin-right: 12px; padding: 0;">
             <el-upload
                 @click="clearFiles"
@@ -289,7 +289,7 @@
       </div>
     </div>
 
-    <div style="display: flex;  width: 100%; margin: 70px 8px 8px; align-content: center; align-items: center">
+    <div style="display: flex;  width: 100%; margin: 12px 8px 8px; align-content: center; align-items: center">
       <el-upload
           class="custom-upload"
           :append-to-body="false"
@@ -349,6 +349,7 @@ import { h } from 'vue'
 import { ElNotification } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 const  checkDelete = async () => {
   ElMessageBox.confirm(
