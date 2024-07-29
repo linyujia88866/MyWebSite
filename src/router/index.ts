@@ -15,6 +15,8 @@ import Trans from "@/Core/Trans.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
 import ViewExcel from "@/ViewFile/ViewExcel.vue";
 import ViewPPT from "@/ViewFile/ViewPPT.vue";
+import Profile from "@/components/Basic/Profile.vue";
+import Help from "@/components/Basic/Help.vue";
 
 const routes = [
   {
@@ -46,6 +48,16 @@ const routes = [
     path: '/setting',
     name: 'setting',
     component: Setting
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
+  },
+  {
+    path: '/help',
+    name: 'help',
+    component: Help
   },
   {
     path: '/registry',

@@ -75,6 +75,18 @@ function gotoHelp(){
   router.push({name: 'help'});
 }
 
+function gotoMessage(){
+  router.push({name: 'setting'});
+}
+
+function gotoSetting(){
+  router.push({name: 'message'});
+}
+
+function gotoManage(){
+  router.push({name: 'manager'});
+}
+
 function logout() {
   // 执行退出登录的操作，例如清除token或调用API
   menuVisible.value = false; // 可选：关闭菜单
@@ -106,16 +118,16 @@ defineExpose({
           <li :class="{active: activeTab === '功能'}" v-if="props.originTab==='功能'">
             <a @click="changeTab('功能')">功能</a>
           </li>
-          <li :class="{active: activeTab === '通知'}">
+          <li :class="{active: activeTab === '通知'}"  v-if="props.originTab==='通知'">
             <a @click="changeTab('通知')">通知</a>
           </li>
-          <li :class="{active: activeTab === '个人信息'}">
+          <li :class="{active: activeTab === '个人信息'}"  v-if="props.originTab==='个人信息'">
             <a @click="changeTab('个人信息')">个人中心</a>
           </li>
-          <li :class="{active: activeTab === '设置'}">
+          <li :class="{active: activeTab === '设置'}"  v-if="props.originTab==='设置'">
             <a @click="changeTab('设置')">设置</a>
           </li>
-          <li :class="{active: activeTab === '管理中心'}" v-if="authority === '0'">
+          <li :class="{active: activeTab === '管理中心'}"  v-if="props.originTab==='管理中心'">
             <a @click="changeTab('管理中心')">管理中心</a>
           </li>
           <li :class="{active: activeTab === '帮助'}"  v-if="props.originTab==='帮助'">
@@ -126,6 +138,10 @@ defineExpose({
     </div>
     <div class="user-actions">
 
+      <!-- 通知图标 -->
+      <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoMessage" class="help-icon">
+      <!-- 通知图标 -->
+      <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoSetting" class="help-icon">
       <!-- 帮助图标 -->
       <img src="../../assets/help.jpg" alt="Help Icon" @click="gotoHelp" class="help-icon">
       <!-- 用户头像 -->

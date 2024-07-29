@@ -2,7 +2,7 @@
 <template>
   <div class="home-page">
     <div>
-      <navigate ref="childRef"></navigate>
+      <navigate-one ref="childRef"></navigate-one>
     </div>
     <div class="card-container">
         <!-- 卡片内容 -->
@@ -54,6 +54,7 @@
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
 import Navigate from "@/components/Common/Navigate.vue";
+import NavigateOne from "@/components/Common/NavigateOne.vue";
 const router = useRouter();
 
 const childRef = ref(null);
