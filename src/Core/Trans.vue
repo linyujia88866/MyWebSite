@@ -45,7 +45,6 @@
       </div>
 
 
-
       <div style="display: flex; margin-left: 12px; margin-top: 12px; margin-bottom: 12px; ">
         <button v-if="curPath !== ''"
                 style="margin-right: 8px; display: flex;" @click="changePath">
@@ -322,14 +321,14 @@
       :url-list="imgPreviewList"
   />
 
-  <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" ></Repeat>
+  <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
 <!--  <div class="status-bar">-->
 <!--    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！-->
 <!--  </div>-->
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {nextTick, onMounted, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {myHttp} from "@/request/myrequest";
 import Navigate from "@/components/Common/Navigate.vue";
@@ -402,7 +401,7 @@ let fileNamesToUpload = ref([])
 let filesToUpload = ref([])
 let sameFilesToUpload = ref([])
 // ==============================================================================================================
-const openFullScreen2 = (text) => {
+const openLoadingDialog = (text) => {
   if(loading === null){
     if(text === undefined){
       text = '正在上传文件...'
@@ -469,7 +468,6 @@ function handleExceed(files, fileList) {
 
 function handleChange(file, fileList) {
 // 文件状态变化时的处理逻辑
-  console.log('文件状态变化', file, fileList);
   fileNamesToUpload.value.push(file.name)
   filesToUpload.value.push(file.raw)
   if(!uploading.value){
@@ -482,7 +480,6 @@ function handleChange(file, fileList) {
 
 // 原本的挨个处理同名文件改成批量处理同名文件，所以这里有了方法2
 async function customUpload2() {
-  console.log(fileNamesToUpload.value)
   for (let i = 0; i < fileNamesToUpload.value.length; i++) {
     let file = filesToUpload.value[i]
     if (file.size === 0) {
@@ -501,7 +498,7 @@ async function customUpload2() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('filepath', curPath.value + '/');
-    openFullScreen2(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
+    openLoadingDialog(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
     await myHttp.post("/minio/upload", formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -519,20 +516,19 @@ async function customUpload2() {
   }
   getFileList()
   loading?.close()
+  loading = null
   if (sameFilesToUpload.value.length > 0) {
-    repeatFiledDialog.value.changeVisibleStatus()
-    console.log(sameFilesToUpload.value)
-    repeatFiledDialog.value.transData(sameFilesToUpload.value)
+    repeatFiledDialog.value.openDialog()
+    repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value)
   }
 }
 
 function handleCloseSameFileDialog(){
-  console.log("关闭弹窗")
   repeatFiledDialog.value.changeVisibleStatus()
   sameFilesToUpload.value = []
   fileNamesToUpload.value = []
   filesToUpload.value = []
-  console.log(sameFilesToUpload.value)
+  getFileList()
 }
 
 const closePreview = () => {
@@ -628,7 +624,7 @@ async function showTheFile(filename) {
   }
   let finalPath;
   let url = "/minio/preview"
-  openFullScreen2('正在加载文件内容...')
+  openLoadingDialog('正在加载文件内容...')
   if (curPath.value.length > 0) {
     finalPath = curPath.value + '/' + filename
   } else {
@@ -689,7 +685,7 @@ function copyTheFile(filename) {
 }
 
 async function downloadFile(filename, type) {
-  openFullScreen2('正在下载文件夹...')
+  openLoadingDialog('正在下载文件夹...')
   let finalPath;
   let url = "/minio/download"
   let resName= type === 'folder' ? filename + '.zip' : filename
@@ -754,7 +750,7 @@ async function deleteFile(filename) {
 }
 
 async function doDeleteFile(filename) {
-  openFullScreen2('正在删除文件...')
+  openLoadingDialog('正在删除文件...')
   let removePath;
   if (curPath.value === '') {
     removePath = filename
@@ -802,7 +798,7 @@ async function deleteFolder(dirName) {
 
 // 删除文件夹
 async function doDeleteFolder(dirName) {
-  openFullScreen2("正在删除文件夹...")
+  openLoadingDialog("正在删除文件夹...")
   let removePath;
   if (curPath.value === '') {
     removePath = dirName
@@ -878,7 +874,7 @@ const uploadFile = (request) =>
       const formData = new FormData();
       formData.append('file', request.file);
       formData.append('filepath', curPath.value + '/');
-      openFullScreen2(`文件正在努力上传中，请耐心等待。。。`)
+      openLoadingDialog(`文件正在努力上传中，请耐心等待。。。`)
       try {
         myHttp.post("/minio/upload", formData, {
           headers: {
@@ -939,7 +935,7 @@ const hasName = (target) => {
 };
 
 function getFileList(){
-  openFullScreen2('正在获取文件列表信息...')
+  openLoadingDialog('正在获取文件列表信息...')
   let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {
@@ -990,7 +986,11 @@ function getFileList(){
 
 
 // 刚进入页面时获取文件列表
-getFileList()
+onMounted(()=>{
+  nextTick(()=>{
+    getFileList()
+  })
+})
 
 </script>
 <style scoped>

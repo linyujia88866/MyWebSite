@@ -11,21 +11,28 @@ function getFirstAndLastChars(str) {
             x.push({l: 1, n: str[i]})
         }
     }
-    if(x.length < 30){
+    if(x.length < 40){
         return str
     }
-    for(let i = 0; i < 10; i++)
+    for(let i = 0; i < 15; i++)
     {
         first += x[i].n
     }
-    for(let i = x.length - 10; i < x.length; i++)
+    for(let i = x.length - 15; i < x.length; i++)
     {
         last += x[i].n
     }
     return first+ '...' + last
 }
 
-
+function getFileNameWithoutExtension(filename) {
+    // 获取文件名中最后一个点的位置
+    const lastIndex = filename.lastIndexOf('.');
+    // 如果没有点或者点在第一个位置，则返回原文件名
+    if (lastIndex < 1) return filename;
+    // 返回去掉后缀的文件名
+    return filename.substring(0, lastIndex);
+}
 function getExtension(fileName) {
     let dotIndex = fileName.lastIndexOf('.');
     return fileName.substring(dotIndex + 1);
@@ -88,5 +95,6 @@ export  {
     replaceSuffix,
     getParentDirectory,
     calSize,
-    getExtension
+    getExtension,
+    getFileNameWithoutExtension
 }

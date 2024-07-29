@@ -1,18 +1,17 @@
 <template>
-  <el-dialog v-model="dialogTableVisible" title="发现同名文件" width="800" :close-on-press-escape="false" :close-on-click-modal="false">
+  <el-dialog v-model="dialogTableVisible" title="已存在同名文件" width="800" :close-on-press-escape="false" :close-on-click-modal="false">
     <el-table ref="multipleTableRef"
               @selection-change="handleSelectionChange"
               :data="fileObjects">
       <el-table-column type="selection" width="55" />
-      <el-table-column property="name" label="Name"  />
-      <el-table-column property="size" label="Size" width="200" />
+      <el-table-column property="name" label="文件名"  />
+      <el-table-column property="size" label="大小（字节）" width="200" />
     </el-table>
     <template #footer>
       <span class="dialog-footer">
-<!--        <el-button @click="toggleSelection([])">Clear selection</el-button>-->
-        <el-button type="primary" @click="handleConfirm">取消上传</el-button>
-        <el-button type="primary" @click="handleConfirm">增加编号</el-button>
-        <el-button type="primary" @click="handleConfirm">覆盖上传</el-button>
+        <el-button type="primary" @click="handleCancel">取消上传</el-button>
+        <el-button type="primary" @click="handleTogether">增加编号</el-button>
+        <el-button type="primary" @click="handleCover">覆盖上传</el-button>
       </span>
     </template>
   </el-dialog>
@@ -20,25 +19,24 @@
 
 <script setup>
 import {defineProps, nextTick, reactive, ref} from 'vue'
-import {calSize, getParentDirectory, removePrefix, replaceSuffix, timePatternChange} from "@/utils/stringutils";
+import {
+  calSize,
+  getFileNameWithoutExtension,
+  getParentDirectory,
+  removePrefix,
+  replaceSuffix,
+  timePatternChange
+} from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
-import {ElLoading, ElMessage} from "element-plus";
-
+import {ElLoading, ElMessage, ElNotification} from "element-plus";
 
 
 let fileObjects = ref([])
+let curPath = ref('')
+let allFileNames = ref([])
 const emit = defineEmits(['close-event'])
 const multipleTableRef = ref()
 const multipleSelection = ref([])
-// const toggleSelection = (rows) => {
-//   if (rows.length>0) {
-//     rows.forEach((row) => {
-//       multipleTableRef.value.toggleRowSelection(row, undefined)
-//     })
-//   } else {
-//     multipleTableRef.value.clearSelection()
-//   }
-// }
 const handleSelectionChange = (val) => {
   multipleSelection.value = val
 }
@@ -46,24 +44,116 @@ const handleSelectionChange = (val) => {
 const dialogTableVisible = ref(false)
 
 function changeVisibleStatus() {
-
-  dialogTableVisible.value = !dialogTableVisible.value
+  dialogTableVisible.value = false
 }
 
-function transData(files) {
+
+function openDialog() {
+  dialogTableVisible.value = true
+}
+
+function transData(files, path, allFiles) {
   multipleSelection.value = []
   fileObjects.value = files
+  curPath.value = path
+  allFileNames.value = allFiles
+}
+async function handleCover() {
+  await uploadFile()
+  filterFiles()
+  if (fileObjects.value.length === 0) {
+    emit("close-event", "")
+  }
 }
 
-
-function  handleConfirm(){
-  console.log(multipleSelection.value)
+function  handleCancel(){
   filterFiles()
   if(fileObjects.value.length === 0){
     emit("close-event", "")
   }
-
 }
+
+async function handleTogether() {
+  await uploadFileWithDiffName()
+  filterFiles()
+  if (fileObjects.value.length === 0) {
+    emit("close-event", "")
+  }
+}
+
+const uploadFile = async () => {
+      for (let i = 0; i < multipleSelection.value.length; i++) {
+        let file = multipleSelection.value[i]
+        openLoadingDialog(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('filepath', curPath.value + '/');
+
+        await myHttp.post("/minio/upload", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }).then(() => {
+
+        }).catch(() => {
+          ElNotification({
+            title: '错误',
+            message: `文件【${file.name}】上传失败！`,
+            duration: 10000,
+            type: 'error',
+          })
+        });
+      }
+  loading?.close()
+  loading = null
+}
+
+function genNewFileName(oldname){
+  let count = 1
+  let basic = getFileNameWithoutExtension(oldname)
+  let suffix = oldname.split(".").pop();
+  let newName = ""
+  while (true){
+    newName = basic + `(${count}).` + suffix
+    if (allFileNames.value.some(obj => obj.name === newName)){
+      count++
+    }else {
+      break
+    }
+  }
+  return newName
+}
+
+const uploadFileWithDiffName = async () => {
+  for (let i = 0; i < multipleSelection.value.length; i++) {
+
+    let file = multipleSelection.value[i]
+    const formData = new FormData();
+    formData.append('file', file);
+    let newFileName = genNewFileName(file.name)
+    openLoadingDialog(`文件【${newFileName}】正在努力上传中，请耐心等待。。。`)
+    let renameReportFile =new File([file],newFileName,{type:file.type});
+    formData.append("file",renameReportFile );
+    formData.append("filename",newFileName );
+    formData.append('filepath', curPath.value + '/');
+    await myHttp.post("/minio/upload2", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(() => {
+    }).catch(() => {
+      ElNotification({
+        title: '错误',
+        message: `文件【${file.name}】上传失败！`,
+        duration: 10000,
+        type: 'error',
+      })
+    });
+  }
+  loading?.close()
+  loading = null
+}
+
 
 function filterFiles() {
   let uniqueNames = new Set(multipleSelection.value.map(item => item.name));
@@ -71,29 +161,27 @@ function filterFiles() {
   multipleSelection.value = []
 }
 
-function handleCancel() {
-  if(multipleSelection.value.length === 0){
-    emit("close-event", "")
-  }
-}
-
 let loading = null;
-const openFullScreen2 = (text) => {
-  if(text === undefined){
-    text = '正在复制文件...'
+const openLoadingDialog = (text) => {
+  if(loading === null){
+    if(text === undefined){
+      text = '正在上传文件...'
+    }
+    loading = ElLoading.service({
+      lock: true,
+      text: text,
+      background: 'rgba(0, 0, 0, 0.7)',
+    })
+  } else {
+    loading.setText(text)
   }
-  loading = ElLoading.service({
-    lock: true,
-    text: text,
-    background: 'rgba(0, 0, 0, 0.7)',
-    overlay: true
-  })
 }
 
 
 defineExpose({
   changeVisibleStatus,
-  transData
+  transData,
+  openDialog
 })
 
 </script>
@@ -108,7 +196,7 @@ defineExpose({
   width: 300px;
 }
 .dialog-footer button:first-child {
-  margin-right: 10px;
+  //margin-right: 10px;
 }
 
 </style>
