@@ -1,7 +1,8 @@
 <template>
   <navigate-one ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate-one>
-  <div @click="reset" style="height: 98vh; display: flex; ">
+  <div @click="reset" style="height: 90vh; display: flex; ">
     <div>
+<!--      ===========================================================================================================-->
       <div style="margin-bottom: 0; padding-bottom: 0; ">
 
         <div  style=" margin: 12px 0 0;padding: 0;display: flex">
@@ -23,27 +24,11 @@
           <el-button type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
         </div>
       </div>
-
-      <div v-if="files.length > 0"
-           style="display: flex;
-                  width: 100%;
-                  padding: 0;
-
-                  margin: 12px 0 0 12px;">
-        <ul>
-          <li v-for="file in files" :key="file.name"
-              style="height: 28px;">
-            <h4 style="height: 28px;
-                        margin: 0; padding: 0;">
-              文件【{{ file.name }}】正在努力上传中，文件大小为【{{ file.size }} bytes】，请耐心等待。。。</h4>
-          </li>
-        </ul>
-      </div>
-
+      <!--      ===========================================================================================================-->
 
       <div style="display: flex; margin-left: 12px; margin-top: 12px; margin-bottom: 12px; ">
         <button v-if="curPath !== ''"
-                style="margin-right: 8px; display: flex;" @click="changePath">
+                style="margin-right: 8px; display: flex;" @click="gotoParentPath">
           <p style="margin: 0; padding: 0">↑</p>
           <p style="margin: 0; padding: 0">返回上一层</p>
         </button>
@@ -61,239 +46,11 @@
         <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
       </div>
 <!--      =====================================================================================================================================================-->
-      <div>
-        <tr style="display: flex;
-            align-items: center;
-            align-content: center;
-            padding: 0; margin: 0;
-            height: 32px;">
-          <td style="display: flex;align-items: center;
-            align-content: center;
-            padding: 0;
-            margin: 0 0 0 12px;
-            width: 400px;
-            height: 32px;">
-            <h3>文件名</h3>
-          </td>
-          <td style="display: flex;align-items: center;
-            align-content: center;
-            padding: 0;
-            width: 300px;
-            height: 32px;">
-            <h3 style="color: #42b983;margin-left: auto; " v-if="showHead">文件操作</h3>
-          </td>
-          <td style="width: 200px; text-align: left">
-            <h3 style="color: #42b983;
-            /*text-align: center;*/
-            align-content: center;
-            padding: 0;
-            height: 32px;
-           margin: 0 0 0 20px;">大小</h3>
-          </td>
-          <td style="width: 200px;text-align: left">
-            <h3 style=" color: #42b983;
-            /*text-align: center;*/
-            align-content: center;
-            padding: 0;
-            height: 32px;
-           margin: 0 0 0 20px;">修改时间</h3>
-          </td>
-        </tr>
-        <!--    ================================================================================================================-->
-        <div style="padding: 0; margin: 0 0 0 12px;" v-for="folder in folders"
-             @click="goIntoDir(folder.name)">
-          <tr @mouseover="handleFileHover(folder)"
-              @mouseleave="handleFileLeave(folder)"
-              style="display: flex;
-                    align-items: center;
-                    align-content: center;
-                    padding: 0; margin: 0;
-                    height: 32px;">
-            <td style="display: flex;align-items: center;
-            align-content: center;
-            padding: 0; margin: 0;
-            width: 700px;
-            height: 32px;">
-              <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-
-              <h3
-                  style="width: 400px;
-                         cursor: pointer;
-                         text-align: left;"
-              >{{ folder.name }}</h3>
-              <el-tooltip
-                  effect="dark"
-                  content="下载"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="folder.show"
-                           style="margin: 0 0 0 auto;"
-                           @click.stop="downloadFile(folder.name, 'folder')"
-                           type="warning"
-                           size="small"
-                           circle
-                           :icon="Download" ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                  effect="dark"
-                  content="删除"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="folder.show"  circle
-                           style="margin: 0 0 0 8px;"
-                           @click.stop="deleteFolder(folder.name)"
-                           type="danger"
-                           size="small"
-                           :icon="Delete" ></el-button>
-              </el-tooltip>
-            </td>
-            <td style="width: 200px; text-align: left;">
-              <h3 style=" color: #42b983;
-                /*text-align: center;*/
-                align-content: center;
-                padding: 0;
-                height: 32px;
-                margin: 0 0 0 20px;">-</h3>
-            </td>
-            <td style="min-width: 200px;">
-              <h3 style=" color: #42b983;
-                text-align: left;
-                padding: 2px;
-                height: 32px;
-                margin: 0 0 0 20px;">-</h3>
-            </td>
-          </tr>
-        </div>
-        <!--    ================================================================================================================-->
-      </div>
-      <div>
-        <div style="padding: 0; margin: 0 0 0 12px;" v-for="fileName in fileNames" >
-
-          <tr @mouseover="handleFileHover(fileName)"
-              @mouseleave="handleFileLeave(fileName)"
-              style="display: flex;
-              align-items: center;
-              align-content: center;
-              padding: 0; margin: 0;
-              line-height: 32px;">
-            <td
-                class="myTr"
-                style="display: flex;align-items: center;
-                align-content: center;
-                padding: 0; margin: 0;
-                width: 700px;
-                height: 32px;">
-              <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-              <h3 style="width: 400px;
-                         cursor: pointer;
-                         text-align: left;"
-                  @dblclick="showTheFile(fileName.name)">{{ getFirstAndLastChars(fileName.name) }}</h3>
-              <el-tooltip
-                  effect="dark"
-                  content="复制"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 auto;"
-                           @click.stop="copyTheFile(fileName.name)"
-                           type="primary"
-                           size="small"
-                           :icon="CopyDocument"></el-button>
-              </el-tooltip>
-
-              <el-tooltip
-                  effect="dark"
-                  content="移动"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 8px;"
-                           @click.stop="moveTheFile(fileName.name)"
-                           type="primary"
-                           size="small"
-                           :icon="DocumentRemove" ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                  effect="dark"
-                  content="重命名"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 8px;"
-                           @click.stop="renameFile(fileName.name)"
-                           type="primary"
-                           size="small"
-                           :icon="Edit" ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                  effect="dark"
-                  content="预览"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 8px;"
-                           @click.stop="showTheFile(fileName.name)"
-                           type="success"
-                           size="small"
-                           :icon="View" ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                  effect="dark"
-                  content="下载"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 0 0 8px;"
-                           @click.stop="downloadFile(fileName.name, 'fileName')"
-                           type="warning"
-                           size="small"
-                           :icon="Download" ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                  effect="dark"
-                  content="删除"
-                  placement="top"
-                  :show-after="500"
-              >
-                <el-button v-if="fileName.show"  circle
-                           style="margin: 0 8px 0 8px;"
-                           @click.stop="deleteFile(fileName.name)"
-                           type="danger"
-                           size="small"
-                           :icon="Delete" ></el-button>
-              </el-tooltip>
-            </td>
-            <td style="width: 200px; text-align: left;">
-              <h3 style=" color: #42b983;
-                /*text-align: center;*/
-                align-content: center;
-                padding: 0;
-                height: 32px;
-                margin: 0 0 0 20px;">{{ fileName.size }}</h3>
-            </td>
-            <td style="min-width: 200px;">
-              <h3 style=" color: #42b983;
-                text-align: center;
-                align-content: center;
-                padding: 0;
-                height: 32px;
-                margin: 0 0 0 20px;">{{ fileName.time }}</h3>
-            </td>
-          </tr>
-        </div>
-        <div v-if="progressVisible">
-          <el-progress :percentage="progressPercent"></el-progress>
-        </div>
-      </div>
+      <FileInfoData
+          @cur-path-change="updateCurPath"
+          style="width: 1200px" ref="table"></FileInfoData>
     </div>
-
+    <!--      =====================================================================================================================================================-->
     <div
         style="display: flex;
                 width: 100%;
@@ -316,6 +73,7 @@
         <div class="el-upload__tip" slot="tip">文件大小不要超过40m</div>
       </el-upload>
     </div>
+    <!--      =====================================================================================================================================================-->
   </div>
 <MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
           ref="moveFile"></MoveFile>
@@ -349,6 +107,7 @@ import {
 } from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
+import FileInfoData from "@/Core/FileInfoData.vue";
 import { ElLoading } from 'element-plus'
 import {
   Delete,
@@ -386,6 +145,7 @@ const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
 let curPath = ref('')     // 当前文件路径
 const upload_drag = ref(null)       // 右边的上传文件拖动区对象
+const table = ref(null)       // 右边的上传文件拖动区对象
 const upload_top = ref(null)   // 顶部的上传文件操作区对象
 const renameFileDialog = ref(null)   // 顶部的上传文件操作区对象
 const moveFile = ref(null);    // 移动文件夹弹窗对象
@@ -407,25 +167,13 @@ let sameFilesToUpload = ref([])
 // ==============================================================================================================
 
 // ==========================================
-const openLoadingDialog = (text) => {
-  if(loading === null){
-    if(text === undefined){
-      text = '正在上传文件...'
-    }
-    loading = ElLoading.service({
-      lock: true,
-      text: text,
-      background: 'rgba(0, 0, 0, 0.7)',
-    })
-  } else {
-    loading.setText(text)
-  }
-}
-
 function confirmRename(newName){
   getFileList()
 }
 
+function updateCurPath(newPath){
+  curPath.value = newPath
+}
 function handleExceed(files, fileList) {
   ElNotification({
     title: '文件数量限制',
@@ -496,13 +244,14 @@ function handleFileLeave(fileObject){
 }
 
 // 返回上一层
-function changePath() {
+function gotoParentPath() {
   if(curPath.value === ''){
     return
   } else {
     curPath.value = getParentDirectory(curPath.value)
   }
-  getFileList()
+  table.value.updateCurPath(curPath.value)
+  table.value.updateTableData()
 }
 
 // 进入文件夹
@@ -670,8 +419,8 @@ onMounted(()=>{
   width: 100%;
 }
 /deep/ .custom-upload .el-upload-dragger{
-  width: 100%;
-  height: 90vh;
+  width: auto;
+  height: 80vh;
   align-content: center;
 }
 
