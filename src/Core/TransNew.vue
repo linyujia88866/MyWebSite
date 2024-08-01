@@ -51,6 +51,8 @@
         <p style="margin: 0; padding: 0;font-weight: bold; vertical-align: bottom; text-decoration-line: underline; ">/全部文件/</p>
         <p style="margin: 0; padding: 0; font-weight: bold; vertical-align: bottom; text-decoration-line: underline;">{{curPath}}</p>
       </div>
+
+<!--      ==========================================================================================================================================-->
       <div v-if="makingDir"
            style="display: flex; align-items: center; align-content: center; padding: 0; margin: 0 0 0 12px;height: 32px;">
         <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
@@ -58,6 +60,7 @@
         <button style="margin-left: 12px;" @click.stop="createDir">确定</button>
         <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
       </div>
+<!--      =====================================================================================================================================================-->
       <div>
         <tr style="display: flex;
             align-items: center;
@@ -183,25 +186,6 @@
                 width: 700px;
                 height: 32px;">
               <img src="@/assets/wenjian.jpg" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-<!--            以下这段代码是直接重名名文件的，现采用弹窗形式修改，故而注释掉-->
-<!--              <div style="display: flex; align-items: center;" v-if="fileName.fileEdit === 'true'" >-->
-<!--                <el-input-->
-<!--                    @blur="finishEdit(fileName)"-->
-<!--                          v-model="fileName.name"-->
-<!--                          style="width: 360px;-->
-<!--                          font-weight: bold; font-size: 20px;"-->
-<!--                          placeholder="Please input"-->
-<!--                          class="custom-input"-->
-<!--                          clearable-->
-<!--                          ref="renameInput"-->
-<!--                >-->
-
-<!--                </el-input>-->
-<!--                <el-icon color="#42b983" :size="20" style="cursor: pointer; padding: 0;  margin: 0 0 0 8px;"-->
-<!--                         @click="changeFileName(fileName)"-->
-<!--                ><SuccessFilled /></el-icon>-->
-<!--                <el-icon color="red" :size="20"  style="cursor: pointer;  margin: 0; padding: 0;"><Close /></el-icon>-->
-<!--              </div>-->
               <h3 style="width: 400px;
                          cursor: pointer;
                          text-align: left;"
@@ -360,12 +344,8 @@ import {useRouter} from 'vue-router';
 import {myHttp} from "@/request/myrequest";
 import { ElMessage } from 'element-plus';
 import {
-  calSize, getExtension,
   getFirstAndLastChars,
   getParentDirectory,
-  removePrefix,
-  replaceSuffix,
-  timePatternChange
 } from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
@@ -373,17 +353,11 @@ import { ElLoading } from 'element-plus'
 import {
   Delete,
   Edit,
-  Search,
-  Share,
-  Close,
-  DeleteFilled,
   CopyDocument,
   DocumentRemove,
   View,
   Upload,
   Download,
-  SuccessFilled,
-  Message
 } from '@element-plus/icons-vue'
 import { h } from 'vue'
 import { ElNotification } from 'element-plus'
@@ -391,30 +365,19 @@ import { ElMessageBox } from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
-
-const  checkDelete = async () => {
-  ElMessageBox.confirm(
-      '确认是否删除文件?',
-      'Warning',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-  )
-      .then(() => {
-        return true
-      })
-      .catch(() => {
-        return false
-      })
-  return false
-}
+import {showTheFileApi} from "@/utils/viewFile";
+import {
+  createDirApi,
+  deleteFileApi,
+  deleteFolderApi,
+  downloadFileApi,
+  getFileListApi,
+  uploadFileApi
+} from "@/utils/fileApi";
 
 // ==============================================================================================================
 
 let showHead = ref(false)           // 文件操作表头显示开关
-let hasSameFiles = ref(false)           // 文件操作表头显示开关
 // docx作为参数通过父组件传参
 let imgPreviewList = ref([])           //预览图片列表
 const showImagePreview = ref(false)    //预览图片开关
@@ -422,7 +385,6 @@ const router = useRouter();           // 理由处理
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
 let curPath = ref('')     // 当前文件路径
-let fileList = ref([])    // 右边的上传文件拖动区文件列表
 const upload_drag = ref(null)       // 右边的上传文件拖动区对象
 const upload_top = ref(null)   // 顶部的上传文件操作区对象
 const renameFileDialog = ref(null)   // 顶部的上传文件操作区对象
@@ -439,12 +401,9 @@ let progressVisible = ref(false)    //显示进度条
 let progressPercent = ref(0)         // 进度条百分比
 let loading = null;
 let uploading = ref(false)
-let fileEdit = ref(false)
-let renameInput = ref()
 let fileNamesToUpload = ref([])
 let filesToUpload = ref([])
 let sameFilesToUpload = ref([])
-let activeInputs = ref([])
 // ==============================================================================================================
 
 // ==========================================
@@ -464,47 +423,7 @@ const openLoadingDialog = (text) => {
 }
 
 function confirmRename(newName){
-  console.log(newName)
   getFileList()
-}
-
-function gotoWordView(docxUrl){
-  const queryParams = {docxUrl: docxUrl};
-  // 将query参数转换为查询字符串
-  const queryString = new URLSearchParams(queryParams).toString();
-  // 创建新标签页的URL，并附加query参数
-  const urlWithQuery = `/viewWord?${queryString}`;
-
-  // 使用window.open在新标签页中打开URL
-  window.open(router.resolve(urlWithQuery).href, '_blank');
-  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
-}
-
-function gotoPPTView(pptUrl){
-
-  // const queryParams = {pptUrl: pptUrl};
-  // // 将query参数转换为查询字符串
-  // const queryString = new URLSearchParams(queryParams).toString();
-  // // 创建新标签页的URL，并附加query参数
-  // const urlWithQuery = `/viewPPT?${queryString}`;
-  //
-  // // 使用window.open在新标签页中打开URL
-  // window.open(router.resolve(urlWithQuery).href, '_blank');
-  window.open(`/PPTXjs-1.21.1/index.html?file=` + pptUrl, '_blank');
-  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
-}
-
-
-function gotoExcelView(excelUrl){
-  const queryParams = {excelUrl: excelUrl};
-  // 将query参数转换为查询字符串
-  const queryString = new URLSearchParams(queryParams).toString();
-  // 创建新标签页的URL，并附加query参数
-  const urlWithQuery = `/viewExcel?${queryString}`;
-
-  // 使用window.open在新标签页中打开URL
-  window.open(router.resolve(urlWithQuery).href, '_blank');
-  // router.push({name: 'viewWord',query:{docxUrl: docxUrl}});
 }
 
 function handleExceed(files, fileList) {
@@ -532,43 +451,8 @@ function handleChange(file, fileList) {
 
 // 原本的挨个处理同名文件改成批量处理同名文件，所以这里有了方法2
 async function customUpload2() {
-  for (let i = 0; i < fileNamesToUpload.value.length; i++) {
-    let file = filesToUpload.value[i]
-    if (file.size === 0) {
-      ElNotification({
-        title: '文件格式错误',
-        message: `【${file.name}】是一个空文件， 请上传有效的文件！`,
-        duration: 10000,
-        type: 'warning',
-      })
-      continue
-    }
-    if (hasName(file.name)) {
-      sameFilesToUpload.value.push(file)
-      continue
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('filepath', curPath.value + '/');
-    openLoadingDialog(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
-    await myHttp.post("/minio/upload", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }).then(() => {
-
-    }).catch(() => {
-      ElNotification({
-        title: '错误',
-        message: `文件【${file.name}】上传失败！`,
-        duration: 10000,
-        type: 'error',
-      })
-    });
-  }
-  getFileList()
-  loading?.close()
-  loading = null
+  sameFilesToUpload.value = await uploadFileApi(fileNamesToUpload.value, filesToUpload.value, fileNames.value, curPath.value)
+  await getFileList()
   if (sameFilesToUpload.value.length > 0) {
     repeatFiledDialog.value.openDialog()
     repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value)
@@ -590,27 +474,6 @@ const closePreview = () => {
   showImagePreview.value = false
 }
 
-function  customUpload(request) {
-  if(request.file.size === 0){
-    ElNotification({
-      title: '文件格式错误',
-      message: `【${request.file.name}】是一个空文件， 请上传有效的文件！`,
-      duration: 10000,
-      type: 'warning',
-    })
-    return
-  }
-  // files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
-  afterFileSelected(request)
-}
-function  handleSuccess(response, file, fileList) {
-  // 成功处理逻辑
-  console.log('Upload success:');
-}
-function  handleError(err, file, fileList) {
-  // 错误处理逻辑
-  console.error('Upload failed:');
-}
 
 // 创建文件夹
 function makeDir() {
@@ -649,6 +512,7 @@ function goIntoDir(dir){
   } else {
     curPath.value = curPath.value + '/'  + dir
   }
+  console.log(curPath.value)
   getFileList()
 }
 
@@ -666,70 +530,12 @@ function cancelMakeDir() {
 function hasElementWithName(list, name) {
   return list.some(element => element.name === name);
 }
-let supportList = ['pdf', 'docx', 'jpg', 'png', 'pptx', 'xlsx']
 async function showTheFile(filename) {
-
-  if(supportList.includes(getExtension(filename))){
-
-  } else {
-    ElMessage({
-      message: '该文件类型暂不支持预览！',
-      type: 'warning',
-    });
-    return
-  }
-  let finalPath;
-  let url = "/minio/preview"
-  openLoadingDialog('正在加载文件内容...')
-  if (curPath.value.length > 0) {
-    finalPath = curPath.value + '/' + filename
-  } else {
-    finalPath = filename
-  }
-
-  try {
-    await myHttp.get(url, {
-      params: {
-        fileName: finalPath
-      },
-      responseType: 'blob'
-    })
-        .then(response => {
-          if (response.status === 200) {
-            //浏览器下载
-            const myBlob = response.data
-            const qrUrl = window.URL.createObjectURL(myBlob);
-            // pdf文件类型
-            if(filename.endsWith('.pdf')){
-              window.open(qrUrl, '_blank');
-            }
-            else if(filename.endsWith('.pptx')){
-              gotoPPTView(qrUrl)
-            }
-            // 图片文件类型
-            else if(filename.endsWith('.png') || filename.endsWith('.jpg')){
-              showImagePreview.value = true
-              imgPreviewList.value = [qrUrl]
-            }
-            // word文档文件类型
-            else if(filename.endsWith('.docx')){
-              gotoWordView(qrUrl)
-            }
-            else if(filename.endsWith('.xlsx')){
-              gotoExcelView(qrUrl)
-            }
-
-          }
-        });
-
-  } catch (error) {
-    ElMessage({
-      message: '获取文件失败！',
-      type: 'warning',
-    });
-  }
-    loading?.close()
-    loading = null
+  let qrUrl= await showTheFileApi(filename, curPath.value)
+  // if(filename.endsWith('.png') || filename.endsWith('.jpg')){
+  //               showImagePreview.value = true
+  //               imgPreviewList.value = [qrUrl]
+  //             }
 }
 
 function moveTheFile(filename) {
@@ -738,78 +544,15 @@ function moveTheFile(filename) {
 
 function renameFile(name){
   renameFileDialog.value.open(name)
-  // renameInput.value
-  // fileName.fileEdit = 'true'
-  // if(activeInputs.value.length > 0){
-  //   activeInputs.value.pop().fileEdit = 'false'
-  // }
-  // activeInputs.value.push(fileName)
-  // nextTick(()=>{
-  //   renameInput.value[0].select()
-  // })
 }
 
-function finishEdit(fileName) {
-  // nextTick(()=>{
-  //   fileName.fileEdit = 'false'
-  //   activeInputs.value = []
-  //   console.log(renameInput.value)
-  // })
-
-}
-
-function changeFileName(fileName) {
-  console.log(fileName)
-}
 
 function copyTheFile(filename) {
   copyFile.value.changeVisibleStatus(curPath.value, filename)
 }
 
 async function downloadFile(filename, type) {
-  openLoadingDialog('正在下载文件夹...')
-  let finalPath;
-  let url = "/minio/download"
-  let resName= type === 'folder' ? filename + '.zip' : filename
-  if(curPath.value.length > 0){
-    finalPath = curPath.value + '/' + filename
-  } else {
-    finalPath = filename
-  }
-  if(type==='folder'){
-    finalPath = finalPath + '/'
-    url = "/minio/downloadDir"
-  }
-  try {
-    await myHttp.get(url, {
-      params: {
-        fileName: finalPath
-      },
-      responseType: 'blob'
-    })
-      .then(response => {
-        if (response.status === 200) {
-          //浏览器下载
-          const myBlob = response.data
-          const qrUrl = window.URL.createObjectURL(myBlob);
-          let fileLink = document.createElement("a");
-          fileLink.href = qrUrl;
-          fileLink.setAttribute("download", resName);
-          document.body.appendChild(fileLink);
-          fileLink.click();
-        } else if (response.status === 222) {
-          ElMessage({
-            message: '文件夹为空！',
-            type: 'warning',
-          });
-        }
-      });
-
-  } catch (error) {
-    console.error(error);
-  }
-    loading?.close()
-    loading = null
+  await downloadFileApi(filename, type, curPath.value)
 }
 
 async function deleteFile(filename) {
@@ -832,32 +575,11 @@ async function deleteFile(filename) {
 }
 
 async function doDeleteFile(filename) {
-  openLoadingDialog('正在删除文件...')
-  let removePath;
-  if (curPath.value === '') {
-    removePath = filename
-  } else {
-    removePath = curPath.value + '/' + filename
+  let res  = await deleteFileApi(filename, curPath.value)
+  console.log(res)
+  if(res === 'success'){
+    await getFileList()
   }
-  const formData = new FormData();
-  formData.append('filepath', removePath);
-
-  try {
-    await myHttp.post("/minio/removeObject", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-        .then(response => {
-          if (response.status === 200 && response.data === true) {
-            getFileList()
-          }
-        });
-  } catch (error) {
-    console.error(error);
-  }
-    loading?.close()
-    loading = null
 }
 
 async function deleteFolder(dirName) {
@@ -880,32 +602,10 @@ async function deleteFolder(dirName) {
 
 // 删除文件夹
 async function doDeleteFolder(dirName) {
-  openLoadingDialog("正在删除文件夹...")
-  let removePath;
-  if (curPath.value === '') {
-    removePath = dirName
-  } else {
-    removePath = curPath.value + '/' + dirName
+  let res = await deleteFolderApi(dirName, curPath.value)
+  if(res === "success"){
+    await getFileList()
   }
-  const formData = new FormData();
-  formData.append('filepath', removePath);
-
-  try {
-    await myHttp.post("/minio/removeDir", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-        .then(response => {
-          if (response.status === 200 && response.data === true) {
-            getFileList()
-          }
-        });
-  } catch (error) {
-    console.error(error);
-  }
-    loading?.close()
-    loading = null
 }
 
 
@@ -926,63 +626,16 @@ const createDir = async () =>
         });
         return
       }
-      const formData = new FormData();
-      formData.append('filepath', curPath.value + '/' + dirName.value);
-
-      try {
-        await myHttp.post("/minio/createDir", formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-            .then(() => {
-              makingDir.value = false
-              dirName.value = ""
-              getFileList()
-            });
-
-      } catch (error) {
-        ElMessage({
-          message: '创建文件夹失败！',
-          type: 'error',
-        });
+      let res = await createDirApi(curPath.value, dirName.value)
+      if(res === 'success'){
+        makingDir.value = false
+        dirName.value = ""
+        await getFileList()
       }
     }
-;
-
-
-const uploadFile = (request) =>
-    {
-      const formData = new FormData();
-      formData.append('file', request.file);
-      formData.append('filepath', curPath.value + '/');
-      openLoadingDialog(`文件正在努力上传中，请耐心等待。。。`)
-      try {
-        myHttp.post("/minio/upload", formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-            .then(() =>{
-              getFileList()
-              loading?.close()
-              loading = null;
-            });
-      } catch (error) {
-        loading?.close()
-        loading = null;
-      }
-    }
-;
-
-function clearFileObjects(){
-  fileObject.value=null
-  // files.value = []
-}
 
 function clearFiles(){
   fileObject.value=null
-  // files.value = []
   upload_drag.value.clearFiles()
   upload_top.value.clearFiles()
   uploading.value = false
@@ -990,85 +643,15 @@ function clearFiles(){
   sameFilesToUpload.value = []
   filesToUpload.value = []
 }
-
-function afterFileSelected(request) {
-  if(hasName(request.file.name)){
-    ElMessageBox.confirm(
-        `文件【${request.file.name}】已经存在，是否覆盖？`,
-        'Warning',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-    )
-        .then(() => {
-          uploadFile(request)
-        })
-        .catch(() => {
-        })
-  }
-  else {
-    uploadFile(request)
-  }
-}
-
-
 // 使用计算属性
 const hasName = (target) => {
   return fileNames.value.some(item => item.name === target);
 };
 
-function getFileList(){
-  openLoadingDialog('正在获取文件列表信息...')
-  let url = "/minio/listObjectsInDir/test"
-  myHttp.post(url, {prefix: curPath.value+'/'}, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-    .then(response => {
-      if (response.status === 200) {
-        folders.value = []
-        fileNames.value = []
-        let array = response.data;
-        for (let i = 0; i < array.length; i++) {
-          let json_item = array[i]
-          let item_name_temp = removePrefix(json_item.name,'.*?\/')
-          let item_size_temp = json_item.size
-          let item_time_temp = json_item.time
-          let item_name = removePrefix(item_name_temp, curPath.value + '\/')
-          if(item_name.endsWith('/')){
-            folders.value.push({
-              name: replaceSuffix(item_name),
-              size: calSize(item_size_temp),
-              time: timePatternChange(item_time_temp),
-              show: false,
-            })
-          }
-          else {
-            if(!item_name.endsWith("_#*#*dirMask")){
-              fileNames.value.push({
-                name: item_name,
-                size: calSize(item_size_temp),
-                time: timePatternChange(item_time_temp),
-                show: false,
-                lineWidth: 0,
-                fileEdit: 'false'
-              })
-            }
-          }
-        }
-      }else {
-        ElMessage({
-          message: '获取文件列表失败！',
-          type: 'error',
-        });
-      }
-    })
-    .catch(error => console.error('Error:', error));
-    loading?.close()
-    loading = null
+async function getFileList() {
+  let [_, a, b] = await getFileListApi(curPath.value + '/', undefined, [], [])
+  folders.value = a
+  fileNames.value = b
 }
 
 
@@ -1121,7 +704,7 @@ ul {
 
 /* 设置悬停时的阴影效果 */
 .myTr:hover {
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* 阴影大小、模糊度、扩散距离和颜色 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 阴影大小、模糊度、扩散距离和颜色 */
 }
 
 /deep/ .custom-input .el-input__inner {

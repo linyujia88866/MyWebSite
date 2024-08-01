@@ -3,26 +3,42 @@ function getFirstAndLastChars(str) {
     let last = '';
     let len = str.length;
     let x = []
-
+    let totalLen = 0
     for (let i = 0; i < len; i++) {
         if (str.charCodeAt(i) > 255) { // 如果是中文字符，长度为2
             x.push({l: 2, n: str[i]})
+            totalLen += 2
         } else { // 如果是英文字符，长度为1
             x.push({l: 1, n: str[i]})
+            totalLen+=1
         }
     }
-    if(x.length < 40){
+    if(totalLen < 30){
         return str
     }
+    let leftCount = 0
+    let rightCount = 0
     for(let i = 0; i < 15; i++)
     {
         first += x[i].n
+        leftCount += x[i].l
+        if(leftCount > 14){
+            break
+        }
     }
-    for(let i = x.length - 15; i < x.length; i++)
+    for(let i = x.length - 1; i > x.length-15; i--)
     {
         last += x[i].n
+        rightCount += x[i].l
+        if(rightCount > 14){
+            break
+        }
     }
-    return first+ '...' + last
+    return first+ '...' + reverseString(last)
+}
+
+function reverseString(str) {
+    return str.split('').reverse().join('');
 }
 
 function getFileNameWithoutExtension(filename) {
@@ -62,6 +78,10 @@ function replaceSuffix(str, prefix='\/') {
     return str.replace(regex, '');
 }
 
+const hasName = (srcList, target) => {
+    return srcList.some(item => item.name === target);
+};
+
 function timePatternChange(dateStr){
     if(dateStr === null){
         return ""
@@ -96,5 +116,6 @@ export  {
     getParentDirectory,
     calSize,
     getExtension,
-    getFileNameWithoutExtension
+    getFileNameWithoutExtension,
+    hasName
 }

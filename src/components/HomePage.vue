@@ -43,7 +43,7 @@
       </div>
 
 
-        <div class="card" @click.stop="gotoTest()" v-if="false">
+        <div class="card" @click.stop="gotoTest()" >
 
         </div>
     </div>

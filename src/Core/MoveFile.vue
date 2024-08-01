@@ -55,7 +55,7 @@ import {calSize, getParentDirectory, removePrefix, replaceSuffix, timePatternCha
 import {myHttp} from "@/request/myrequest";
 import {ElLoading, ElMessage} from "element-plus";
 let loading = null;
-const openFullScreen2 = (text) => {
+const openLoadingDialog = (text) => {
   if(text === undefined){
     text = '正在移动文件...'
   }
@@ -116,7 +116,7 @@ function  handleConfirm(){
 }
 
 function moveObject(){
-  openFullScreen2()
+  openLoadingDialog()
   let url = "/minio/moveObject"
   const formData = new FormData();
   formData.append('srcpath', originPath.value+'/' + operationFileName.value);
@@ -145,7 +145,7 @@ function moveObject(){
       loading.close()
 }
 function getFileList(){
-  openFullScreen2('正在加载文件夹目录信息...')
+  openLoadingDialog('正在加载文件夹目录信息...')
   let url = "/minio/listObjectsInDir/test"
   myHttp.post(url, {prefix: curPath.value+'/'}, {
     headers: {

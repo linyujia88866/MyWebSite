@@ -17,6 +17,8 @@ import ViewExcel from "@/ViewFile/ViewExcel.vue";
 import ViewPPT from "@/ViewFile/ViewPPT.vue";
 import Profile from "@/components/Basic/Profile.vue";
 import Help from "@/components/Basic/Help.vue";
+import TransNew from "@/Core/TransNew.vue";
+import FileInfoData from "@/Core/FileInfoData.vue";
 
 const routes = [
   {
@@ -87,7 +89,7 @@ const routes = [
   {
     path: '/fileTrans',
     name: 'fileTrans',
-    component: Trans
+    component: TransNew
   },
   {
     path: '/viewWord',
@@ -107,7 +109,7 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: ViewPPT
+    component: FileInfoData
   }
 ]
 
