@@ -1,8 +1,8 @@
 <template>
-  <el-dialog v-model="dialogFormVisible" title="文件重命名" width="500">
-    <el-form :model="form">
-      <el-form-item label="重命名" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
+  <el-dialog v-model="dialogFormVisible" title="新建文件夹"  width="700">
+    <el-form >
+      <el-form-item label="文件夹名称：" :label-width="formLabelWidth">
+        <el-input v-model="dirName" autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -17,70 +17,58 @@
 </template>
 
 <script setup>
-import {defineProps, reactive, ref} from 'vue'
-import {myHttp} from "@/request/myrequest";
-import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
-import {getExtension} from "@/utils/stringutils";
+import {reactive, ref} from 'vue'
+import {ElMessage} from "element-plus";
+import {hasElementWithName} from "@/utils/stringutils";
+import {createDirApi} from "@/utils/fileApi";
 
 const dialogFormVisible = ref(false)
-const formLabelWidth = '80px'
-const props = defineProps({
-  originFileName: {
-    type: String,
-    default: "",
-  }
-});
+const formLabelWidth = '100px'
+let folders = ref([])
+let dirName = ref("新建文件夹")
+
 const emit = defineEmits(['confirm','cancel'])
 let form = reactive({
   name: '',
 })
-let originFilename = ref('')
 let originPath = ref('')
-function open(origin){
+function open(origin, folderNames){
   dialogFormVisible.value = true
-  form.name = origin
-  originFilename.value = origin
+  originPath.value = origin
+  folders.value = folderNames
+  console.log(folders.value)
+  console.log(originPath.value)
 }
-let loading = null
-const openLoadingDialog = (text) => {
-  if(text === undefined){
-    text = '正在移动文件...'
+
+function close(){
+  dialogFormVisible.value = false
+}
+
+const createDir = async () =>
+{
+  if(!dirName.value){
+    ElMessage({
+      message: '请输入文件夹名称！',
+      type: 'warning',
+    });
+    return
   }
-  loading = ElLoading.service({
-    lock: true,
-    text: text,
-    background: 'rgba(0, 0, 0, 0.7)',
-  })
+  console.log(folders.value)
+  console.log(dirName.value)
+  if(hasElementWithName(folders.value, dirName.value)){
+    ElMessage({
+      message: '文件夹名称重复！',
+      type: 'warning',
+    });
+    return
+  }
+  let res = await createDirApi(originPath.value, dirName.value)
+  if(res === 'success'){
+    dirName.value = "新建文件夹"
+    emit('confirm', dirName.value)
+  }
 }
-async function moveObject() {
-  openLoadingDialog('正在提交文件信息...')
-  let url = "/minio/moveObject"
-  const formData = new FormData();
-  formData.append('srcpath', originPath.value + '/' + originFilename.value);
 
-  formData.append('despath', originPath.value + '/' + form.name);
-  await myHttp.post(url, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-      .then(response => {
-        if (response.status === 200) {
-
-          ElMessage({
-            message: '文件重命名成功！',
-            type: 'success',
-          });
-        }
-      })
-      .catch(error => {
-        ElMessage({
-          message: '文件重命名失败！',
-          type: 'error',
-        });
-      });
-  loading.close()
-}
 
 function cancel(){
   emit('cancel')
@@ -88,45 +76,17 @@ function cancel(){
 }
 
 async function confirm() {
-
-  if(form.name === originFilename.value){
-    ElMessage({
-      message: '文件名没有发生变化！',
-      type: 'error',
-    });
-    return
-  }
-
-  if(getExtension(originFilename.value) !== getExtension(form.name)){
-    ElMessageBox.confirm(
-        '修改文件名后缀可能导致文件不可用或无法预览！ 确认更改?',
-        'Warning',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-    )
-        .then(async () => {
-          await moveObject()
-          dialogFormVisible.value = false
-          emit('confirm', form.name)
-        })
-        .catch(() => {
-          ElMessage({
-            type: 'info',
-            message: '更改文件名失败！',
-          })
-        })
-    return
-  }
-  await moveObject()
+  await createDir()
   dialogFormVisible.value = false
-  emit('confirm', form.name)
+
 }
 
 defineExpose({
-  open
+  open,
+  close
 })
 
 </script>
+
+<style scoped>
+</style>

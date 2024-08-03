@@ -17,41 +17,28 @@
 </template>
 
 <script setup>
-import {defineProps, reactive, ref} from 'vue'
+import {reactive, ref} from 'vue'
 import {myHttp} from "@/request/myrequest";
-import {ElLoading, ElMessage, ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import {getExtension} from "@/utils/stringutils";
+import {closeLoading, openLoadingDialog} from "@/utils/loading";
 
 const dialogFormVisible = ref(false)
 const formLabelWidth = '80px'
-const props = defineProps({
-  originFileName: {
-    type: String,
-    default: "",
-  }
-});
+
 const emit = defineEmits(['confirm','cancel'])
 let form = reactive({
   name: '',
 })
 let originFilename = ref('')
 let originPath = ref('')
-function open(origin){
+function open(origin, path){
   dialogFormVisible.value = true
   form.name = origin
   originFilename.value = origin
+  originPath.value = path
 }
-let loading = null
-const openLoadingDialog = (text) => {
-  if(text === undefined){
-    text = '正在移动文件...'
-  }
-  loading = ElLoading.service({
-    lock: true,
-    text: text,
-    background: 'rgba(0, 0, 0, 0.7)',
-  })
-}
+
 async function moveObject() {
   openLoadingDialog('正在提交文件信息...')
   let url = "/minio/moveObject"
@@ -79,7 +66,7 @@ async function moveObject() {
           type: 'error',
         });
       });
-  loading.close()
+  closeLoading()
 }
 
 function cancel(){

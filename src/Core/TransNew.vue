@@ -1,10 +1,8 @@
 <template>
   <navigate-one ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate-one>
-  <div @click="reset" style="height: 90vh; display: flex; ">
+  <div @click="reset" style="height: 90vh; display: flex;">
     <div>
-<!--      ===========================================================================================================-->
       <div style="margin-bottom: 0; padding-bottom: 0; ">
-
         <div  style=" margin: 12px 0 0;padding: 0;display: flex">
           <div style="margin-left: 12px; margin-right: 12px; padding: 0;">
             <el-upload
@@ -24,7 +22,7 @@
           <el-button type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
         </div>
       </div>
-      <!--      ===========================================================================================================-->
+      <!--      =====================================================================================================================================================-->
 
       <div style="display: flex; margin-left: 12px; margin-top: 12px; margin-bottom: 12px; ">
         <button v-if="curPath !== ''"
@@ -36,20 +34,16 @@
         <p style="margin: 0; padding: 0;font-weight: bold; vertical-align: bottom; text-decoration-line: underline; ">/全部文件/</p>
         <p style="margin: 0; padding: 0; font-weight: bold; vertical-align: bottom; text-decoration-line: underline;">{{curPath}}</p>
       </div>
-
-<!--      ==========================================================================================================================================-->
-      <div v-if="makingDir"
-           style="display: flex; align-items: center; align-content: center; padding: 0; margin: 0 0 0 12px;height: 32px;">
-        <img src="@/assets/wenjianjia.png" alt="图标文件夹" style="margin-right: 12px; height: 20px; width: 20px;">
-        <input v-model="dirName" @click.stop>
-        <button style="margin-left: 12px;" @click.stop="createDir">确定</button>
-        <button style="margin-left: 12px;" @click.stop="cancelMakeDir">取消</button>
-      </div>
-<!--      =====================================================================================================================================================-->
+      <!--      =====================================================================================================================================================-->
       <FileInfoData
           @cur-path-change="updateCurPath"
-          style="width: 1200px" ref="table"></FileInfoData>
+          @copy-file="copyTheFile"
+          @view-file="showTheFile"
+          @move-file="moveTheFile"
+          @rename-file="renameFile"
+          style="width: 1200px; " ref="table"></FileInfoData>
     </div>
+<!--    上面这个高度值要注意，要和el-table那边的设置一致，否则会出现末尾行遮挡现象-->
     <!--      =====================================================================================================================================================-->
     <div
         style="display: flex;
@@ -75,71 +69,31 @@
     </div>
     <!--      =====================================================================================================================================================-->
   </div>
-<MoveFile :cur-dir="curPath.value"  @update-value="getFileList"
-          ref="moveFile"></MoveFile>
-
-  <CopyFile :cur-dir="curPath.value"  @update-value="getFileList"
-            ref="copyFile"></CopyFile>
-
-  <!-- 图片预览 -->
-  <el-image-viewer
-      v-if="showImagePreview"
-      :zoom-rate="1.2"
-      @close="closePreview"
-      :url-list="imgPreviewList"
-  />
-
+  <MoveFile   @update-value="getFileList" ref="moveFile"></MoveFile>
+  <CopyFile  @update-value="getFileList" ref="copyFile"></CopyFile>
+  <MakingDir ref="makingDir" @confirm="getFileList"></MakingDir>
+  <ViewPhotoes ref="viewPhotos"></ViewPhotoes>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
   <RenameFile ref="renameFileDialog" @confirm="confirmRename"></RenameFile>
-<!--  <div class="status-bar">-->
-<!--    注意：预览文件目前只支持docx、pdf和图片格式，预览文件时会将docx转换为pdf格式！！！-->
-<!--  </div>-->
 </template>
 
 <script setup>
-import {nextTick, onMounted, ref} from 'vue';
+import {nextTick, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {myHttp} from "@/request/myrequest";
-import { ElMessage } from 'element-plus';
-import {
-  getFirstAndLastChars,
-  getParentDirectory,
-} from "@/utils/stringutils";
+import {getParentDirectory} from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
-import { ElLoading } from 'element-plus'
-import {
-  Delete,
-  Edit,
-  CopyDocument,
-  DocumentRemove,
-  View,
-  Upload,
-  Download,
-} from '@element-plus/icons-vue'
-import { h } from 'vue'
+import {Upload} from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
-import { ElMessageBox } from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
+import MakingDir from "@/Core/MakingDir.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {showTheFileApi} from "@/utils/viewFile";
-import {
-  createDirApi,
-  deleteFileApi,
-  deleteFolderApi,
-  downloadFileApi,
-  getFileListApi,
-  uploadFileApi
-} from "@/utils/fileApi";
+import {uploadFileApi} from "@/utils/fileApi";
+import ViewPhotoes from "@/Core/ViewPhotoes.vue";
 
-// ==============================================================================================================
-
-let showHead = ref(false)           // 文件操作表头显示开关
-// docx作为参数通过父组件传参
-let imgPreviewList = ref([])           //预览图片列表
-const showImagePreview = ref(false)    //预览图片开关
 const router = useRouter();           // 理由处理
 const topLine = ref('-')
 topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
@@ -155,24 +109,26 @@ const files = ref([]);       // 上传文件时提示
 const folders = ref([]);     // 当前页面的文件夹名称列表
 const fileObject = ref(null)   // 正在上传或处理的文件对象
 const fileNames = ref([]);    // 当前页面的文件名列表
-let dirName = ref('')      // 新建文件夹名称
-let makingDir=ref(false)   // 正在创建  文件夹
-let progressVisible = ref(false)    //显示进度条
-let progressPercent = ref(0)         // 进度条百分比
+
+let makingDir=ref()   // 正在创建  文件夹
+let viewPhotos=ref()   // 正在创建  文件夹
+
 let loading = null;
 let uploading = ref(false)
 let fileNamesToUpload = ref([])
 let filesToUpload = ref([])
 let sameFilesToUpload = ref([])
 // ==============================================================================================================
-
-// ==========================================
-function confirmRename(newName){
+nextTick(()=>{
   getFileList()
+})
+// ==========================================
+async function confirmRename(newName) {
+  await getFileList()
 }
 
-function updateCurPath(newPath){
-  curPath.value = newPath
+function updateCurPath(res){
+  [curPath.value, folders.value, fileNames.value] = [...res]
 }
 function handleExceed(files, fileList) {
   ElNotification({
@@ -191,16 +147,16 @@ function handleChange(file, fileList) {
   if(!uploading.value){
     uploading.value = true
     setTimeout(function() {
-      customUpload2()
+      uploadFile()
 
     }, 100);
   }
 }
 
 // 原本的挨个处理同名文件改成批量处理同名文件，所以这里有了方法2
-async function customUpload2() {
+async function uploadFile() {
   sameFilesToUpload.value = await uploadFileApi(fileNamesToUpload.value, filesToUpload.value, fileNames.value, curPath.value)
-  await getFileList()
+  table.value.updateTableData()
   if (sameFilesToUpload.value.length > 0) {
     repeatFiledDialog.value.openDialog()
     repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value)
@@ -208,39 +164,18 @@ async function customUpload2() {
   clearFiles()
 }
 
-function handleCloseSameFileDialog(){
-  repeatFiledDialog.value.changeVisibleStatus()
+async function handleCloseSameFileDialog() {
+  repeatFiledDialog.value.changeVisibleStatus()  //关闭窗口
   sameFilesToUpload.value = []
   fileNamesToUpload.value = []
   filesToUpload.value = []
-  getFileList()
+  await getFileList()
   clearFiles()
 }
 
-const closePreview = () => {
-  imgPreviewList.value = []
-  showImagePreview.value = false
-}
-
-
 // 创建文件夹
 function makeDir() {
-  makingDir.value = true
-  dirName.value = "新建文件夹"
-}
-
-// 文件鼠标移动上去触发事件
-function handleFileHover(fileObject){
-    fileObject.show = true
-    fileObject.lineWidth = 1
-  // showHead.value = true
-}
-
-// 文件鼠标失焦事件
-function handleFileLeave(fileObject){
-  fileObject.show = false
-  fileObject.lineWidth = 0
-  // showHead.value = false
+  makingDir.value.open(curPath.value, folders.value)
 }
 
 // 返回上一层
@@ -253,38 +188,16 @@ function gotoParentPath() {
   table.value.updateCurPath(curPath.value)
   table.value.updateTableData()
 }
-
-// 进入文件夹
-function goIntoDir(dir){
-  if(curPath.value === ''){
-    curPath.value = dir
-  } else {
-    curPath.value = curPath.value + '/'  + dir
-  }
-  console.log(curPath.value)
-  getFileList()
-}
-
 // 取消创建文件夹输入文件夹名称状态
 function reset(){
-  makingDir.value = false
-  dirName.value = ""
-}
-// 取消创建文件夹输入文件夹名称状态
-function cancelMakeDir() {
-  makingDir.value = false
-  dirName.value = ""
-}
-// 判断文件名是否存在
-function hasElementWithName(list, name) {
-  return list.some(element => element.name === name);
+  makingDir.value.close()
 }
 async function showTheFile(filename) {
-  let qrUrl= await showTheFileApi(filename, curPath.value)
-  // if(filename.endsWith('.png') || filename.endsWith('.jpg')){
-  //               showImagePreview.value = true
-  //               imgPreviewList.value = [qrUrl]
-  //             }
+  if(filename.endsWith('.png') || filename.endsWith('.jpg')){
+    viewPhotos.value.open(filename, curPath.value)
+  } else {
+    await showTheFileApi(filename, curPath.value)
+  }
 }
 
 function moveTheFile(filename) {
@@ -292,96 +205,12 @@ function moveTheFile(filename) {
 }
 
 function renameFile(name){
-  renameFileDialog.value.open(name)
+  renameFileDialog.value.open(name, curPath.value)
 }
-
 
 function copyTheFile(filename) {
   copyFile.value.changeVisibleStatus(curPath.value, filename)
 }
-
-async function downloadFile(filename, type) {
-  await downloadFileApi(filename, type, curPath.value)
-}
-
-async function deleteFile(filename) {
-
-  ElMessageBox.confirm(
-      '确认是否删除文件?',
-      'Warning',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-  )
-      .then(() => {
-        doDeleteFile(filename)
-      })
-      .catch(() => {
-        return false
-      })
-}
-
-async function doDeleteFile(filename) {
-  let res  = await deleteFileApi(filename, curPath.value)
-  console.log(res)
-  if(res === 'success'){
-    await getFileList()
-  }
-}
-
-async function deleteFolder(dirName) {
-  ElMessageBox.confirm(
-      '确认是否删除文件夹?',
-      'Warning',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }
-  )
-      .then(() => {
-        doDeleteFolder(dirName)
-      })
-      .catch(() => {
-        return false
-      })
-}
-
-// 删除文件夹
-async function doDeleteFolder(dirName) {
-  let res = await deleteFolderApi(dirName, curPath.value)
-  if(res === "success"){
-    await getFileList()
-  }
-}
-
-
-const createDir = async () =>
-    {
-      if(!dirName.value){
-        ElMessage({
-          message: '请输入文件夹名称！',
-          type: 'warning',
-        });
-        return
-      }
-
-      if(hasElementWithName(folders.value, dirName.value)){
-        ElMessage({
-          message: '文件夹名称重复！',
-          type: 'warning',
-        });
-        return
-      }
-      let res = await createDirApi(curPath.value, dirName.value)
-      if(res === 'success'){
-        makingDir.value = false
-        dirName.value = ""
-        await getFileList()
-      }
-    }
 
 function clearFiles(){
   fileObject.value=null
@@ -392,25 +221,9 @@ function clearFiles(){
   sameFilesToUpload.value = []
   filesToUpload.value = []
 }
-// 使用计算属性
-const hasName = (target) => {
-  return fileNames.value.some(item => item.name === target);
-};
-
 async function getFileList() {
-  let [_, a, b] = await getFileListApi(curPath.value + '/', undefined, [], [])
-  folders.value = a
-  fileNames.value = b
+  await table.value.updateTableData()
 }
-
-
-// 刚进入页面时获取文件列表
-onMounted(()=>{
-  nextTick(()=>{
-    getFileList()
-  })
-})
-
 </script>
 <style scoped>
 
@@ -420,40 +233,14 @@ onMounted(()=>{
 }
 /deep/ .custom-upload .el-upload-dragger{
   width: auto;
-  height: 80vh;
+  height: 82vh;
   align-content: center;
-}
-
-tr{
-  width: 70vw;
 }
 
 ul {
   list-style-type: none; /* 移除列表的标记，可选 */
   margin: 0; /* 移除默认的列表内边距，可选 */
   padding: 0; /* 移除默认的列表内边距，可选 */
-}
-
-.status-bar {
-  position: fixed;      /* 固定位置 */
-  left: 0;              /* 左边距为0 */
-  bottom: 0;            /* 底部边距为0 */
-  width: 100%;          /* 宽度为100% */
-  height: 40px;         /* 高度设置为你需要的值 */
-  background-color: #333; /* 背景颜色 */
-  color: white;         /* 文字颜色 */
-  /* 其他样式 */
-}
-
-
-
-/* 设置基本样式 */
-.myTr {
-}
-
-/* 设置悬停时的阴影效果 */
-.myTr:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 阴影大小、模糊度、扩散距离和颜色 */
 }
 
 /deep/ .custom-input .el-input__inner {

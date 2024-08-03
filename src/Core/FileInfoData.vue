@@ -2,7 +2,7 @@
   <el-table
       :data="tableData"
       :highlight-current-row="true"
-      max-height="700px"
+      max-height="76vh"
       @cell-mouse-enter="handleMouseEnter"
       @cell-mouse-leave="handleMouseLeave"
       style="width: 100%" :default-sort="{ prop: 'type', order: 'descending' }">
@@ -60,7 +60,7 @@
                        @click.stop="moveTheFile(scope.row.name)"
                        type="primary"
                        size="small"
-                       :icon="DocumentRemove" ></el-button>
+                       :icon="TopRight" ></el-button>
           </el-tooltip>
           <el-tooltip
               effect="dark"
@@ -140,6 +140,7 @@
     </el-table-column>
 
     <el-table-column
+        property="time"
         label="修改时间" sortable >
 
       <template #default="scope">{{ scope.row.time }}</template>
@@ -151,7 +152,7 @@
 import {ElMessageBox, ElTable} from 'element-plus'
 import {deleteFileApi, deleteFolderApi, downloadFileApi, getFileListApi} from "@/utils/fileApi";
 import {ref} from "vue";
-import {CopyDocument, Delete, DocumentRemove, Download, Edit, View} from "@element-plus/icons-vue";
+import {CopyDocument, Delete, TopRight, Download, Edit, View} from "@element-plus/icons-vue";
 import fl from "@/assets/wenjian.jpg";
 import fd from "@/assets/wenjianjia.png";
 
@@ -167,17 +168,17 @@ function getMapBg(markNumber) {
 
 function moveTheFile(fileName){
   emit('moveFile', fileName)
-  console.log('移动文件夹')
+  console.log('移动文件')
 }
 
 function copyFile(fileName){
   emit('copyFile', fileName)
-  console.log('复制文件夹')
+  console.log('复制文件')
 }
 
 function renameFile(fileName){
   emit('renameFile', fileName)
-  console.log('重命名文件夹')
+  console.log('重命名文件')
 }
 
 function showTheFile(fileName) {
@@ -217,7 +218,7 @@ function deleteFile(row){
 let curPath = ref('')
 let tableData = ref([])
 let highlight = ref(true)
-getFileListApi(curPath.value + '/', tableData.value)
+
 function handleClick(row){
   if(row.type==='folder'){
     goIntoDir(row.name)
@@ -240,14 +241,14 @@ async function goIntoDir(dir) {
   } else {
     curPath.value = curPath.value + '/' + dir
   }
-  emit('curPathChange', curPath.value)
   await updateTableData()
 }
 
 async function updateTableData() {
   let a
   let b
-  [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
+  [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [],[],[])
+  emit('curPathChange', [curPath.value, a, b])
 }
 
 async function updateCurPath(newPath) {
@@ -269,7 +270,7 @@ defineExpose({
 })
 </script>
 
-<style>
+<style lang="less" scoped>
 .filenametd{
   display: flex;
   align-items: center;
@@ -283,6 +284,11 @@ defineExpose({
   background-color: #f5f5f6 !important;
 }
 
-
+/deep/ .el-table{
+  .el-table__fixed,
+  .el-table__fixed-right{
+    height:100% !important;
+  }
+}
 
 </style>

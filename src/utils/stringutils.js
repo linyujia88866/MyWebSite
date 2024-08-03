@@ -41,6 +41,18 @@ function reverseString(str) {
     return str.split('').reverse().join('');
 }
 
+function hasElementWithName(list, name) {
+    return list.some(element => element.name === name);
+}
+
+function getIndexByName(arr, name) {
+    return arr.findIndex(obj => obj.name === name);
+}
+
+function findObject(objs, name) {
+    return objs.find(obj => obj.name === name);
+}
+
 function getFileNameWithoutExtension(filename) {
     // 获取文件名中最后一个点的位置
     const lastIndex = filename.lastIndexOf('.');
@@ -76,6 +88,14 @@ function replaceSuffix(str, prefix='\/') {
     const regex = new RegExp(prefix + '$');
     // 使用replace方法替换后缀
     return str.replace(regex, '');
+}
+
+function transToDirPath(origin) {
+    if(origin.length === 0){
+        return origin
+    } else {
+        return origin + "/"
+    }
 }
 
 const hasName = (srcList, target) => {
@@ -117,5 +137,9 @@ export  {
     calSize,
     getExtension,
     getFileNameWithoutExtension,
-    hasName
+    hasName,
+    hasElementWithName,
+    getIndexByName,
+    findObject,
+    transToDirPath
 }

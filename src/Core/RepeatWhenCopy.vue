@@ -9,9 +9,9 @@
     </el-table>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="handleCancel">取消上传</el-button>
-        <el-button type="primary" @click="handleTogether">增加编号</el-button>
-        <el-button type="primary" @click="handleCover">覆盖上传</el-button>
+        <el-button type="primary" @click="handleCancel">跳过文件</el-button>
+        <el-button type="primary" @click="handleTogether">生成副本</el-button>
+        <el-button type="primary" @click="handleCover">覆盖文件</el-button>
       </span>
     </template>
   </el-dialog>
@@ -20,15 +20,16 @@
 <script setup>
 import {ref} from 'vue'
 import {
-  getFileNameWithoutExtension,
+  getFileNameWithoutExtension, transToDirPath,
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
-import {ElNotification} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 
 
 let fileObjects = ref([])
 let curPath = ref('')
+let originPath = ref('')
 let allFileNames = ref([])
 const emit = defineEmits(['close-event'])
 const multipleTableRef = ref()
@@ -48,14 +49,23 @@ function openDialog() {
   dialogTableVisible.value = true
 }
 
-function transData(files, path, allFiles) {
+function transData(files, path, allFiles, origin) {
   multipleSelection.value = []
-  fileObjects.value = files
-  curPath.value = path
-  allFileNames.value = allFiles
+  // 以下四个是传过来的数据
+  fileObjects.value = files    // 要处理的重名文件
+  curPath.value = path     // 复制的目标目录
+  originPath.value = origin    // 复制的初始目录
+  allFileNames.value = allFiles   // 目标目录下所有文件列表，用于计算新文件名
 }
 async function handleCover() {
-  await uploadFile()
+  if(multipleSelection.value.length === 0){
+    ElMessage({
+      message: `请选择要操作的文件！`,
+      type: 'warning',
+    });
+    return
+  }
+  await copyFile()
   filterFiles()
   if (fileObjects.value.length === 0) {
     emit("close-event", "")
@@ -63,6 +73,13 @@ async function handleCover() {
 }
 
 function  handleCancel(){
+  if(multipleSelection.value.length === 0){
+    ElMessage({
+      message: `请选择要操作的文件！`,
+      type: 'warning',
+    });
+    return
+  }
   filterFiles()
   if(fileObjects.value.length === 0){
     emit("close-event", "")
@@ -70,37 +87,63 @@ function  handleCancel(){
 }
 
 async function handleTogether() {
-  await uploadFileWithDiffName()
+  if(multipleSelection.value.length === 0){
+    ElMessage({
+      message: `请选择要操作的文件！`,
+      type: 'warning',
+    });
+    return
+  }
+  await copyFileWithDiffName()
   filterFiles()
   if (fileObjects.value.length === 0) {
     emit("close-event", "")
   }
 }
 
-const uploadFile = async () => {
-      for (let i = 0; i < multipleSelection.value.length; i++) {
-        let file = multipleSelection.value[i]
-        openLoadingDialog(`文件【${file.name}】正在努力上传中，请耐心等待。。。`)
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('filepath', curPath.value + '/');
-
-        await myHttp.post("/minio/upload", formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }).then(() => {
-
-        }).catch(() => {
-          ElNotification({
-            title: '错误',
-            message: `文件【${file.name}】上传失败！`,
-            duration: 10000,
-            type: 'error',
-          })
-        });
-      }
+const copyFile = async () => {
+  if(originPath.value === curPath.value){
+    ElMessage({
+      message: '复制目标位置和初始位置一致！',
+      type: 'warning',
+    });
+    return;
+  }
+  openLoadingDialog(`正在复制文件...`)
+    for (let i = 0; i < multipleSelection.value.length; i++) {
+      await copyObject(multipleSelection.value[i].name)
+    }
   closeLoading()
+}
+
+async function copyObject(operationFileName, targetFileName) {
+  let url = "/minio/copyObject"
+  let target
+  if(targetFileName!==undefined){
+    target = targetFileName
+  }else {
+    target = operationFileName
+  }
+  const formData = new FormData();
+  formData.append('srcpath', transToDirPath(originPath.value) + operationFileName);
+  formData.append('despath', transToDirPath(curPath.value) + target);
+  await myHttp.post(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+      .then(response => {
+        if (response.status === 200) {
+
+        }
+      })
+      .catch(error => {
+        ElMessage({
+          message: `复制文件${operationFileName}失败！`,
+          type: 'error',
+        });
+      });
+
 }
 
 function genNewFileName(oldname){
@@ -119,31 +162,10 @@ function genNewFileName(oldname){
   return newName
 }
 
-const uploadFileWithDiffName = async () => {
+const copyFileWithDiffName = async () => {
+  openLoadingDialog(`正在复制文件...`)
   for (let i = 0; i < multipleSelection.value.length; i++) {
-
-    let file = multipleSelection.value[i]
-    const formData = new FormData();
-    formData.append('file', file);
-    let newFileName = genNewFileName(file.name)
-    openLoadingDialog(`文件【${newFileName}】正在努力上传中，请耐心等待。。。`)
-    let renameReportFile =new File([file],newFileName,{type:file.type});
-    formData.append("file",renameReportFile );
-    formData.append("filename",newFileName );
-    formData.append('filepath', curPath.value + '/');
-    await myHttp.post("/minio/upload2", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }).then(() => {
-    }).catch(() => {
-      ElNotification({
-        title: '错误',
-        message: `文件【${file.name}】上传失败！`,
-        duration: 10000,
-        type: 'error',
-      })
-    });
+    await copyObject(multipleSelection.value[i].name, genNewFileName(multipleSelection.value[i].name))
   }
   closeLoading()
 }

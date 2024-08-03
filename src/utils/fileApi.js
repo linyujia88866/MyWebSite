@@ -119,6 +119,7 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
 
 const createDirApi = async (curPath, dirName) =>
 {
+    openLoadingDialog("正在创建文件夹...")
     let res  = ""
     const formData = new FormData();
     formData.append('filepath', curPath + '/' + dirName);
@@ -139,6 +140,7 @@ const createDirApi = async (curPath, dirName) =>
             type: 'error',
         });
     }
+    closeLoading()
     return res
 }
 

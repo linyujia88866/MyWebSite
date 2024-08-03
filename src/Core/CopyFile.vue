@@ -1,9 +1,5 @@
 <template>
-<!--  <el-button text @click="dialogTableVisible = true"-->
-<!--  >open a Table nested Dialog</el-button-->
-<!--  >-->
-<!--  align-items: flex-start; /* 置顶对齐 */-->
-  <el-dialog v-model="dialogTableVisible" title="移动到">
+  <el-dialog v-model="dialogTableVisible" title="复制到">
     <div style="display: flex; margin-left: 12px; margin-top: 12px;
     margin-bottom: 12px;  ">
       <button v-if="curPath !== ''"
@@ -16,7 +12,7 @@
       <p style="margin: 0; padding: 0; font-weight: bold;  text-decoration-line: underline;">{{curPath}}</p>
     </div>
     <div style="min-height: 400px;">
-      <div style="padding: 0; margin: 0 0 0 12px;margin-bottom: auto; " v-for="folder in folders"
+      <div style="padding: 0; margin: 0 0 auto 12px;" v-for="folder in folders"
            @click="goIntoDir(folder.name)">
         <tr style="display: flex;
             align-items: center;
@@ -47,13 +43,23 @@
       </span>
     </template>
   </el-dialog>
+  <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
 </template>
 
 <script setup>
-import {defineProps, nextTick, reactive, ref} from 'vue'
-import {calSize, getParentDirectory, removePrefix, replaceSuffix, timePatternChange} from "@/utils/stringutils";
+import {defineProps, nextTick, ref} from 'vue'
+import {
+  calSize, findObject,
+  getParentDirectory,
+  hasElementWithName,
+  removePrefix,
+  replaceSuffix,
+  timePatternChange, transToDirPath
+} from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
-import {ElLoading, ElMessage} from "element-plus";
+import {ElMessage} from "element-plus";
+import {closeLoading, openLoadingDialog} from "@/utils/loading";
+import Repeat from "@/Core/RepeatWhenCopy.vue";
 
 
 const props = defineProps({
@@ -67,63 +73,68 @@ const emit = defineEmits(['updateValue'])
 let curPath = ref('')
 let originPath = ref('')
 let operationFileName = ref('')
+let repeatFiledDialog=ref()
+let sameFilesToUpload=ref([])
 
 const dialogTableVisible = ref(false)
+async function handleCloseSameFileDialog() {
+  repeatFiledDialog.value.changeVisibleStatus()     //关闭窗口
+  dialogTableVisible.value = false
+  clearFiles()
+  emit('updateValue', "")
+}
 
+function clearFiles(){
+  sameFilesToUpload.value = []
+}
 // 进入文件夹
-function goIntoDir(dir){
-  if(curPath.value === ''){
+async function goIntoDir(dir) {
+  if (curPath.value === '') {
     curPath.value = dir
   } else {
-    curPath.value = curPath.value + '/'  + dir
+    curPath.value = curPath.value + '/' + dir
   }
-  getFileList()
+  await getFileList()
 }
 function changeVisibleStatus(curDir, filename) {
   dialogTableVisible.value = true
   originPath.value = curDir
   operationFileName.value = filename
   curPath.value = ""
-  nextTick(()=>{
-    getFileList()
+  nextTick(async () => {
+    await getFileList()
   })
 }
 
-curPath.value = props.curDir
-function changePath() {
-  if(curPath.value === ''){
+async function changePath() {
+  if (curPath.value === '') {
     return
   } else {
     curPath.value = getParentDirectory(curPath.value)
   }
-  getFileList()
+  await getFileList()
 }
 const folders = ref([]);
 const fileNames = ref([]);
 
 function  handleConfirm(){
-  moveObject()
-}
-
-let loading = null;
-const openFullScreen2 = (text) => {
-  if(text === undefined){
-    text = '正在复制文件...'
+  if(hasElementWithName(fileNames.value, operationFileName.value)){
+    sameFilesToUpload.value.push(findObject(fileNames.value, operationFileName.value))
   }
-  loading = ElLoading.service({
-    lock: true,
-    text: text,
-    background: 'rgba(0, 0, 0, 0.7)',
-    overlay: true
-  })
+  if(sameFilesToUpload.value.length >0){
+    repeatFiledDialog.value.openDialog()
+    repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value, originPath.value)
+    return
+  }
+  copyObject()
 }
 
-function moveObject(){
-  openFullScreen2()
+function copyObject(){
+  openLoadingDialog('正在复制文件...')
   let url = "/minio/copyObject"
   const formData = new FormData();
-  formData.append('srcpath', originPath.value+'/' + operationFileName.value);
-  formData.append('despath', curPath.value+'/' + operationFileName.value);
+  formData.append('srcpath', transToDirPath(originPath.value) + operationFileName.value);
+  formData.append('despath', transToDirPath(curPath.value) + operationFileName.value);
   myHttp.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -145,12 +156,12 @@ function moveObject(){
           type: 'error',
         });
       });
-      loading.close(0)
+      closeLoading()
 }
-function getFileList(){
-  openFullScreen2('正在加载文件夹目录信息...')
+async function getFileList() {
+  openLoadingDialog('正在加载文件夹目录信息...')
   let url = "/minio/listObjectsInDir/test"
-  myHttp.post(url, {prefix: curPath.value+'/'}, {
+  await myHttp.post(url, {prefix: curPath.value + '/'}, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -162,20 +173,19 @@ function getFileList(){
           let array = response.data;
           for (let i = 0; i < array.length; i++) {
             let json_item = array[i]
-            let item_name_temp = removePrefix(json_item.name,'.*?\/')
+            let item_name_temp = removePrefix(json_item.name, '.*?\/')
             let item_size_temp = json_item.size
             let item_time_temp = json_item.time
             let item_name = removePrefix(item_name_temp, curPath.value + '\/')
-            if(item_name.endsWith('/')){
+            if (item_name.endsWith('/')) {
               folders.value.push({
                 name: replaceSuffix(item_name),
                 size: calSize(item_size_temp),
                 time: timePatternChange(item_time_temp),
                 show: false,
               })
-            }
-            else {
-              if(!item_name.endsWith("_#*#*dirMask")){
+            } else {
+              if (!item_name.endsWith("_#*#*dirMask")) {
                 fileNames.value.push({
                   name: item_name,
                   size: calSize(item_size_temp),
@@ -185,7 +195,7 @@ function getFileList(){
               }
             }
           }
-        }else {
+        } else {
           ElMessage({
             message: '获取文件列表失败！',
             type: 'error',
@@ -193,7 +203,7 @@ function getFileList(){
         }
       })
       .catch(error => console.error('Error:', error));
-  loading.close()
+  closeLoading()
 }
 
 defineExpose({
