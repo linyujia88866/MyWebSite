@@ -36,8 +36,6 @@ function open(origin, folderNames){
   dialogFormVisible.value = true
   originPath.value = origin
   folders.value = folderNames
-  console.log(folders.value)
-  console.log(originPath.value)
 }
 
 function close(){
@@ -51,22 +49,21 @@ const createDir = async () =>
       message: '请输入文件夹名称！',
       type: 'warning',
     });
-    return
+    return false
   }
-  console.log(folders.value)
-  console.log(dirName.value)
   if(hasElementWithName(folders.value, dirName.value)){
     ElMessage({
       message: '文件夹名称重复！',
       type: 'warning',
     });
-    return
+    return false
   }
   let res = await createDirApi(originPath.value, dirName.value)
   if(res === 'success'){
     dirName.value = "新建文件夹"
     emit('confirm', dirName.value)
   }
+  return true
 }
 
 
@@ -76,9 +73,7 @@ function cancel(){
 }
 
 async function confirm() {
-  await createDir()
-  dialogFormVisible.value = false
-
+  dialogFormVisible.value = ! await createDir()
 }
 
 defineExpose({

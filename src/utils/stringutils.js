@@ -76,9 +76,11 @@ function getParentDirectory(filePath) {
     return match ? match[1] : '';
 }
 function removePrefix(str, prefix) {
+    let regStr = prefix
+    regStr = regStr.replace("(", "\\(")
+    regStr = regStr.replace(")", "\\)")
     // 创建一个正则表达式，它将匹配以prefix变量开头的字符串
-    const regex = new RegExp('^' + prefix);
-
+    const regex = new RegExp('^' + regStr);
     // 使用replace方法移除匹配到的前缀
     return str.replace(regex, '');
 }
@@ -128,6 +130,37 @@ function calSize(size){
     }
 }
 
+function genNewFileName(oldName, allFileNames){
+    let count = 1
+    let basic = getFileNameWithoutExtension(oldName).replace(/\(\d+\)/g, "");
+    let suffix = oldName.split(".").pop();
+    let newName = ""
+    while (true){
+        newName = basic + `(${count}).` + suffix
+        if (allFileNames.some(obj => obj.name === newName)){
+            count++
+        }else {
+            break
+        }
+    }
+    return newName
+}
+
+function genNewFolderName(oldName, allFolderNames){
+    let count = 1
+    let basic = getFileNameWithoutExtension(oldName).replace(/\(\d+\)/g, "");
+    let newName = ""
+    while (true){
+        newName = basic + `(${count})`
+        if (allFolderNames.some(obj => obj.name === newName)){
+            count++
+        }else {
+            break
+        }
+    }
+    return newName
+}
+
 export  {
     getFirstAndLastChars,
     timePatternChange,
@@ -141,5 +174,7 @@ export  {
     hasElementWithName,
     getIndexByName,
     findObject,
-    transToDirPath
+    transToDirPath,
+    genNewFileName,
+    genNewFolderName
 }

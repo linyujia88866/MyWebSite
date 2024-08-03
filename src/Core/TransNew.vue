@@ -208,8 +208,8 @@ function renameFile(name){
   renameFileDialog.value.open(name, curPath.value)
 }
 
-function copyTheFile(filename) {
-  copyFile.value.changeVisibleStatus(curPath.value, filename)
+function copyTheFile(fileObj) {
+  copyFile.value.changeVisibleStatus(curPath.value, fileObj)
 }
 
 function clearFiles(){

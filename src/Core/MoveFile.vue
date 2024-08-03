@@ -44,6 +44,7 @@
     </template>
   </el-dialog>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
+  <RepeatDir ref="repeatDirDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></RepeatDir>
 </template>
 
 <script setup>
@@ -58,6 +59,7 @@ import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 import Repeat from "@/Core/RepeatWhenMove.vue";
+import RepeatDir from "@/Core/RepeatWhenMoveDir.vue";
 import {getFileListApi} from "@/utils/fileApi";
 
 
@@ -72,19 +74,23 @@ const emit = defineEmits(['updateValue'])
 let curPath = ref('')
 let originPath = ref('')
 let operationFileName = ref('')
+let operationFileType = ref('file')
 let repeatFiledDialog=ref()
-let sameFilesToUpload=ref([])
+let repeatDirDialog=ref()
+let sameFilesToMove=ref([])
+let sameFoldersToMove=ref([])
 
 const dialogTableVisible = ref(false)
 async function handleCloseSameFileDialog() {
   repeatFiledDialog.value.changeVisibleStatus()     //关闭窗口
+  repeatDirDialog.value.changeVisibleStatus()     //关闭窗口
   dialogTableVisible.value = false
   clearFiles()
   emit('updateValue', "")
 }
 
 function clearFiles(){
-  sameFilesToUpload.value = []
+  sameFilesToMove.value = []
 }
 // 进入文件夹
 async function goIntoDir(dir) {
@@ -95,10 +101,13 @@ async function goIntoDir(dir) {
   }
   await getFileList()
 }
-function changeVisibleStatus(curDir, filename) {
+
+// 打开窗口
+function changeVisibleStatus(curDir, fileObject) {
   dialogTableVisible.value = true
   originPath.value = curDir
-  operationFileName.value = filename
+  operationFileName.value = fileObject.name
+  operationFileType.value = fileObject.type
   curPath.value = ""
   nextTick(async () => {
     await getFileList()
@@ -117,24 +126,41 @@ const folders = ref([]);
 const fileNames = ref([]);
 
 function  handleConfirm(){
-  if(hasElementWithName(fileNames.value, operationFileName.value)){
-    sameFilesToUpload.value.push(findObject(fileNames.value, operationFileName.value))
+  if(operationFileType.value === 'file'){
+    if(hasElementWithName(folders.value, operationFileName.value)){
+      sameFilesToMove.value.push(findObject(fileNames.value, operationFileName.value))
+    }
+  }else {
+    if(hasElementWithName(folders.value, operationFileName.value)){
+      sameFoldersToMove.value.push(findObject(folders.value, operationFileName.value))
+    }
   }
-  if(sameFilesToUpload.value.length >0){
+  if(sameFilesToMove.value.length >0){
     repeatFiledDialog.value.openDialog()
-    repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value, originPath.value)
+    repeatFiledDialog.value.transData(sameFilesToMove.value, curPath.value, fileNames.value, originPath.value)
+    return
+  }
+  if(sameFoldersToMove.value.length >0){
+    repeatDirDialog.value.openDialog()
+    repeatDirDialog.value.transData(sameFoldersToMove.value, curPath.value, folders.value, originPath.value)
     return
   }
   moveObject()
 }
 
-function moveObject(){
+async function moveObject() {
   openLoadingDialog('正在移动文件...')
-  let url = "/minio/moveObject"
+  let url
+  if (operationFileType.value === 'file') {
+    url = "/minio/moveObject"
+  } else {
+    url = "/minio/moveDir"
+  }
+
   const formData = new FormData();
   formData.append('srcpath', transToDirPath(originPath.value) + operationFileName.value);
   formData.append('despath', transToDirPath(curPath.value) + operationFileName.value);
-  myHttp.post(url, formData, {
+  await myHttp.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -148,7 +174,8 @@ function moveObject(){
           });
           dialogTableVisible.value = false
           emit('updateValue', "")
-        }})
+        }
+      })
       .catch(error => {
         ElMessage({
           message: '移动文件失败！',
@@ -171,15 +198,12 @@ defineExpose({
 .el-button--text {
   margin-right: 15px;
 }
-
 .el-select {
   width: 300px;
 }
-
 .el-input {
   width: 300px;
 }
-
 .dialog-footer button:first-child {
   margin-right: 10px;
 }

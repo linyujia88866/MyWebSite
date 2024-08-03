@@ -4,14 +4,13 @@
               @selection-change="handleSelectionChange"
               :data="fileObjects">
       <el-table-column type="selection" width="55" />
-      <el-table-column property="name" label="文件名"  />
-      <el-table-column property="size" label="大小（字节）" width="200" />
+      <el-table-column property="name" label="文件夹名称"  />
+      <el-table-column property="type" label="类型" width="200" />
     </el-table>
     <template #footer>
       <span class="dialog-footer">
         <el-button type="primary" @click="handleCancel">跳过文件</el-button>
         <el-button type="primary" @click="handleTogether">生成副本</el-button>
-        <el-button type="primary" @click="handleCover">覆盖文件</el-button>
       </span>
     </template>
   </el-dialog>
@@ -20,7 +19,7 @@
 <script setup>
 import {ref} from 'vue'
 import {
-  genNewFileName,
+  genNewFolderName,
   transToDirPath,
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
@@ -57,20 +56,9 @@ function transData(files, path, allFiles, origin) {
   curPath.value = path     // 复制的目标目录
   originPath.value = origin    // 复制的初始目录
   allFileNames.value = allFiles   // 目标目录下所有文件列表，用于计算新文件名
-}
-async function handleCover() {
-  if(multipleSelection.value.length === 0){
-    ElMessage({
-      message: `请选择要操作的文件！`,
-      type: 'warning',
-    });
-    return
-  }
-  await copyFile()
-  filterFiles()
-  if (fileObjects.value.length === 0) {
-    emit("close-event", "")
-  }
+  console.log(fileObjects.value)
+  console.log(curPath.value)
+  console.log(allFileNames.value)
 }
 
 function  handleCancel(){
@@ -102,23 +90,8 @@ async function handleTogether() {
   }
 }
 
-const copyFile = async () => {
-  if(originPath.value === curPath.value){
-    ElMessage({
-      message: '复制目标位置和初始位置一致！',
-      type: 'warning',
-    });
-    return;
-  }
-  openLoadingDialog(`正在复制文件...`)
-    for (let i = 0; i < multipleSelection.value.length; i++) {
-      await copyObject(multipleSelection.value[i].name)
-    }
-  closeLoading()
-}
-
 async function copyObject(operationFileName, targetFileName) {
-  let url = "/minio/copyObject"
+  let url = "/minio/copyDir"
   let target
   if(targetFileName!==undefined){
     target = targetFileName
@@ -150,7 +123,7 @@ async function copyObject(operationFileName, targetFileName) {
 const copyFileWithDiffName = async () => {
   openLoadingDialog(`正在复制文件...`)
   for (let i = 0; i < multipleSelection.value.length; i++) {
-    await copyObject(multipleSelection.value[i].name, genNewFileName(multipleSelection.value[i].name,allFileNames.value))
+    await copyObject(multipleSelection.value[i].name, genNewFolderName(multipleSelection.value[i].name,allFileNames.value))
   }
   closeLoading()
 }

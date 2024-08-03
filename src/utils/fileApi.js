@@ -11,7 +11,6 @@ import {ElMessage, ElNotification} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 
 async function getFileListApi(path, res, folders, fileNames) {
-    console.log(path)
     openLoadingDialog('正在获取文件信息...')
     await myHttp.post("/minio/listObjectsInDir/test", {prefix: path}, {
         headers: {

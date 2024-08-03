@@ -20,6 +20,7 @@
 <script setup>
 import {ref} from 'vue'
 import {
+  genNewFileName,
   getFileNameWithoutExtension,
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
@@ -103,29 +104,13 @@ const uploadFile = async () => {
   closeLoading()
 }
 
-function genNewFileName(oldname){
-  let count = 1
-  let basic = getFileNameWithoutExtension(oldname)
-  let suffix = oldname.split(".").pop();
-  let newName = ""
-  while (true){
-    newName = basic + `(${count}).` + suffix
-    if (allFileNames.value.some(obj => obj.name === newName)){
-      count++
-    }else {
-      break
-    }
-  }
-  return newName
-}
-
 const uploadFileWithDiffName = async () => {
   for (let i = 0; i < multipleSelection.value.length; i++) {
 
     let file = multipleSelection.value[i]
     const formData = new FormData();
     formData.append('file', file);
-    let newFileName = genNewFileName(file.name)
+    let newFileName = genNewFileName(file.name,allFileNames.value)
     openLoadingDialog(`文件【${newFileName}】正在努力上传中，请耐心等待。。。`)
     let renameReportFile =new File([file],newFileName,{type:file.type});
     formData.append("file",renameReportFile );

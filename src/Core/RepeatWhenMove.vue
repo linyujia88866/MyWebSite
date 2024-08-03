@@ -20,6 +20,7 @@
 <script setup>
 import {ref} from 'vue'
 import {
+  genNewFileName,
   getFileNameWithoutExtension, transToDirPath,
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
@@ -139,22 +140,6 @@ async function moveObject(operationFileName, targetFileName) {
 
 }
 
-function genNewFileName(oldname){
-  let count = 1
-  let basic = getFileNameWithoutExtension(oldname)
-  let suffix = oldname.split(".").pop();
-  let newName = ""
-  while (true){
-    newName = basic + `(${count}).` + suffix
-    if (allFileNames.value.some(obj => obj.name === newName)){
-      count++
-    }else {
-      break
-    }
-  }
-  return newName
-}
-
 const moveFileWithDiffName = async () => {
   if(multipleSelection.value.length === 0){
     ElMessage({
@@ -165,7 +150,7 @@ const moveFileWithDiffName = async () => {
   }
   openLoadingDialog(`正在移动文件...`)
   for (let i = 0; i < multipleSelection.value.length; i++) {
-    await moveObject(multipleSelection.value[i].name, genNewFileName(multipleSelection.value[i].name))
+    await moveObject(multipleSelection.value[i].name, genNewFileName(multipleSelection.value[i].name,allFileNames.value))
   }
   closeLoading()
 }

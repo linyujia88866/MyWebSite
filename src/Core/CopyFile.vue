@@ -38,28 +38,29 @@
       <span class="dialog-footer">
         <el-button @click="dialogTableVisible = false">取消</el-button>
         <el-button type="primary" @click="handleConfirm"
-        >移动到此</el-button
+        >复制到此</el-button
         >
       </span>
     </template>
   </el-dialog>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
+  <RepeatDir ref="repeatDirDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></RepeatDir>
 </template>
 
 <script setup>
 import {defineProps, nextTick, ref} from 'vue'
 import {
-  calSize, findObject,
+  findObject,
   getParentDirectory,
   hasElementWithName,
-  removePrefix,
-  replaceSuffix,
-  timePatternChange, transToDirPath
+  transToDirPath
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 import Repeat from "@/Core/RepeatWhenCopy.vue";
+import RepeatDir from "@/Core/RepeatWhenCopyDir.vue";
+import {getFileListApi} from "@/utils/fileApi";
 
 
 const props = defineProps({
@@ -73,19 +74,23 @@ const emit = defineEmits(['updateValue'])
 let curPath = ref('')
 let originPath = ref('')
 let operationFileName = ref('')
+let operationFileType = ref('file')
 let repeatFiledDialog=ref()
-let sameFilesToUpload=ref([])
+let repeatDirDialog=ref()
+let sameFilesToCopy=ref([])
+let sameFoldersToCopy=ref([])
 
 const dialogTableVisible = ref(false)
 async function handleCloseSameFileDialog() {
   repeatFiledDialog.value.changeVisibleStatus()     //关闭窗口
+  repeatDirDialog.value.changeVisibleStatus()     //关闭窗口
   dialogTableVisible.value = false
   clearFiles()
   emit('updateValue', "")
 }
 
 function clearFiles(){
-  sameFilesToUpload.value = []
+  sameFilesToCopy.value = []
 }
 // 进入文件夹
 async function goIntoDir(dir) {
@@ -96,10 +101,13 @@ async function goIntoDir(dir) {
   }
   await getFileList()
 }
-function changeVisibleStatus(curDir, filename) {
+
+// 打开窗口
+function changeVisibleStatus(curDir, fileObject) {
   dialogTableVisible.value = true
   originPath.value = curDir
-  operationFileName.value = filename
+  operationFileName.value = fileObject.name
+  operationFileType.value = fileObject.type
   curPath.value = ""
   nextTick(async () => {
     await getFileList()
@@ -118,24 +126,41 @@ const folders = ref([]);
 const fileNames = ref([]);
 
 function  handleConfirm(){
-  if(hasElementWithName(fileNames.value, operationFileName.value)){
-    sameFilesToUpload.value.push(findObject(fileNames.value, operationFileName.value))
+  if(operationFileType.value === 'file'){
+    if(hasElementWithName(folders.value, operationFileName.value)){
+      sameFilesToCopy.value.push(findObject(fileNames.value, operationFileName.value))
+    }
+  }else {
+    if(hasElementWithName(folders.value, operationFileName.value)){
+      sameFoldersToCopy.value.push(findObject(folders.value, operationFileName.value))
+    }
   }
-  if(sameFilesToUpload.value.length >0){
+  if(sameFilesToCopy.value.length >0){
     repeatFiledDialog.value.openDialog()
-    repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value, originPath.value)
+    repeatFiledDialog.value.transData(sameFilesToCopy.value, curPath.value, fileNames.value, originPath.value)
+    return
+  }
+  if(sameFoldersToCopy.value.length >0){
+    repeatDirDialog.value.openDialog()
+    repeatDirDialog.value.transData(sameFoldersToCopy.value, curPath.value, folders.value, originPath.value)
     return
   }
   copyObject()
 }
 
-function copyObject(){
+async function copyObject() {
   openLoadingDialog('正在复制文件...')
-  let url = "/minio/copyObject"
+  let url
+  if (operationFileType.value === 'file') {
+    url = "/minio/copyObject"
+  } else {
+    url = "/minio/copyDir"
+  }
+
   const formData = new FormData();
   formData.append('srcpath', transToDirPath(originPath.value) + operationFileName.value);
   formData.append('despath', transToDirPath(curPath.value) + operationFileName.value);
-  myHttp.post(url, formData, {
+  await myHttp.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -149,61 +174,19 @@ function copyObject(){
           });
           dialogTableVisible.value = false
           emit('updateValue', "")
-      }})
+        }
+      })
       .catch(error => {
         ElMessage({
           message: '复制文件失败！',
           type: 'error',
         });
       });
-      closeLoading()
+  closeLoading()
 }
 async function getFileList() {
-  openLoadingDialog('正在加载文件夹目录信息...')
-  let url = "/minio/listObjectsInDir/test"
-  await myHttp.post(url, {prefix: curPath.value + '/'}, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-      .then(response => {
-        if (response.status === 200) {
-          folders.value = []
-          fileNames.value = []
-          let array = response.data;
-          for (let i = 0; i < array.length; i++) {
-            let json_item = array[i]
-            let item_name_temp = removePrefix(json_item.name, '.*?\/')
-            let item_size_temp = json_item.size
-            let item_time_temp = json_item.time
-            let item_name = removePrefix(item_name_temp, curPath.value + '\/')
-            if (item_name.endsWith('/')) {
-              folders.value.push({
-                name: replaceSuffix(item_name),
-                size: calSize(item_size_temp),
-                time: timePatternChange(item_time_temp),
-                show: false,
-              })
-            } else {
-              if (!item_name.endsWith("_#*#*dirMask")) {
-                fileNames.value.push({
-                  name: item_name,
-                  size: calSize(item_size_temp),
-                  time: timePatternChange(item_time_temp),
-                  show: false,
-                })
-              }
-            }
-          }
-        } else {
-          ElMessage({
-            message: '获取文件列表失败！',
-            type: 'error',
-          });
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  closeLoading()
+  let a
+  [a, folders.value, fileNames.value] = await getFileListApi(curPath.value + '/', [],[],[])
 }
 
 defineExpose({

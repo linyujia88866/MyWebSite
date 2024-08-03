@@ -391,6 +391,7 @@ import { ElMessageBox } from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
+import {getFileListApi} from "@/utils/fileApi";
 
 const  checkDelete = async () => {
   ElMessageBox.confirm(
@@ -1013,62 +1014,14 @@ function afterFileSelected(request) {
   }
 }
 
-
 // 使用计算属性
 const hasName = (target) => {
   return fileNames.value.some(item => item.name === target);
 };
 
-function getFileList(){
-  openLoadingDialog('正在获取文件列表信息...')
-  let url = "/minio/listObjectsInDir/test"
-  myHttp.post(url, {prefix: curPath.value+'/'}, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-    .then(response => {
-      if (response.status === 200) {
-        folders.value = []
-        fileNames.value = []
-        let array = response.data;
-        for (let i = 0; i < array.length; i++) {
-          let json_item = array[i]
-          let item_name_temp = removePrefix(json_item.name,'.*?\/')
-          let item_size_temp = json_item.size
-          let item_time_temp = json_item.time
-          let item_name = removePrefix(item_name_temp, curPath.value + '\/')
-          if(item_name.endsWith('/')){
-            folders.value.push({
-              name: replaceSuffix(item_name),
-              size: calSize(item_size_temp),
-              time: timePatternChange(item_time_temp),
-              show: false,
-            })
-          }
-          else {
-            if(!item_name.endsWith("_#*#*dirMask")){
-              fileNames.value.push({
-                name: item_name,
-                size: calSize(item_size_temp),
-                time: timePatternChange(item_time_temp),
-                show: false,
-                lineWidth: 0,
-                fileEdit: 'false'
-              })
-            }
-          }
-        }
-      }else {
-        ElMessage({
-          message: '获取文件列表失败！',
-          type: 'error',
-        });
-      }
-    })
-    .catch(error => console.error('Error:', error));
-    loading?.close()
-    loading = null
+async function getFileList() {
+  let a
+  [a, folders.value, fileNames.value] = await getFileListApi(curPath.value + '/', [], [], [])
 }
 
 

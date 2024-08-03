@@ -41,7 +41,7 @@
               :show-after="500"
           >
             <el-button   circle
-                         @click.stop="copyFile(scope.row.name)"
+                         @click.stop="copyFile(scope.row)"
                          v-if="scope.row.show"
                          style="margin: 0 0 0 8px;"
                          type="primary"
@@ -57,7 +57,7 @@
             <el-button   circle
                          v-if="scope.row.show"
                        style="margin: 0 0 0 8px;"
-                       @click.stop="moveTheFile(scope.row.name)"
+                       @click.stop="moveTheFile(scope.row)"
                        type="primary"
                        size="small"
                        :icon="TopRight" ></el-button>
