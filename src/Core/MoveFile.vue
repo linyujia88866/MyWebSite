@@ -49,17 +49,16 @@
 <script setup>
 import {defineProps, nextTick, ref} from 'vue'
 import {
-  calSize, findObject,
+  findObject,
   getParentDirectory,
   hasElementWithName,
-  removePrefix,
-  replaceSuffix,
-  timePatternChange, transToDirPath
+  transToDirPath
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 import Repeat from "@/Core/RepeatWhenMove.vue";
+import {getFileListApi} from "@/utils/fileApi";
 
 
 const props = defineProps({
@@ -123,9 +122,6 @@ function  handleConfirm(){
   }
   if(sameFilesToUpload.value.length >0){
     repeatFiledDialog.value.openDialog()
-    console.log("--------------")
-    console.log(curPath.value)
-    console.log(fileNames.value)
     repeatFiledDialog.value.transData(sameFilesToUpload.value, curPath.value, fileNames.value, originPath.value)
     return
   }
@@ -162,51 +158,8 @@ function moveObject(){
   closeLoading()
 }
 async function getFileList() {
-  openLoadingDialog('正在加载文件夹目录信息...')
-  let url = "/minio/listObjectsInDir/test"
-  await myHttp.post(url, {prefix: curPath.value + '/'}, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  })
-      .then(response => {
-        if (response.status === 200) {
-          folders.value = []
-          fileNames.value = []
-          let array = response.data;
-          for (let i = 0; i < array.length; i++) {
-            let json_item = array[i]
-            let item_name_temp = removePrefix(json_item.name, '.*?\/')
-            let item_size_temp = json_item.size
-            let item_time_temp = json_item.time
-            let item_name = removePrefix(item_name_temp, curPath.value + '\/')
-            if (item_name.endsWith('/')) {
-              folders.value.push({
-                name: replaceSuffix(item_name),
-                size: calSize(item_size_temp),
-                time: timePatternChange(item_time_temp),
-                show: false,
-              })
-            } else {
-              if (!item_name.endsWith("_#*#*dirMask")) {
-                fileNames.value.push({
-                  name: item_name,
-                  size: calSize(item_size_temp),
-                  time: timePatternChange(item_time_temp),
-                  show: false,
-                })
-              }
-            }
-          }
-        } else {
-          ElMessage({
-            message: '获取文件列表失败！',
-            type: 'error',
-          });
-        }
-      })
-      .catch(error => console.error('Error:', error));
-  closeLoading()
+  let a
+  [a, folders.value, fileNames.value] = await getFileListApi(curPath.value + '/', [],[],[])
 }
 
 defineExpose({
