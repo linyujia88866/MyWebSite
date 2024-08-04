@@ -4,7 +4,7 @@
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">
         <div  style=" margin: 12px 0 0;padding: 0;display: flex">
-          <div style="margin-left: 12px; margin-right: 12px; padding: 0;">
+          <div style="margin-left: 12px; margin-right: 12px; padding: 0;" v-if="!batchOperationStatus">
             <el-upload
                 @click="clearFiles"
                 action=""
@@ -19,7 +19,14 @@
               <el-button size="large" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
             </el-upload>
           </div>
-          <el-button type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
+          <el-button v-if="!batchOperationStatus" type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
+          <el-button v-if="batchOperationStatus"
+                     style="margin-left: 12px"
+                     type="primary" size="large"
+                     @click.stop="batchDownload">下载</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchDelete">删除</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="makeDir">复制</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="makeDir">移动</el-button>
         </div>
       </div>
       <!--      =====================================================================================================================================================-->
@@ -41,6 +48,7 @@
           @view-file="showTheFile"
           @move-file="moveTheFile"
           @rename-file="renameFile"
+          @selection-change="handleSelectionChange"
           style="width: 1200px; " ref="table"></FileInfoData>
     </div>
 <!--    上面这个高度值要注意，要和el-table那边的设置一致，否则会出现末尾行遮挡现象-->
@@ -80,7 +88,7 @@
 <script setup>
 import {nextTick, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {getParentDirectory} from "@/utils/stringutils";
+import {genNewFolderName, getParentDirectory} from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
@@ -91,7 +99,7 @@ import RenameFile from "@/Core/RenameFile.vue";
 import MakingDir from "@/Core/MakingDir.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {showTheFileApi} from "@/utils/viewFile";
-import {uploadFileApi} from "@/utils/fileApi";
+import {downloadFileApi, uploadFileApi} from "@/utils/fileApi";
 import ViewPhotoes from "@/Core/ViewPhotoes.vue";
 
 const router = useRouter();           // 理由处理
@@ -109,6 +117,8 @@ const files = ref([]);       // 上传文件时提示
 const folders = ref([]);     // 当前页面的文件夹名称列表
 const fileObject = ref(null)   // 正在上传或处理的文件对象
 const fileNames = ref([]);    // 当前页面的文件名列表
+let batchOperationStatus = ref(false)
+let selectionFiles = ref([])
 
 let makingDir=ref()   // 正在创建  文件夹
 let viewPhotos=ref()   // 正在创建  文件夹
@@ -129,6 +139,11 @@ async function confirmRename(newName) {
 
 function updateCurPath(res){
   [curPath.value, folders.value, fileNames.value] = [...res]
+}
+
+function handleSelectionChange(selections) {
+  selectionFiles.value = selections
+  batchOperationStatus.value = selections.length > 0;
 }
 function handleExceed(files, fileList) {
   ElNotification({
@@ -176,6 +191,24 @@ async function handleCloseSameFileDialog() {
 // 创建文件夹
 function makeDir() {
   makingDir.value.open(curPath.value, folders.value)
+}
+
+async function batchDownload() {
+  for (let i = 0; i < selectionFiles.value.length; i++) {
+    let file = selectionFiles.value[i]
+    console.log(file)
+    console.log(file.name)
+    console.log(file.type)
+    await downloadFileApi(file.name, file.type, curPath.value)
+  }
+}
+
+async function batchDelete() {
+  table.value.batchDelete(selectionFiles.value)
+}
+
+function clearSelection() {
+  table.value.clearSelection()
 }
 
 // 返回上一层

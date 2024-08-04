@@ -3,8 +3,10 @@
       :data="tableData"
       :highlight-current-row="true"
       max-height="76vh"
+      ref = "table"
       @cell-mouse-enter="handleMouseEnter"
       @cell-mouse-leave="handleMouseLeave"
+      @selection-change="handleSelectionChange"
       style="width: 100%" :default-sort="{ prop: 'type', order: 'descending' }">
     <el-table-column type="selection" width="30" />
     <el-table-column v-if="false"
@@ -156,7 +158,16 @@ import {CopyDocument, Delete, TopRight, Download, Edit, View} from "@element-plu
 import fl from "@/assets/wenjian.jpg";
 import fd from "@/assets/wenjianjia.png";
 
-const emit = defineEmits(['moveFile', 'renameFile', 'viewFile', 'copyFile', 'curPathChange'])
+const table = ref()
+
+const emit = defineEmits([
+    'moveFile',
+    'renameFile',
+    'viewFile',
+    'copyFile',
+    'curPathChange',
+    'SelectionChange'
+])
 
 function getMapBg(markNumber) {
   let bgObj = {
@@ -196,18 +207,47 @@ function deleteFile(row){
         type: 'warning',
       }
   )
+    .then(async () => {
+      let res
+      if(row.type === 'file'){
+        res = await deleteFileApi(row.name, curPath.value)
+      } else {
+        res = await deleteFolderApi(row.name, curPath.value)
+      }
+      if (res === 'success') {
+        let a
+        let b
+        [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
+      }
+    })
+    .catch(() => {
+      return false
+    })
+}
+
+function batchDelete(rows){
+  ElMessageBox.confirm(
+      '确认是否删除这些文件/文件夹?',
+      'Warning',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
       .then(async () => {
         let res
-        if(row.type === 'file'){
-          res = await deleteFileApi(row.name, curPath.value)
-        } else {
-          res = await deleteFolderApi(row.name, curPath.value)
+        for (let i = 0; i < rows.length; i++) {
+          let row = rows[i]
+          if(row.type === 'file'){
+            res = await deleteFileApi(row.name, curPath.value)
+          } else {
+            res = await deleteFolderApi(row.name, curPath.value)
+          }
         }
-        if (res === 'success') {
-          let a
-          let b
-          [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
-        }
+        let a
+        let b
+        [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
       })
       .catch(() => {
         return false
@@ -233,6 +273,10 @@ function handleDbClick(row) {
 
 async function downloadFile(fileName, fileType) {
   await downloadFileApi(fileName, fileType, curPath.value)
+}
+
+function clearSelection(){
+  table.value.clearSelection()
 }
 
 async function goIntoDir(dir) {
@@ -264,9 +308,15 @@ function handleMouseLeave(row, column, cell, event) {
   row.show = false
 }
 
+function handleSelectionChange(newSelection){
+    emit('SelectionChange', newSelection)
+}
+
 defineExpose({
   updateTableData,
-  updateCurPath
+  updateCurPath,
+  clearSelection,
+  batchDelete
 })
 </script>
 

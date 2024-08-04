@@ -102,7 +102,8 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
             },
         }).then(() => {
 
-        }).catch(() => {
+        }).catch((error) => {
+            console.log(error)
             ElNotification({
                 title: '错误',
                 message: `文件【${file.name}】上传失败！`,
