@@ -26,7 +26,7 @@
                      @click.stop="batchDownload">下载</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchDelete">删除</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchCopy">复制</el-button>
-          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="makeDir">移动</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchMove">移动</el-button>
         </div>
       </div>
       <!--      =====================================================================================================================================================-->
@@ -206,6 +206,10 @@ async function batchDelete() {
 
 function batchCopy() {
   copyFile.value.openDialog(curPath.value, selectionFiles.value)
+}
+
+function batchMove() {
+  moveFile.value.openDialog(curPath.value, selectionFiles.value)
 }
 
 function clearSelection() {
