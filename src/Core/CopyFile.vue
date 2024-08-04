@@ -45,6 +45,7 @@
   </el-dialog>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
   <RepeatDir ref="repeatDirDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></RepeatDir>
+  <RepeatBatch ref="repeatBatchDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></RepeatBatch>
 </template>
 
 <script setup>
@@ -60,6 +61,7 @@ import {ElMessage} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 import Repeat from "@/Core/RepeatWhenCopy.vue";
 import RepeatDir from "@/Core/RepeatWhenCopyDir.vue";
+import RepeatBatch from "@/Core/RepeatWhenCopyBatch.vue";
 import {getFileListApi} from "@/utils/fileApi";
 
 
@@ -77,13 +79,18 @@ let operationFileName = ref('')
 let operationFileType = ref('file')
 let repeatFiledDialog=ref()
 let repeatDirDialog=ref()
+let repeatBatchDialog=ref()
 let sameFilesToCopy=ref([])
 let sameFoldersToCopy=ref([])
+let batchStatus = ref(false)
+let selectionFiles = ref([])
+let notRepeatFiles =  ref([])
 
 const dialogTableVisible = ref(false)
 async function handleCloseSameFileDialog() {
   repeatFiledDialog.value.changeVisibleStatus()     //关闭窗口
   repeatDirDialog.value.changeVisibleStatus()     //关闭窗口
+  repeatBatchDialog.value.changeVisibleStatus()     //关闭窗口
   dialogTableVisible.value = false
   clearFiles()
   emit('updateValue', "")
@@ -91,6 +98,8 @@ async function handleCloseSameFileDialog() {
 
 function clearFiles(){
   sameFilesToCopy.value = []
+  sameFoldersToCopy.value = []
+  notRepeatFiles.value = []
 }
 // 进入文件夹
 async function goIntoDir(dir) {
@@ -104,11 +113,23 @@ async function goIntoDir(dir) {
 
 // 打开窗口
 function changeVisibleStatus(curDir, fileObject) {
+  batchStatus.value = false  // 单个对象复制
   dialogTableVisible.value = true
   originPath.value = curDir
   operationFileName.value = fileObject.name
   operationFileType.value = fileObject.type
   curPath.value = ""
+  nextTick(async () => {
+    await getFileList()
+  })
+}
+
+function openDialog(curDir, fileObjects) {
+  batchStatus.value = true  // 批量复制对象
+  dialogTableVisible.value = true
+  originPath.value = curDir    // 复制文件起始路径，也就是执行复制操作时所谓的当前路径
+  selectionFiles.value = fileObjects
+  curPath.value = ""    // 复制对象目的路径
   nextTick(async () => {
     await getFileList()
   })
@@ -126,6 +147,10 @@ const folders = ref([]);
 const fileNames = ref([]);
 
 function  handleConfirm(){
+  if(batchStatus.value === true){
+    handleConfirmBatchMode()
+    return;
+  }
   if(operationFileType.value === 'file'){
     if(hasElementWithName(folders.value, operationFileName.value)){
       sameFilesToCopy.value.push(findObject(fileNames.value, operationFileName.value))
@@ -146,6 +171,45 @@ function  handleConfirm(){
     return
   }
   copyObject()
+}
+
+async function handleConfirmBatchMode() {
+  console.log("批量复制")
+  for (let i = 0; i < selectionFiles.value.length; i++) {
+    let row = selectionFiles.value[i]
+    if(row.type === 'file'){
+      if(hasElementWithName(fileNames.value, row.name)){
+        row.radio = 'skip'
+        sameFilesToCopy.value.push(row)
+      } else {
+        notRepeatFiles.value.push(row)
+      }
+    }else {
+      if(hasElementWithName(folders.value, row.name)){
+        row.radio = 'skip'
+        sameFilesToCopy.value.push(row)
+      }else {
+        notRepeatFiles.value.push(row)
+      }
+    }
+  }
+  for (let i = 0; i < notRepeatFiles.value.length; i++) {
+    let row = notRepeatFiles.value[i]
+    await copyObjectBatch(row)
+  }
+  if(sameFilesToCopy.value.length >0 || sameFoldersToCopy.value.length >0){
+    repeatBatchDialog.value.openDialog()
+    repeatBatchDialog.value.transData(
+        sameFilesToCopy.value,      // 同名文件列表
+        sameFoldersToCopy.value,     // 同名文件夹列表
+        curPath.value,        // 复制目标地址
+        fileNames.value,     // 所有文件名，用于计算 副本文件名
+        folders.value,       // 所有文件夹名
+        originPath.value)    // 复制初始地址
+  } else {
+    dialogTableVisible.value = false
+    emit('updateValue', "")
+  }
 }
 
 async function copyObject() {
@@ -184,13 +248,48 @@ async function copyObject() {
       });
   closeLoading()
 }
+
+async function copyObjectBatch(file) {
+  openLoadingDialog('正在复制文件...')
+  let url
+  if (file.type === 'file') {
+    url = "/minio/copyObject"
+  } else {
+    url = "/minio/copyDir"
+  }
+  const formData = new FormData();
+  formData.append('srcpath', transToDirPath(originPath.value) + file.name);
+  formData.append('despath', transToDirPath(curPath.value) + file.name);
+  await myHttp.post(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then(response => {
+      if (response.status === 200) {
+        ElMessage({
+          message: `复制文件${file.name}成功！`,
+          type: 'success',
+        });
+
+      }
+    })
+    .catch(error => {
+      ElMessage({
+        message: `复制文件${file.name}失败！`,
+        type: 'error',
+      });
+    });
+  closeLoading()
+}
 async function getFileList() {
   let a
   [a, folders.value, fileNames.value] = await getFileListApi(curPath.value + '/', [],[],[])
 }
 
 defineExpose({
-  changeVisibleStatus
+  changeVisibleStatus,
+  openDialog
 })
 
 </script>

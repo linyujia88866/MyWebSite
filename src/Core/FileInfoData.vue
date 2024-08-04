@@ -138,14 +138,14 @@
         label="大小"
         width="100px"
     >
-      <template #default="scope">{{ scope.row.size }}</template>
+      <template #default="scope">{{ scope.row.type==='folder'? '-':  scope.row.size }}</template>
     </el-table-column>
 
     <el-table-column
         property="time"
         label="修改时间" sortable >
 
-      <template #default="scope">{{ scope.row.time }}</template>
+      <template #default="scope">{{ scope.row.type==='folder'? '-':  scope.row.time }}</template>
     </el-table-column>
   </el-table>
 </template>
@@ -245,9 +245,7 @@ function batchDelete(rows){
             res = await deleteFolderApi(row.name, curPath.value)
           }
         }
-        let a
-        let b
-        [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
+        await updateTableData()
       })
       .catch(() => {
         return false

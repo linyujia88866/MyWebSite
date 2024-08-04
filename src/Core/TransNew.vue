@@ -25,7 +25,7 @@
                      type="primary" size="large"
                      @click.stop="batchDownload">下载</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchDelete">删除</el-button>
-          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="makeDir">复制</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchCopy">复制</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="makeDir">移动</el-button>
         </div>
       </div>
@@ -196,15 +196,16 @@ function makeDir() {
 async function batchDownload() {
   for (let i = 0; i < selectionFiles.value.length; i++) {
     let file = selectionFiles.value[i]
-    console.log(file)
-    console.log(file.name)
-    console.log(file.type)
     await downloadFileApi(file.name, file.type, curPath.value)
   }
 }
 
 async function batchDelete() {
   table.value.batchDelete(selectionFiles.value)
+}
+
+function batchCopy() {
+  copyFile.value.openDialog(curPath.value, selectionFiles.value)
 }
 
 function clearSelection() {

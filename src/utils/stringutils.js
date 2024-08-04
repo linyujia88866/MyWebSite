@@ -133,10 +133,19 @@ function calSize(size){
 function genNewFileName(oldName, allFileNames){
     let count = 1
     let basic = getFileNameWithoutExtension(oldName).replace(/\(\d+\)/g, "");
-    let suffix = oldName.split(".").pop();
+    let splitRes = oldName.split(".")
+    let suffix = ""
+    if(splitRes.length > 1){
+        suffix = oldName.split(".").pop();
+    }
     let newName = ""
     while (true){
-        newName = basic + `(${count}).` + suffix
+        if(suffix.length > 0){
+            newName = basic + `(${count}).` + suffix
+        } else {
+            newName = basic + `(${count})`
+        }
+
         if (allFileNames.some(obj => obj.name === newName)){
             count++
         }else {
