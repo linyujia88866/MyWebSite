@@ -1,6 +1,4 @@
 <script setup>
-
-import Navigate from "@/components/Common/Navigate.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 </script>
 

@@ -59,7 +59,6 @@ function changeVisibleStatus() {
   dialogTableVisible.value = false
 }
 
-
 function openDialog() {
   dialogTableVisible.value = true
 }

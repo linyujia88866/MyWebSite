@@ -8,7 +8,6 @@
         <el-button type="primary" v-if="showMode==='1'"  @click.prevent="showMode='2'"  size="large">列表式显示</el-button>
       </div>
       <div class="card-container" v-if="showMode==='1'">
-
         <Card v-for="task in tasks"
               :title="task.title"
               :date="task.createdAt.replace(/\.0$/, '')"
@@ -38,7 +37,6 @@
 
 <script setup>
 import {reactive, ref} from 'vue';
-import Navigate from "@/components/Common/Navigate.vue";
 
 import {useRouter} from 'vue-router';
 const router = useRouter();

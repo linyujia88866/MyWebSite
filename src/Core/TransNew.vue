@@ -16,17 +16,17 @@
                 :on-exceed="handleExceed"
                 :show-file-list="false"
                 >
-              <el-button size="large" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
+              <el-button size="default" type="primary">点击上传<el-icon class="el-icon--right"><Upload /></el-icon></el-button>
             </el-upload>
           </div>
-          <el-button v-if="!batchOperationStatus" type="primary" size="large" @click.stop="makeDir">新建文件夹</el-button>
+          <el-button v-if="!batchOperationStatus" type="primary" size="default" @click.stop="makeDir">新建文件夹</el-button>
           <el-button v-if="batchOperationStatus"
                      style="margin-left: 12px"
-                     type="primary" size="large"
+                     type="primary" size="default"
                      @click.stop="batchDownload">下载</el-button>
-          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchDelete">删除</el-button>
-          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchCopy">复制</el-button>
-          <el-button v-if="batchOperationStatus" type="primary" size="large" @click.stop="batchMove">移动</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchDelete">删除</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchCopy">复制</el-button>
+          <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchMove">移动</el-button>
         </div>
       </div>
       <!--      =====================================================================================================================================================-->
