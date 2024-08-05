@@ -2,58 +2,26 @@
 <template>
   <div class="home-page">
     <div>
-      <navigate-one ref="childRef"></navigate-one>
+      <navigate-one ref="childRef" :origin-tab="'功能'"></navigate-one>
     </div>
     <div class="card-container">
-        <!-- 卡片内容 -->
-        <div>
-          <div class="card card-fileTrans" @click="gotoTrans">
-
-          </div>
-          <p style="margin: 0; padding: 0; font-weight: bold;">
-            文件传输助手
-          </p>
-        </div>
-      <!--=================================================分割线================================================================-->
+      <!-- 卡片内容 -->
       <div>
-        <div class="card card-fileChange" @click="gotoTrans">
+        <div class="card card-fileTrans" @click="gotoCreateArt">
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          文件转换助手
-        </p>
-      </div>
-<!--=================================================分割线================================================================-->
-      <div>
-        <div class="card card-notebook" @click="gotoNotebook">
-
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          文章博客日记
+          创建新的文章
         </p>
       </div>
       <!--=================================================分割线================================================================-->
       <div>
-        <div class="card card-memory" @click="gotoMemory">
+        <div class="card card-fileChange" @click="gotoManage">
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          待办任务清单管理
+          管理我的文章
         </p>
-      </div>
-      <!--=================================================分割线================================================================-->
-      <div v-if="false">
-        <div class="card card-table" >
-
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          表格快捷变换
-        </p>
-      </div>
-
-
-      <div  class="card" @click.stop="gotoTest()" >
-
       </div>
     </div>
   </div>
@@ -67,20 +35,12 @@ const router = useRouter();
 
 const childRef = ref(null);
 
-function gotoNotebook() {
-  router.push({name: 'articleHome'});
+function gotoCreateArt() {
+  router.push({name: 'createArticle'});
 }
 
-function gotoTest() {
-  router.push({name: 'test'});
-}
-
-function gotoMemory() {
-  router.push({name: 'memoryCards'});
-}
-
-function gotoTrans() {
-  router.push({name: 'fileTrans'});
+function gotoManage() {
+  router.push({name: 'notes'});
 }
 
 </script>
@@ -111,40 +71,40 @@ function gotoTrans() {
   padding: 10px;
   text-align: center;
 
-  background-image: url('../assets/more.png');
+  background-image: url('@/assets/more.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .card-table{
-   background-image: url('../assets/table.png');
-   background-size: cover;
-   background-position: 0 -20px;
-   background-repeat: no-repeat;
- }
+  background-image: url('@/assets/table.png');
+  background-size: cover;
+  background-position: 0 -20px;
+  background-repeat: no-repeat;
+}
 .card-notebook{
-  background-image: url('../assets/note.jpg');
+  background-image: url('@/assets/note.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 .card-memory{
-  background-image: url('../assets/remember.jpg');
+  background-image: url('@/assets/remember.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .card-fileTrans{
-  background-image: url('../assets/filetrans.png');
+  background-image: url('@/assets/createArticle.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .card-fileChange{
-  background-image: url('../assets/trans.jpg');
+  background-image: url('@/assets/manageArticle.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

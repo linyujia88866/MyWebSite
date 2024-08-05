@@ -86,7 +86,8 @@ onMounted(() => {
 </script>
 <style scoped lang="scss">
 :deep(.ql-editor) {
-  min-height: 180px;
+  min-height: 500px;
+  max-height: 600px;
 }
 :deep(.ql-formats) {
   height: 21px;

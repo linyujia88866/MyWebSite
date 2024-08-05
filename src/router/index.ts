@@ -20,6 +20,8 @@ import Help from "@/components/Basic/Help.vue";
 import TransNew from "@/Core/TransNew.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
 import ViewArticle from "@/Comps/Article/ViewArticle.vue";
+import CreateArticle from "@/Comps/Article/CreateArticle.vue";
+import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 
 const routes = [
   {
@@ -116,6 +118,16 @@ const routes = [
     path: '/viewArticle',
     name: 'viewArticle',
     component: ViewArticle
+  },
+  {
+    path: '/createArticle',
+    name: 'createArticle',
+    component: CreateArticle
+  },
+  {
+    path: '/articleHome',
+    name: 'articleHome',
+    component: ArticleHome
   }
 ]
 

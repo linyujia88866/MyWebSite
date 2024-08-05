@@ -1,9 +1,9 @@
 <template>
   <div>
     <navigate-one  :origin-tab="'功能'"></navigate-one>
-    <el-affix :offset="80" style="text-align: left; margin-left: 12px;" >
-      <el-button type="primary" @click="router.push('/notes')">返回文章列表</el-button>
-    </el-affix>
+    <div style=" position: absolute; text-align: left; margin-left: 20px;  top: 80px; " >
+      <el-button type="primary" @click="router.push('/notes')">返回文章管理</el-button>
+    </div>
     <div style=" margin: 12px auto auto;width: 70%;">
       <div> <h1>{{title}}</h1></div>
 
