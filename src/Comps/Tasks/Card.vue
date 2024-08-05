@@ -13,7 +13,10 @@
           </div>
           <div class="bottom">
             <time class="time">{{ props.date }}</time>
-            <el-button text class="button">查看</el-button>
+            <div style="display: flex;justify-content: right; ">
+              <el-button size="small" type="primary" class="button" style="margin-left: auto">查看</el-button>
+              <el-button size="small" type="primary"  class="button" @click.stop="deleteTask" >删除</el-button>
+            </div>
           </div>
         </div>
       </el-card>
@@ -30,12 +33,18 @@ const props = defineProps({
     type: String
   },
 })
+let emit = defineEmits(['deleteTask'])
+function deleteTask(){
+  emit('deleteTask')
+}
 </script>
 
 <style scoped>
 .time {
   font-size: 12px;
-  color: #999;
+  color: black;
+  margin: 0 20px 0 0;
+  width: 120px;
 }
 
 .bottom {
@@ -47,8 +56,7 @@ const props = defineProps({
 }
 
 .button {
-  padding: 0;
-  min-height: auto;
+  margin: 0;
 }
 
 .image {

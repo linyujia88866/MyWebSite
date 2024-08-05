@@ -12,6 +12,7 @@
               :title="task.title"
               :date="task.createdAt.replace(/\.0$/, '')"
               @click.prevent="gotoShowCase(task.taskId)"
+              @delete-task="deleteTask(task.taskId)"
         />
       </div>
       <div class="card-container2" v-if="showMode==='2'">
@@ -27,7 +28,7 @@
           margin: 0; padding: 0;">{{task.createdAt.replace(/\.0$/, '')}}</p>
 
             <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >编辑</el-button>
-            <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >删除</el-button>
+            <el-button type="primary" size="small"  @click.prevent="deleteTask(task.taskId)"  >删除</el-button>
           </li>
         </ul>
       </div>
@@ -37,28 +38,31 @@
 
 <script setup>
 import {reactive, ref} from 'vue';
-
-import {useRouter} from 'vue-router';
-const router = useRouter();
-function gotoShowCase(taskId){
-  router.push({name: 'memory',query:{taskId: taskId}});
-}
-const tasks = reactive([])
-let url = "/task/tasks"
-let showMode = ref('1')
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
 import Card from "@/Comps/Tasks/Card.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
+import {useRouter} from 'vue-router';
 
-myHttp.get(url)
+const router = useRouter();
+const tasks = ref([])
+let showMode = ref('1')
+getTaskList()
+
+function gotoShowCase(taskId){
+  router.push({name: 'memory',query:{taskId: taskId}});
+}
+async function getTaskList() {
+  tasks.value = []
+  let url = "/task/tasks"
+  await myHttp.get(url)
     .then(response => {
       if (response.data.code === 200) {
         let array = response.data.data;
         for (let i = 0; i < array.length; i++) {
-          tasks.push(array[i])
+          tasks.value.push(array[i])
         }
-      }else {
+      } else {
         ElMessage({
           message: '获取任务列表失败！',
           type: 'error',
@@ -66,7 +70,20 @@ myHttp.get(url)
       }
     })
     .catch(error => console.error('Error:', error));
-
+}
+async function deleteTask(taskId) {
+  await myHttp.post("/task/delete/" + taskId)
+    .then(response => {
+      if (response.data.code === 200) {
+        ElMessage({
+          message: "任务删除成功" + taskId,
+          type: 'success',
+        });
+        getTaskList()
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
 
 </script>
 
@@ -74,7 +91,7 @@ myHttp.get(url)
 /* 在这里添加全局样式 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   grid-gap: 5px;
   margin: 12px 8px 8px;
   flex-grow: 1;

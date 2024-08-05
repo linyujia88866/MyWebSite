@@ -1,9 +1,9 @@
 <template>
 <div>
-  <header style="margin-top: 70px">
+  <header >
     <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">
   </header>
-  <div style="width: 100%">
+  <div style="width: 100%; margin-bottom: 100px">
     <Editor :value="emailForm.test_msg" @updateValue="getMsg"  />
   </div>
   <div class="fixed-bar">
@@ -105,7 +105,8 @@ async function save() {
   display: flex;
   justify-content: right;
   align-items: center;
-  background-color: rgb(135, 206, 235);
+  //background-color: rgb(135, 206, 235);
+  background-color: white;
   color: white;
   padding: 10px;
 }

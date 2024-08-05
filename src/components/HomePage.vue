@@ -14,7 +14,16 @@
             文件传输助手
           </p>
         </div>
+      <!--=================================================分割线================================================================-->
+      <div>
+        <div class="card card-fileChange" @click="gotoTrans">
 
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          文件转换助手
+        </p>
+      </div>
+<!--=================================================分割线================================================================-->
       <div>
         <div class="card card-notebook" @click="gotoNotebook">
 
@@ -23,7 +32,7 @@
           文章博客日记
         </p>
       </div>
-
+      <!--=================================================分割线================================================================-->
       <div>
         <div class="card card-memory" @click="gotoMemory">
 
@@ -32,7 +41,7 @@
           待办任务清单管理
         </p>
       </div>
-
+      <!--=================================================分割线================================================================-->
       <div v-if="false">
         <div class="card card-table" >
 
@@ -43,9 +52,9 @@
       </div>
 
 
-        <div class="card" @click.stop="gotoTest()" >
+      <div  class="card" @click.stop="gotoTest()" >
 
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +62,6 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
-import Navigate from "@/components/Common/Navigate.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 const router = useRouter();
 
@@ -130,6 +138,13 @@ function gotoTrans() {
 
 .card-fileTrans{
   background-image: url('../assets/filetrans.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-fileChange{
+  background-image: url('../assets/trans.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

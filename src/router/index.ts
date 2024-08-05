@@ -10,7 +10,7 @@ import Registry from "@/components/Registry.vue";
 import UserManager from "@/components/Manage/UserManager.vue";
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
 import Articles from "@/Comps/Article/Articles.vue";
-import NotePage from "@/Comps/Article/NotePage.vue";
+import NotePage from "@/Comps/Article/ManageArticles.vue";
 import Trans from "@/Core/Trans.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
 import ViewExcel from "@/ViewFile/ViewExcel.vue";
@@ -19,6 +19,7 @@ import Profile from "@/components/Basic/Profile.vue";
 import Help from "@/components/Basic/Help.vue";
 import TransNew from "@/Core/TransNew.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
+import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 
 const routes = [
   {
@@ -110,6 +111,11 @@ const routes = [
     path: '/test',
     name: 'test',
     component: FileInfoData
+  },
+  {
+    path: '/viewArticle',
+    name: 'viewArticle',
+    component: ViewArticle
   }
 ]
 

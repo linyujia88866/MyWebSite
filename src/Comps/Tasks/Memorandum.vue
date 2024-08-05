@@ -67,6 +67,13 @@ async function saveTask() {
     });
     return
   }
+  if(title.value.length > 30){
+    ElMessage({
+      message: "标题长度不能超过30个字符",
+      type: 'warning',
+    });
+    return
+  }
   if(items.length === 0){
     ElMessage({
       message: "请添加至少一个任务",
@@ -96,7 +103,7 @@ async function updateTask(requestBody) {
         if (response.data.code === 200) {
           ElMessage({
             message: "任务保存成功" + taskId.value,
-            type: 'info',
+            type: 'success',
           });
           router.push({name: 'memoryCards'})
         }
@@ -110,7 +117,7 @@ async function createNewTask(requestBody) {
         if (response.data.code === 200) {
           ElMessage({
             message: "任务保存成功" + response.data.data,
-            type: 'info',
+            type: 'success',
           });
           taskId.value = response.data.data
           router.push({name: 'memoryCards'})

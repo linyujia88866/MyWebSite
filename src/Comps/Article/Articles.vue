@@ -11,7 +11,13 @@
           <span>Likes: {{ article.likes }}</span>
           <span>Date: {{ formatDate(article.date) }}</span>
           <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
-          <a style="text-decoration: underline; float: right; color: dodgerblue; margin: 0 8px;">浏览</a>
+          <a
+              @click="viewArt(article.id)"
+              style="text-decoration: underline;
+              float: right;
+              cursor: pointer;
+              color: dodgerblue;
+              margin: 0 8px;">浏览</a>
         </div>
       </li>
     </ul>
@@ -21,14 +27,21 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
-const searchQuery = ref('');
-const articles = ref([]);
+
 
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
+import {useRouter} from "vue-router";
 
-myHttp.get('/article/articles')
+const searchQuery = ref('');
+const articles = ref([]);
+const router = useRouter();
+let titleToView = ref('')
+let contentToView = ref('')
+
+getArtList()
+async function getArtList() {
+  await myHttp.get('/article/articles')
     .then(response => {
       if (response.data.code === 200) {
         let array = response.data.data;
@@ -40,9 +53,10 @@ myHttp.get('/article/articles')
             reads: 100,
             comments: 20,
             likes: 50,
-            date: item.createdAt.replace(/\.0$/, '')})
+            date: item.createdAt.replace(/\.0$/, '')
+          })
         }
-      }else {
+      } else {
         ElMessage({
           message: '获取文章列表失败！',
           type: 'error',
@@ -50,12 +64,38 @@ myHttp.get('/article/articles')
       }
     })
     .catch(error => console.error('Error:', error));
+}
 
 const filteredArticles = computed(() => {
   return articles.value.filter(article =>
       article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
+
+async function viewArt(artId) {
+  await myHttp.get(`/article/get/${artId}`)
+      .then(response => {
+        if (response.data.code === 200) {
+          titleToView.value = response.data.data.title
+          contentToView.value = response.data.data.content
+          router.push({name: 'viewArticle',
+                       state: {
+                          articleId: artId,
+                          title: titleToView.value,
+                          content: contentToView.value,
+                          username: response.data.data.username,
+                         createdAt: response.data.data.createdAt
+                       }
+                  });
+        } else {
+          ElMessage({
+            message: '获取文章列表失败！',
+            type: 'error',
+          });
+        }
+      })
+      .catch(error => console.error('Error:', error));
+}
 
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
@@ -66,7 +106,8 @@ const formatDate = (date) => {
 <style scoped>
 .article-list {
   max-width: 800px;
-  margin: 70px auto auto;
+  max-height: 600px;
+  margin: 0 auto auto;
 }
 .article-list input {
   width: 100%;

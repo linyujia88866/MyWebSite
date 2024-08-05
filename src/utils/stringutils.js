@@ -104,6 +104,26 @@ const hasName = (srcList, target) => {
     return srcList.some(item => item.name === target);
 };
 
+
+function timestampToDate(timestamp) {
+    let date = new Date(timestamp); // 将时间戳转换为Date对象
+
+    // 获取年月日时分秒，并对零补齐
+    let year = date.getFullYear().toString().padStart(4, '0');
+    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份是从0开始的
+    let day = date.getDate().toString().padStart(2, '0');
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+    let seconds = date.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`; // 拼接字符串返回
+}
+
+// 示例：使用当前时间戳
+var currentTimestamp = Date.now();
+console.log(timestampToDate(currentTimestamp)); // 输出格式化的日期时间字符串
+
+
 function timePatternChange(dateStr){
     if(dateStr === null){
         return ""
@@ -185,5 +205,6 @@ export  {
     findObject,
     transToDirPath,
     genNewFileName,
-    genNewFolderName
+    genNewFolderName,
+    timestampToDate
 }
