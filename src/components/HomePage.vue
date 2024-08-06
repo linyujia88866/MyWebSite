@@ -15,7 +15,7 @@
           </p>
         </div>
       <!--=================================================分割线================================================================-->
-      <div>
+      <div  v-if="false">
         <div class="card card-fileChange" @click="gotoTrans">
 
         </div>
@@ -52,7 +52,7 @@
       </div>
 
 
-      <div  class="card" @click.stop="gotoTest()" >
+      <div  v-if="false" class="card" @click.stop="gotoTest()" >
 
       </div>
     </div>

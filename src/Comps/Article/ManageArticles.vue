@@ -26,8 +26,8 @@
 
     <el-container>
       <el-main>
-        <Articles v-if="showPublish" style="margin-top:12px; margin-left: auto;"></Articles>
-        <Articles v-else style="margin-top:12px; margin-left: auto;"></Articles>
+        <PubArticles v-if="showPublish" style="margin-top:12px; margin-left: auto;"></PubArticles>
+        <PriArticles v-else style="margin-top:12px; margin-left: auto;"></PriArticles>
       </el-main>
     </el-container>
   </el-container>
@@ -52,25 +52,15 @@
 </template>
 
 <script setup>
-import VerticalTab from '@/Comps/Article/VerticalTab.vue';
 import {ref} from "vue";
 import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
-import NoteEditor from "@/Comps/Article/NoteEditor.vue";
-import Articles from "@/Comps/Article/Articles.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
+import PubArticles from "@/Comps/Article/PubArticles.vue";
+import PriArticles from "@/Comps/Article/PriArticles.vue";
 
 let showPublish = ref(false)
-
-
-const tabs = ref(['未发布文章', '已公开文章', '创建新的文章'])
-const activeTab =ref('未发布文章')
 const router = useRouter();
-
-function whenSave(){
-  activeTab.value='未发布文章'
-}
-
 </script>
 
 <style scoped>

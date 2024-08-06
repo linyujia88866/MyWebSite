@@ -8,7 +8,7 @@
   </div>
   <div class="fixed-bar">
     <button @click.prevent="save">保存文章</button>
-    <button>保存并预览</button>
+    <button @click.prevent="saveAndView">保存并预览</button>
     <button style="margin-right: 30px">发布文章</button>
   </div>
 </div>
@@ -21,6 +21,7 @@ import {useRouter} from 'vue-router';
 const router = useRouter();
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import {viewArt} from "@/utils/articleApi";
 
 const emit = defineEmits(['save-event']);
 
@@ -37,12 +38,17 @@ const getMsg = (val) => {
 }
 
 let title = ref('【无标题】')
-
-function gotoMemoryCards() {
-  router.push({name: 'home'});
+async function saveAndView() {
+  let res = await save()
+  let artData = await viewArt(res)
+  await router.push({
+    name: 'viewArticle',
+    state: artData
+  });
 }
 
 async function save() {
+  let res = ""
   if (title.value === "") {
     ElMessage({
       message: '请输入标题！',
@@ -59,20 +65,23 @@ async function save() {
   }
   let requestBody = {
     title: title.value,
-    content: emailForm.msg
+    content: emailForm.msg,
+    publish: true
   };
 
   await myHttp.post("/article/save", requestBody)
       .then(response => {
         if (response.data.code === 200) {
+          res = response.data.data
           ElMessage({
             message: "文章保存成功" + response.data.data,
-            type: 'info',
+            type: 'success',
           });
           emit('save-event', 'Hello from child with Composition API');
         }
       })
       .catch(error => console.error('Error:', error));
+  return res
 }
 </script>
 <style scoped>

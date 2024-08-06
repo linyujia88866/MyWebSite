@@ -12,7 +12,7 @@
           <span>Date: {{ formatDate(article.date) }}</span>
           <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
           <a
-              @click="viewArt(article.id)"
+              @click="viewArticleById(article.id)"
               style="text-decoration: underline;
               float: right;
               cursor: pointer;
@@ -27,43 +27,27 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
-
-
-import {myHttp} from "@/request/myrequest";
-import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
+import {getPubArticles, viewArt} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
 const router = useRouter();
-let titleToView = ref('')
-let contentToView = ref('')
 
 getArtList()
 async function getArtList() {
-  await myHttp.get('/article/articles')
-    .then(response => {
-      if (response.data.code === 200) {
-        let array = response.data.data;
-        for (let i = 0; i < array.length; i++) {
-          let item = array[i]
-          articles.value.push({
-            id: item.articleId,
-            title: item.title,
-            reads: 100,
-            comments: 20,
-            likes: 50,
-            date: item.createdAt.replace(/\.0$/, '')
-          })
-        }
-      } else {
-        ElMessage({
-          message: '获取文章列表失败！',
-          type: 'error',
-        });
-      }
+  let array = await  getPubArticles()
+  for (let i = 0; i < array.length; i++) {
+    let item = array[i]
+    articles.value.push({
+      id: item.articleId,
+      title: item.title,
+      reads: 100,
+      comments: 20,
+      likes: 50,
+      date: item.createdAt.replace(/\.0$/, '')
     })
-    .catch(error => console.error('Error:', error));
+  }
 }
 
 const filteredArticles = computed(() => {
@@ -72,31 +56,13 @@ const filteredArticles = computed(() => {
   );
 });
 
-async function viewArt(artId) {
-  await myHttp.get(`/article/get/${artId}`)
-      .then(response => {
-        if (response.data.code === 200) {
-          titleToView.value = response.data.data.title
-          contentToView.value = response.data.data.content
-          router.push({name: 'viewArticle',
-                       state: {
-                          articleId: artId,
-                          title: titleToView.value,
-                          content: contentToView.value,
-                          username: response.data.data.username,
-                         createdAt: response.data.data.createdAt
-                       }
-                  });
-        } else {
-          ElMessage({
-            message: '获取文章列表失败！',
-            type: 'error',
-          });
-        }
-      })
-      .catch(error => console.error('Error:', error));
+async function viewArticleById(artId) {
+  let res = await  viewArt(artId)
+  await router.push({
+    name: 'viewArticle',
+    state: res
+  });
 }
-
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
 };

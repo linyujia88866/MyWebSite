@@ -118,12 +118,6 @@ function timestampToDate(timestamp) {
 
     return `${year}-${month}-${day} ${hours}:${minutes}`; // 拼接字符串返回
 }
-
-// 示例：使用当前时间戳
-var currentTimestamp = Date.now();
-console.log(timestampToDate(currentTimestamp)); // 输出格式化的日期时间字符串
-
-
 function timePatternChange(dateStr){
     if(dateStr === null){
         return ""

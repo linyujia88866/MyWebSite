@@ -182,23 +182,6 @@ defineExpose({
   align-items: center;
 }
 
-.user-avatar {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.help-icon {
-  width: 30px;
-  height: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
 .nav-bar ul {
   list-style-type: none;
   padding: 0;
@@ -210,6 +193,7 @@ defineExpose({
   margin-right: 10px;
   color: #ffffff;
   font-size: 20px;
+  cursor: pointer;
 }
 
 .nav-bar li.active a {

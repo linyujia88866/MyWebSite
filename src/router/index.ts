@@ -9,7 +9,7 @@ import Login from "@/components/Login.vue";
 import Registry from "@/components/Registry.vue";
 import UserManager from "@/components/Manage/UserManager.vue";
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
-import Articles from "@/Comps/Article/Articles.vue";
+import Articles from "@/Comps/Article/PriArticles.vue";
 import NotePage from "@/Comps/Article/ManageArticles.vue";
 import Trans from "@/Core/Trans.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
