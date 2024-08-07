@@ -7,9 +7,9 @@
     <Editor :value="emailForm.test_msg" @updateValue="getMsg"  />
   </div>
   <div class="fixed-bar">
-    <button @click.prevent="save">保存文章</button>
+    <button @click.prevent="saveDefault(false)">保存文章</button>
     <button @click.prevent="saveAndView">保存并预览</button>
-    <button style="margin-right: 30px">发布文章</button>
+    <button style="margin-right: 30px" @click.prevent="saveAndPublish">发布文章</button>
   </div>
 </div>
 </template>
@@ -19,12 +19,10 @@ import Editor from '@/Editor/index.vue'
 import {reactive, ref} from "vue";
 import {useRouter} from 'vue-router';
 const router = useRouter();
-import {myHttp} from "@/request/myrequest";
-import {ElMessage} from "element-plus";
-import {viewArt} from "@/utils/articleApi";
+import {pubArt, saveArtApi, updateArtApi, viewArt} from "@/utils/articleApi";
 
 const emit = defineEmits(['save-event']);
-
+let curArtId = ref("")
 const emailForm = reactive({
   test_msg: "<p>#创作灵感# </p>" +
       "<p>• 记录工作实践、项目复盘</p>" +
@@ -39,7 +37,10 @@ const getMsg = (val) => {
 
 let title = ref('【无标题】')
 async function saveAndView() {
-  let res = await save()
+  let res = await saveDefault(false)
+  if(res.length === 0){
+    return
+  }
   let artData = await viewArt(res)
   await router.push({
     name: 'viewArticle',
@@ -47,41 +48,36 @@ async function saveAndView() {
   });
 }
 
-async function save() {
+async function saveDefault(publish) {
+  let artData = {}
   let res = ""
-  if (title.value === "") {
-    ElMessage({
-      message: '请输入标题！',
-      type: 'warning',
-    });
-    return
+  if (curArtId.value.length > 0) {
+    artData = await viewArt(curArtId.value)
+    curArtId.value = artData.articleId
+    await updateArtApi(title.value, emailForm.msg , curArtId.value )
+    return curArtId.value
   }
-  if (emailForm.msg.length === 0) {
-    ElMessage({
-      message: '请输入文章内容！',
-      type: 'warning',
-    });
-    return
-  }
-  let requestBody = {
-    title: title.value,
-    content: emailForm.msg,
-    publish: true
-  };
-
-  await myHttp.post("/article/save", requestBody)
-      .then(response => {
-        if (response.data.code === 200) {
-          res = response.data.data
-          ElMessage({
-            message: "文章保存成功" + response.data.data,
-            type: 'success',
-          });
-          emit('save-event', 'Hello from child with Composition API');
-        }
-      })
-      .catch(error => console.error('Error:', error));
+  res =  await save(publish)
+  curArtId.value = res
   return res
+}
+
+async function saveAndPublish() {
+  let res = await saveDefault(true)
+
+  if(res.length === 0){
+    return
+  }
+  await pubArt(res)
+  let artData = await viewArt(res)
+  await router.push({
+    name: 'viewArticle',
+    state: artData
+  });
+}
+
+async function save(publish) {
+  return  await saveArtApi(title.value, emailForm.msg, publish, emit)
 }
 </script>
 <style scoped>

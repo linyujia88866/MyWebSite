@@ -22,6 +22,7 @@ import FileInfoData from "@/Core/FileInfoData.vue";
 import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 import CreateArticle from "@/Comps/Article/CreateArticle.vue";
 import ArticleHome from "@/Comps/Article/ArticleHome.vue";
+import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
 
 const routes = [
   {
@@ -128,6 +129,11 @@ const routes = [
     path: '/articleHome',
     name: 'articleHome',
     component: ArticleHome
+  },
+  {
+    path: '/EveryBodyArticle',
+    name: 'EveryBodyArticle',
+    component: EveryBodysArticles
   }
 ]
 

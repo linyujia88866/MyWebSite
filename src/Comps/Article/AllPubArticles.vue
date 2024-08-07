@@ -6,11 +6,11 @@
       <li v-for="article in filteredArticles" :key="article.id">
         <h2>{{ article.title }}</h2>
         <div class="meta">
+          <span>作者: {{ article.username }}</span>
           <span>阅读数: {{ article.reads }}</span>
           <span>评论数: {{ article.comments }}</span>
           <span>点赞数: {{ article.likes }}</span>
           <span>发表时间： {{ formatDate(article.date) }}</span>
-          <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
           <a
               @click="viewArticleById(article.id)"
               style="text-decoration: underline;
@@ -18,13 +18,6 @@
               cursor: pointer;
               color: dodgerblue;
               margin: 0 8px;">浏览</a>
-          <a
-              @click="publishArticleById(article.id)"
-              style="text-decoration: underline;
-              float: right;
-              cursor: pointer;
-              color: dodgerblue;
-              margin: 0 8px;">发布</a>
         </div>
       </li>
     </ul>
@@ -35,7 +28,7 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getPriArticles, pubArt, viewArt} from "@/utils/articleApi";
+import {getAllPubArticles, viewArt} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
@@ -43,7 +36,7 @@ const router = useRouter();
 
 getArtList()
 async function getArtList() {
-  let array = await  getPriArticles()
+  let array = await  getAllPubArticles()
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({
@@ -52,14 +45,18 @@ async function getArtList() {
       reads: item.readCount,
       comments: item.commentCount,
       likes: item.likeCount,
+      username: item.username,
       date: item.createdAt.replace(/\.0$/, '')
     })
   }
 }
-async function publishArticleById(artId) {
-  await  pubArt(artId)
-  await viewArticleById(artId)
-}
+
+const filteredArticles = computed(() => {
+  return articles.value.filter(article =>
+      article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
 async function viewArticleById(artId) {
   let res = await  viewArt(artId)
   await router.push({
@@ -67,12 +64,6 @@ async function viewArticleById(artId) {
     state: res
   });
 }
-const filteredArticles = computed(() => {
-  return articles.value.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-});
-
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
 };
@@ -107,6 +98,7 @@ const formatDate = (date) => {
   color: #888;
   font-size: 14px;
 }
+
 span{
   margin: 8px;
 }

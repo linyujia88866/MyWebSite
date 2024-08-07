@@ -23,6 +23,18 @@
           管理我的文章
         </p>
       </div>
+
+<!--      ================================================-->
+      <div>
+        <div class="card card-tushuguan" @click="gotoReadArticles">
+
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          浏览别人的文章
+        </p>
+      </div>
+
+<!--      ================================-->
     </div>
   </div>
 </template>
@@ -42,6 +54,11 @@ function gotoCreateArt() {
 function gotoManage() {
   router.push({name: 'notes'});
 }
+
+function gotoReadArticles() {
+  router.push({name: 'EveryBodyArticle'});
+}
+
 
 </script>
 
@@ -105,6 +122,13 @@ function gotoManage() {
 
 .card-fileChange{
   background-image: url('@/assets/manageArticle.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-tushuguan{
+  background-image: url('@/assets/tushuguan.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

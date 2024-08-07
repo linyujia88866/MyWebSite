@@ -6,10 +6,10 @@
       <li v-for="article in filteredArticles" :key="article.id">
         <h2>{{ article.title }}</h2>
         <div class="meta">
-          <span>Reads: {{ article.reads }}</span>
-          <span>Comments: {{ article.comments }}</span>
-          <span>Likes: {{ article.likes }}</span>
-          <span>Date: {{ formatDate(article.date) }}</span>
+          <span>阅读数: {{ article.reads }}</span>
+          <span>评论数: {{ article.comments }}</span>
+          <span>点赞数: {{ article.likes }}</span>
+          <span>发表时间： {{ formatDate(article.date) }}</span>
           <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
           <a
               @click="viewArticleById(article.id)"
@@ -42,9 +42,9 @@ async function getArtList() {
     articles.value.push({
       id: item.articleId,
       title: item.title,
-      reads: 100,
-      comments: 20,
-      likes: 50,
+      reads: item.readCount,
+      comments: item.commentCount,
+      likes: item.likeCount,
       date: item.createdAt.replace(/\.0$/, '')
     })
   }
@@ -96,5 +96,8 @@ const formatDate = (date) => {
 .article-list .meta {
   color: #888;
   font-size: 14px;
+}
+span{
+  margin: 8px;
 }
 </style>

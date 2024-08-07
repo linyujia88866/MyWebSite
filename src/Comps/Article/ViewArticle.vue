@@ -6,14 +6,14 @@
       <el-aside width="200px" >
         <el-scrollbar >
           <el-menu
-              :default-active="'1-3'"
               :default-openeds="['1']">
             <el-sub-menu index="1">
               <template #title>
                 <el-icon><icon-menu /></el-icon>快速导航
               </template>
               <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>
-              <el-menu-item index="1-1" @click="router.push('/notes')">返回文章管理</el-menu-item>
+              <el-menu-item index="1-2" @click="router.push('/notes')">返回文章管理</el-menu-item>
+              <el-menu-item index="1-3" @click="router.push('/EveryBodyArticle')">返回浏览文章</el-menu-item>
             </el-sub-menu>
           </el-menu>
         </el-scrollbar>

@@ -11,14 +11,10 @@
               <el-icon><icon-menu /></el-icon>快速导航
             </template>
             <el-menu-item-group>
-                <template #title>页面跳转</template>
-                <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>
-                <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章</el-menu-item>
-                <el-menu-item index="1-2" @click="router.push('/EveryBodyArticle')">前往浏览文章</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="文章类型">
-              <el-menu-item index="1-3" @click="showPublish = false">未发布文章</el-menu-item>
-              <el-menu-item index="1-4" @click="showPublish = true">已公开文章</el-menu-item>
+              <template #title>页面跳转</template>
+              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>
+              <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章</el-menu-item>
+              <el-menu-item index="1-2" @click="router.push('/notes')">管理我的文章</el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
         </el-menu>
@@ -27,13 +23,12 @@
 
     <el-container>
       <el-main>
-        <PubArticles v-if="showPublish" style="margin-top:12px; margin-left: auto;"></PubArticles>
-        <PriArticles v-else style="margin-top:12px; margin-left: auto;"></PriArticles>
+        <AllPubArticles style="margin-top:12px; margin-left: auto;"></AllPubArticles>
       </el-main>
     </el-container>
   </el-container>
 
-<div>
+  <div>
     <el-backtop :right="100" :bottom="100" style="width: 150px">
       <div
           style="
@@ -53,14 +48,11 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
+import { Menu as IconMenu } from '@element-plus/icons-vue'
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import PubArticles from "@/Comps/Article/PubArticles.vue";
-import PriArticles from "@/Comps/Article/PriArticles.vue";
+import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
 
-let showPublish = ref(false)
 const router = useRouter();
 </script>
 
