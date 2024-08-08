@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <img alt="Vue logo" src="../assets/logo.png" >
-    <h1>燕子爱学习中文网</h1>
+    <h1>千里之行，始于足下</h1>
     <form @submit.prevent="postData">
       <div style="display: flex">
         <label for="username" style="width: 120px; text-align: left; padding-top: 20px">username:</label>
@@ -64,14 +64,14 @@ const postData = async () => {
   };
   myHttp.post(url, requestBody)
       .then(response => {
-        if (response.data.success === "200") {
+        if (response.data.code === "200") {
           router.push({name: 'home'});
           localStorage.setItem('remember', isChecked.value.toString())
           if(isChecked.value){
             localStorage.setItem('curUser', user.value)
             localStorage.setItem('curPwd', pwd.value)
           }
-        } else if(response.data.success === "500"){
+        } else if(response.data.code === "500"){
           ElMessage({
             message: "账号或密码错误",
             type: 'error',

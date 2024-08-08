@@ -1,7 +1,6 @@
 <template>
   <div>
-    <navigate-one  :origin-tab="'功能'"></navigate-one>
-
+    <navigate-not-login></navigate-not-login>
     <el-container class="layout-container-demo" style="height: 100%;">
       <el-aside width="200px" >
         <el-scrollbar >
@@ -12,10 +11,7 @@
                 <el-icon><icon-menu /></el-icon>快速导航
               </template>
 <!--              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
-              <el-menu-item index="1-2" @click="router.push('/notes')">返回文章管理
-                <el-icon><Setting /></el-icon>
-              </el-menu-item>
-              <el-menu-item index="1-3" @click="router.push('/EveryBodyArticle')">返回浏览文章
+              <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章
                 <el-icon><View /></el-icon>
               </el-menu-item>
             </el-sub-menu>
@@ -25,7 +21,7 @@
 
       <el-container>
         <el-main>
-          <div style=" margin: 12px auto auto;width: 70%;">
+          <div style="margin: 12px auto auto;width: 70%;">
             <div> <h1>{{title}}</h1></div>
             <!--    ===============================================================================================-->
             <!--      一共24列，自由配置-->
@@ -155,9 +151,6 @@
               <!--              =========================================================================-->
             </div>
           </div>
-
-
-
         </el-main>
       </el-container>
     </el-container>
@@ -185,11 +178,11 @@
 
 <script setup>
 import {nextTick, ref} from "vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import {Menu as IconMenu,ChatLineRound, StarFilled, Star, View, Setting} from '@element-plus/icons-vue'
+import {Menu as IconMenu,ChatLineRound, StarFilled,Star, View} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
 import {addLikeToArtApi, cancelLikeToArtApi, checkLikeToArtApi} from "@/utils/fileApi";
+import NavigateNotLogin from "@/components/NotLogin/NavigateNotLogin.vue";
 
 const source = ref(0)
 source.value = 172000
@@ -221,7 +214,11 @@ const props = defineProps({
 })
 
 async function addLikeToArt() {
-  await addLikeToArtApi(articleId.value)
+  let res = await addLikeToArtApi(articleId.value)
+  if(res === "notLogin"){
+    await router.push({name: 'login'});
+    return
+  }
   await checkLikeToArt()
 }
 

@@ -23,6 +23,7 @@ import CreateArticle from "@/Comps/Article/CreateArticle.vue";
 import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
 import EveryBodysArticlesNotLogin from "@/components/NotLogin/EveryBodysArticlesNotLogin.vue";
+import ViewArticleNotLogin from "@/components/NotLogin/ViewArticleNotLogin.vue";
 
 const routes = [
   {
@@ -123,6 +124,11 @@ const routes = [
     path: '/viewArticle',
     name: 'viewArticle',
     component: ViewArticle
+  },
+  {
+    path: '/viewArticleNotLogin',
+    name: 'viewArticleNotLogin',
+    component: ViewArticleNotLogin
   },
   {
     path: '/createArticle',

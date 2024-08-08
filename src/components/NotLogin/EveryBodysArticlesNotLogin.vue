@@ -10,16 +10,9 @@
             <template #title>
               <el-icon><icon-menu /></el-icon>快速导航
             </template>
-            <el-menu-item-group>
-              <template #title>页面跳转</template>
-<!--              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
-              <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
-                <el-icon><Edit /></el-icon>
-              </el-menu-item>
-              <el-menu-item index="1-2" @click="router.push('/notes')">管理我的文章
-                <el-icon><Setting /></el-icon>
-              </el-menu-item>
-            </el-menu-item-group>
+            <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
+              <el-icon><Edit /></el-icon>
+            </el-menu-item>
           </el-sub-menu>
         </el-menu>
       </el-scrollbar>
@@ -27,7 +20,7 @@
 
     <el-container>
       <el-main>
-        <AllPubArticles style="margin-top:12px; margin-left: auto;"></AllPubArticles>
+        <AllPubArticlesNotLogin style="margin-top:12px; margin-left: auto;"></AllPubArticlesNotLogin>
       </el-main>
     </el-container>
   </el-container>
@@ -53,10 +46,9 @@
 
 <script setup>
 import {Menu as IconMenu, Edit, Setting} from '@element-plus/icons-vue'
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
 import NavigateNotLogin from "@/components/NotLogin/NavigateNotLogin.vue";
+import AllPubArticlesNotLogin from "@/components/NotLogin/AllPubArticlesNotLogin.vue";
 
 const router = useRouter();
 </script>

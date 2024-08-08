@@ -32,7 +32,7 @@
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import {Setting} from "@element-plus/icons-vue";
+import {Menu as IconMenu,Setting} from "@element-plus/icons-vue";
 const router = useRouter();
 
 </script>

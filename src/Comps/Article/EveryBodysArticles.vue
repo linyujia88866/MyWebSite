@@ -10,16 +10,12 @@
             <template #title>
               <el-icon><icon-menu /></el-icon>快速导航
             </template>
-            <el-menu-item-group>
-              <template #title>页面跳转</template>
-<!--              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
-              <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
-                <el-icon><Edit /></el-icon>
-              </el-menu-item>
-              <el-menu-item index="1-2" @click="router.push('/notes')">管理我的文章
-                <el-icon><Setting /></el-icon>
-              </el-menu-item>
-            </el-menu-item-group>
+            <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
+              <el-icon><Edit /></el-icon>
+            </el-menu-item>
+            <el-menu-item index="1-2" @click="router.push('/notes')">管理我的文章
+              <el-icon><Setting /></el-icon>
+            </el-menu-item>
           </el-sub-menu>
         </el-menu>
       </el-scrollbar>

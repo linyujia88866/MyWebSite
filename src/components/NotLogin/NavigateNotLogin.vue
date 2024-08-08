@@ -2,7 +2,6 @@
 import {useRoute, useRouter} from 'vue-router';
 import {onMounted, ref} from "vue";
 import { defineProps } from 'vue';
-import {Avatar, } from "@element-plus/icons-vue";
 
 const props = defineProps({
   originTab: {

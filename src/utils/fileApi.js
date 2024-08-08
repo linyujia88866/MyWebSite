@@ -124,10 +124,16 @@ async function addLikeToArtApi(articleId) {
                 'Content-Type': 'multipart/form-data',
             },
         })
-            .then(() => {
+            .then((response) => {
                 res = 'success'
+                if(response.data.code.startsWith("1000")){
+                    ElMessage({
+                        message: '请先登录！',
+                        type: 'error',
+                    });
+                    res = "notLogin"
+                }
             });
-
     } catch (error) {
         ElMessage({
             message: '点赞失败！',
@@ -137,7 +143,7 @@ async function addLikeToArtApi(articleId) {
     return res
 }
 
-async function cancelLikeToArtApi() {
+async function cancelLikeToArtApi(articleId) {
     let res = ""
     try {
         await myHttp.post(`/article/addLikeToArt/${articleId}`, {
