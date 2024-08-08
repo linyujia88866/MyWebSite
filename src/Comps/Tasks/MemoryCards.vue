@@ -7,15 +7,17 @@
         <el-button type="primary" v-if="showMode==='2'"  @click.prevent="showMode='1'"  size="large">卡片式显示</el-button>
         <el-button type="primary" v-if="showMode==='1'"  @click.prevent="showMode='2'"  size="large">列表式显示</el-button>
       </div>
-      <div class="card-container" v-if="showMode==='1'">
-        <Card v-for="task in tasks"
+      <el-empty v-if="tasks.length === 0" description="暂无任务" />
+      <div v-else-if="showMode==='1'" class="card-container">
+        <Card
+            v-for="task in tasks"
               :title="task.title"
               :date="task.createdAt.replace(/\.0$/, '')"
               @click.prevent="gotoShowCase(task.taskId)"
               @delete-task="deleteTask(task.taskId)"
         />
       </div>
-      <div class="card-container2" v-if="showMode==='2'">
+      <div class="card-container2" v-else-if="showMode==='2'">
         <ul style="padding: 0;">
           <li style="display: flex; margin: 0; padding: 0; ">
             <h3 style="width: 700px; line-height: 28px;text-align: left;">任务标题</h3>
@@ -46,7 +48,7 @@ import {useRouter} from 'vue-router';
 
 const router = useRouter();
 const tasks = ref([])
-let showMode = ref('1')
+let showMode = ref('2')
 getTaskList()
 
 function gotoShowCase(taskId){

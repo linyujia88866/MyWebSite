@@ -116,6 +116,68 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
     return sameFilesToUpload
 }
 
+async function addLikeToArtApi(articleId) {
+    let res = ""
+    try {
+        await myHttp.post(`/article/addLikeToArt/${articleId}`, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(() => {
+                res = 'success'
+            });
+
+    } catch (error) {
+        ElMessage({
+            message: '点赞失败！',
+            type: 'error',
+        });
+    }
+    return res
+}
+
+async function cancelLikeToArtApi() {
+    let res = ""
+    try {
+        await myHttp.post(`/article/addLikeToArt/${articleId}`, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(() => {
+                res = 'success'
+            });
+
+    } catch (error) {
+        ElMessage({
+            message: '点赞失败！',
+            type: 'error',
+        });
+    }
+    return res
+}
+
+async function checkLikeToArtApi(articleId) {
+    let res = ""
+    try {
+        await myHttp.get(`/article/checkLikeToArt/${articleId}`)
+            .then((response) => {
+                if(response.data.data !== null && response.data.data.articleId !== undefined){
+                    res = "yes"
+                }else {
+                    res = "no"
+                }
+            });
+
+    } catch (error) {
+        ElMessage({
+            message: '查询点赞信息失败！',
+            type: 'error',
+        });
+    }
+    return res
+}
 
 const createDirApi = async (curPath, dirName) =>
 {
@@ -256,5 +318,8 @@ export {
     downloadFileApi,
     deleteFileApi,
     createDirApi,
-    deleteFolderApi
+    deleteFolderApi,
+    addLikeToArtApi,
+    checkLikeToArtApi,
+    cancelLikeToArtApi
 }

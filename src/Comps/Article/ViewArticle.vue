@@ -11,7 +11,7 @@
               <template #title>
                 <el-icon><icon-menu /></el-icon>快速导航
               </template>
-              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>
+<!--              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
               <el-menu-item index="1-2" @click="router.push('/notes')">返回文章管理</el-menu-item>
               <el-menu-item index="1-3" @click="router.push('/EveryBodyArticle')">返回浏览文章</el-menu-item>
             </el-sub-menu>
@@ -65,6 +65,91 @@
 
             <el-divider content-position="center">文章内容</el-divider>
             <div style="text-align: left; margin-left: 20px;" v-html="content"></div>
+            <div style="display: flex; width: 100%;
+            padding: 8px;
+            justify-content: flex-end;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);">
+              <!--              =========================================================================-->
+              <el-tooltip
+                  v-if="!hasGood"
+                  effect="dark"
+                  content="点赞"
+                  placement="top"
+                  :show-after="500"
+              >
+                <el-button
+                    circle
+                    style="margin: 0 0 0 8px; "
+                    @click.stop="cancelLikeToArt"
+                    size="small">
+                  <template #default>
+                    <el-icon>
+                      <template #default>
+                        <img style="height: 100%; width: 100%" src="@/assets/点赞.svg">
+                      </template>
+                    </el-icon>
+                  </template>
+                </el-button>
+              </el-tooltip>
+              <!--              =========================================================================-->
+              <el-tooltip
+                  v-else
+                  effect="dark"
+                  content="取消点赞"
+                  placement="top"
+                  :show-after="500"
+              >
+                <el-button
+                    circle
+                    style="margin: 0 0 0 8px; "
+                    @click.stop="cancelLikeToArt"
+                    size="small">
+                  <template #default>
+                    <el-icon>
+                      <template #default>
+                        <img style="height: 100%; width: 100%" src="@/assets/已点赞.svg">
+                      </template>
+                    </el-icon>
+                  </template>
+                </el-button>
+              </el-tooltip>
+
+
+<!--              =========================================================================-->
+              <el-tooltip
+                  v-if="hasLike"
+                  effect="dark"
+                  content="取消收藏"
+                  placement="top"
+                  :show-after="500"
+              >
+                <el-button   circle
+                             style="margin: 0 0 0 8px; "
+                             @click.stop="cancelLikeToArt"
+                             size="small" >
+                  <template #default>
+                    <el-icon color="#409efc"><StarFilled /></el-icon>
+                  </template>
+                </el-button>
+
+
+              </el-tooltip>
+              <!--              =========================================================================-->
+              <el-tooltip
+                  v-else
+                  effect="dark"
+                  content="收藏"
+                  placement="top"
+                  :show-after="500"
+              >
+                <el-button circle
+                           style="margin: 0 0 0 8px;"
+                           @click.stop="addLikeToArt"
+                           size="small"
+                           :icon="Star" ></el-button>
+              </el-tooltip>
+              <!--              =========================================================================-->
+            </div>
           </div>
 
 
@@ -98,8 +183,9 @@
 import {nextTick, ref} from "vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import { ChatLineRound, StarFilled,View  } from '@element-plus/icons-vue'
+import {ChatLineRound, StarFilled,Star, View} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
+import {addLikeToArtApi, checkLikeToArtApi} from "@/utils/fileApi";
 
 const source = ref(0)
 source.value = 172000
@@ -108,12 +194,17 @@ let title = ref("")
 let content = ref("")
 let createdAt = ref("")
 let username = ref("")
+let articleId = ref("")
+let hasLike = ref(false)
+let hasGood = ref(false)
 
 nextTick(()=>{
   title.value = history.state.title
   content.value = history.state.content
   createdAt.value = history.state.createdAt
   username.value = history.state.username
+  articleId.value = history.state.articleId
+  checkLikeToArt()
 })
 
 const props = defineProps({
@@ -125,7 +216,20 @@ const props = defineProps({
   },
 })
 
+async function addLikeToArt() {
+  await addLikeToArtApi(articleId.value)
+  await checkLikeToArt()
+}
 
+async function cancelLikeToArt() {
+  await cancelLikeToArtApi(articleId.value)
+  await checkLikeToArt()
+}
+
+async function checkLikeToArt() {
+  let res = await checkLikeToArtApi(articleId.value)
+  hasLike.value = res === "yes";
+}
 
 </script>
 

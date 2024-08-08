@@ -11,7 +11,6 @@ import UserManager from "@/components/Manage/UserManager.vue";
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
 import Articles from "@/Comps/Article/PriArticles.vue";
 import NotePage from "@/Comps/Article/ManageArticles.vue";
-import Trans from "@/Core/Trans.vue";
 import ViewWord from "@/ViewFile/ViewWord.vue";
 import ViewExcel from "@/ViewFile/ViewExcel.vue";
 import ViewPPT from "@/ViewFile/ViewPPT.vue";
@@ -23,10 +22,15 @@ import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 import CreateArticle from "@/Comps/Article/CreateArticle.vue";
 import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
+import EveryBodysArticlesNotLogin from "@/Comps/Article/EveryBodysArticlesNotLogin.vue";
 
 const routes = [
   {
     path: '/',
+    name: 'default',
+    component: EveryBodysArticlesNotLogin
+  },{
+    path: '/home',
     name: 'home',
     component: HomePage
   },

@@ -20,7 +20,6 @@ let msg=ref("");
 const originTab=ref("功能");
 let title = ref("")
 
-
 function getTaskInfo() {
   myHttp.get(url)
       .then(response => {
@@ -144,7 +143,8 @@ function gotoMemoryCards(){
         <input type="text" placeholder="请输入待做事项(按ENTER键添加任务)" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
         <button style="margin: 0 12px ; width: 80px; height: 32px; text-align: center; padding: 0" @click="add">添加</button>
       </div>
-      <div class="items">
+      <el-empty v-if="items.length === 0" description="暂无事项" />
+      <div v-else class="items">
         <ul type="1">
           <li v-for="(item,index) in items">
             <span class="order">{{index+1}}.</span><input style="text-align: left;display: block; width: 80%"  v-model.trim="item.content"> <span class="delete" @click="remove(index)">x</span>

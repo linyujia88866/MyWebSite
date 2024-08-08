@@ -43,12 +43,6 @@ async function verify() {
 onMounted( async () => {
   activeTab.value = props.originTab;
   isLogin=false;
-  await verify();
-  if (!isLogin) {
-    // 要执行的代码;
-    await router.push({name: 'login'});
-  }
-
 })
 
 function changeTab(tab){
@@ -140,7 +134,6 @@ defineExpose({
     </div>
     <div class="user-actions">
       <el-icon color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
-<!--      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp"><HelpFilled /></el-icon>-->
       <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
         <template #default>
           <img style="height: 100%; width: 100%" src="@/assets/帮助.svg">

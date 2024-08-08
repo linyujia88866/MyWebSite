@@ -12,13 +12,29 @@
             </template>
             <el-menu-item-group>
                 <template #title>页面跳转</template>
-                <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>
-                <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章</el-menu-item>
-                <el-menu-item index="1-2" @click="router.push('/EveryBodyArticle')">前往浏览文章</el-menu-item>
+<!--                <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
+                <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
+                  <el-icon><Edit /></el-icon>
+                </el-menu-item>
+                <el-menu-item index="1-2" @click="router.push('/EveryBodyArticle')">前往浏览文章
+                  <el-icon><View /></el-icon>
+                </el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="文章类型">
-              <el-menu-item index="1-3" @click="showPublish = false">未发布文章</el-menu-item>
-              <el-menu-item index="1-4" @click="showPublish = true">已公开文章</el-menu-item>
+              <el-menu-item index="1-3" @click="showPublish = false">未发布文章
+                <el-icon>
+                  <template #default>
+                    <img style="height: 100%; width: 100%" src="@/assets/未发布.svg">
+                  </template>
+                </el-icon>
+              </el-menu-item>
+              <el-menu-item index="1-4" @click="showPublish = true">已发布文章
+                <el-icon>
+                  <template #default>
+                    <img style="height: 100%; width: 100%" src="@/assets/已发布.svg">
+                  </template>
+                </el-icon>
+              </el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
         </el-menu>
@@ -54,7 +70,7 @@
 
 <script setup>
 import {ref} from "vue";
-import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
+import { Menu as IconMenu, Message, Setting, View, Edit } from '@element-plus/icons-vue'
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import PubArticles from "@/Comps/Article/PubArticles.vue";

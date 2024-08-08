@@ -29,7 +29,7 @@
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          文章博客日记
+          文章博客社区
         </p>
       </div>
       <!--=================================================分割线================================================================-->
@@ -38,7 +38,7 @@
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          待办任务清单管理
+          待办任务
         </p>
       </div>
       <!--=================================================分割线================================================================-->
@@ -68,7 +68,7 @@ const router = useRouter();
 const childRef = ref(null);
 
 function gotoNotebook() {
-  router.push({name: 'articleHome'});
+  router.push({name: 'EveryBodyArticle'});
 }
 
 function gotoTest() {
@@ -124,7 +124,7 @@ function gotoTrans() {
    background-repeat: no-repeat;
  }
 .card-notebook{
-  background-image: url('../assets/note.jpg');
+  background-image: url('../assets/报刊杂志.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
