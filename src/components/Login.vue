@@ -22,7 +22,7 @@
         <label for="checkbox">记住登录名</label>
       </div>
       <div style="width: 60%; display: flex; margin-left: auto">
-        <a style="text-align: right;float: right; margin-left: auto" href="/#/">使用访客身份登录</a>
+        <a style="text-align: right;float: right; margin-left: auto" href="/#/">使用访客身份</a>
       </div>
     </div>
   </div>

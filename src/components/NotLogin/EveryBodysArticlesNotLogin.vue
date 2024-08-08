@@ -1,5 +1,5 @@
 <template>
-  <navigate-not-login  :origin-tab="'功能'"></navigate-not-login>
+  <navigate-not-login></navigate-not-login>
   <el-container class="layout-container-demo" style="height: 100%">
     <el-aside width="200px">
       <el-scrollbar>
@@ -56,7 +56,7 @@ import {Menu as IconMenu, Edit, Setting} from '@element-plus/icons-vue'
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
-import NavigateNotLogin from "@/components/Common/NavigateNotLogin.vue";
+import NavigateNotLogin from "@/components/NotLogin/NavigateNotLogin.vue";
 
 const router = useRouter();
 </script>

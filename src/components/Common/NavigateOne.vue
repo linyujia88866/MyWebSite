@@ -4,6 +4,7 @@ import {onMounted, ref} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, Message, HelpFilled, Management, Setting} from "@element-plus/icons-vue";
+import {ElMessage} from "element-plus";
 
 const props = defineProps({
   originTab: {
@@ -47,6 +48,10 @@ onMounted( async () => {
   if (!isLogin) {
     // 要执行的代码;
     await router.push({name: 'login'});
+    ElMessage({
+      message: "请先登录" ,
+      type: 'error',
+    });
   }
 
 })

@@ -22,7 +22,7 @@ import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 import CreateArticle from "@/Comps/Article/CreateArticle.vue";
 import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
-import EveryBodysArticlesNotLogin from "@/Comps/Article/EveryBodysArticlesNotLogin.vue";
+import EveryBodysArticlesNotLogin from "@/components/NotLogin/EveryBodysArticlesNotLogin.vue";
 
 const routes = [
   {
