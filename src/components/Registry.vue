@@ -40,7 +40,7 @@ const postData = async () => {
   let requestBody = {
     username: user.value,
     password: pwd.value,
-    id: userid.value
+    userId: userid.value
   };
   myHttp.post(url, requestBody)
       .then(response => {

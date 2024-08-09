@@ -30,7 +30,7 @@ async function verify() {
   authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
       .then(response => {
-        if (response.data.code === "200") {
+        if (response.data.code === 200) {
           isLogin = true;
           authority.value = response.data.data;
           localStorage.setItem('curAuth', authority.value);
@@ -81,7 +81,7 @@ function logout() {
   // 进行其他退出登录的逻辑，例如跳转到登录页面
   myHttp.post('/logout')
       .then(response => {
-        if(response.data.code === "200"){
+        if(response.data.code === 200){
           isLogin = false;
           router.push({name: 'login'});
         }

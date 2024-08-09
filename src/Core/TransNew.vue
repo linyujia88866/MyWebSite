@@ -1,5 +1,5 @@
 <template>
-  <navigate-one ref="childRef" :origin-tab="'功能'" style="z-index: 100;"></navigate-one>
+  <navigate-one ref="childRef" :origin-tab="'文件传输助手'" style="z-index: 100;"></navigate-one>
   <div @click="reset" style="height: 90vh; display: flex;">
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">
@@ -88,7 +88,7 @@
 <script setup>
 import {nextTick, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {genNewFolderName, getParentDirectory} from "@/utils/stringutils";
+import {getParentDirectory} from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";

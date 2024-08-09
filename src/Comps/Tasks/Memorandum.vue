@@ -17,7 +17,7 @@ if(taskId.value){
 let items=reactive([]);
 
 let msg=ref("");
-const originTab=ref("功能");
+const originTab=ref("任务详情");
 let title = ref("")
 
 function getTaskInfo() {

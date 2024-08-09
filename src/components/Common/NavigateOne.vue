@@ -3,13 +3,13 @@ import {useRoute, useRouter} from 'vue-router';
 import {onMounted, ref} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, Message, HelpFilled, Management, Setting} from "@element-plus/icons-vue";
+import {Avatar, Message, Management, Setting} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 
 const props = defineProps({
   originTab: {
     type: String,
-    default: "首页",
+    default: "",
   }
 });
 function handleMouseLeave(){
@@ -32,7 +32,7 @@ async function verify() {
   authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
       .then(response => {
-        if (response.data.code === "200") {
+        if (response.data.code === 200) {
           isLogin = true;
           authority.value = response.data.data;
           localStorage.setItem('curAuth', authority.value);
@@ -42,7 +42,7 @@ async function verify() {
 }
 
 onMounted( async () => {
-  activeTab.value = props.originTab;
+  // activeTab.value = props.originTab;
   isLogin=false;
   await verify();
   if (!isLogin) {
@@ -60,21 +60,11 @@ function changeTab(tab){
   activeTab.value = tab;
   if(tab==="首页"){
     router.push({name: 'home'});
-  }else if(tab==="通知"){
-    router.push({name: 'message'});
-  }else if(tab==="设置"){
-    router.push({name: 'setting'});
-  }else if(tab==="管理中心"){
-    router.push({name: 'manager'});
-  }else if(tab==="个人信息"){
-    router.push({name: 'profile'});
-  }else if(tab==="帮助"){
-    router.push({name: 'help'});
   }
 }
 
 function updateTab() {
-  changeTab('功能');
+  // changeTab('功能');
 }
 
 function gotoHelp(){
@@ -100,7 +90,7 @@ function logout() {
   // 进行其他退出登录的逻辑，例如跳转到登录页面
   myHttp.post('/logout')
       .then(response => {
-        if(response.data.code === "200"){
+        if(response.data.code === 200){
           isLogin = false;
           router.push({name: 'login'});
         }
@@ -122,23 +112,8 @@ defineExpose({
           <li :class="{active: activeTab === '首页'}">
             <a @click="changeTab('首页')">首页</a>
           </li>
-          <li :class="{active: activeTab === '功能'}" v-if="props.originTab==='功能'">
-            <a @click="changeTab('功能')">功能</a>
-          </li>
-          <li :class="{active: activeTab === '通知'}"  v-if="props.originTab==='通知'">
-            <a @click="changeTab('通知')">通知</a>
-          </li>
-          <li :class="{active: activeTab === '个人信息'}"  v-if="props.originTab==='个人信息'">
-            <a @click="changeTab('个人信息')">个人中心</a>
-          </li>
-          <li :class="{active: activeTab === '设置'}"  v-if="props.originTab==='设置'">
-            <a @click="changeTab('设置')">设置</a>
-          </li>
-          <li :class="{active: activeTab === '管理中心'}"  v-if="props.originTab==='管理中心'">
-            <a @click="changeTab('管理中心')">管理中心</a>
-          </li>
-          <li :class="{active: activeTab === '帮助'}"  v-if="props.originTab==='帮助'">
-            <a @click="changeTab('帮助')">帮助</a>
+          <li style="margin-left: 12px; cursor: default " v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">
+            <a >{{props.originTab}}</a>
           </li>
         </ul>
       </div>

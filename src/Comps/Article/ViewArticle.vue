@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navigate-one  :origin-tab="'功能'"></navigate-one>
+    <navigate-one  :origin-tab="'查看文章'"></navigate-one>
 
     <el-container class="layout-container-demo" style="height: 100%;">
       <el-aside width="200px" >
@@ -132,7 +132,11 @@
                              @click.stop="cancelLikeToArt"
                              size="small" >
                   <template #default>
-                    <el-icon color="#409efc"><StarFilled /></el-icon>
+                    <el-icon>
+                      <template #default>
+                        <img style="height: 100%; width: 100%" src="@/assets/关注-可关注-列表.svg">
+                      </template>
+                    </el-icon>
                   </template>
                 </el-button>
 
@@ -150,7 +154,16 @@
                            style="margin: 0 0 0 8px;"
                            @click.stop="addLikeToArt"
                            size="small"
-                           :icon="Star" ></el-button>
+                >
+                  <template #default>
+                    <el-icon>
+                      <template #default>
+                        <img style="height: 100%; width: 100%" src="@/assets/收藏.svg">
+                      </template>
+                    </el-icon>
+                  </template>
+
+                </el-button>
               </el-tooltip>
               <!--              =========================================================================-->
             </div>

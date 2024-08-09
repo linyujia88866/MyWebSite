@@ -64,14 +64,14 @@ const postData = async () => {
   };
   myHttp.post(url, requestBody)
       .then(response => {
-        if (response.data.code === "200") {
+        if (response.data.code === 200) {
           router.push({name: 'home'});
           localStorage.setItem('remember', isChecked.value.toString())
           if(isChecked.value){
             localStorage.setItem('curUser', user.value)
             localStorage.setItem('curPwd', pwd.value)
           }
-        } else if(response.data.code === "500"){
+        } else if(response.data.code === 500){
           ElMessage({
             message: "账号或密码错误",
             type: 'error',

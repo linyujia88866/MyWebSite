@@ -35,7 +35,7 @@ const getMsg = (val) => {
   emailForm.msg = val
 }
 
-let title = ref('【无标题】')
+let title = ref('')
 async function saveAndView() {
   let res = await saveDefault(false)
   if(res.length === 0){

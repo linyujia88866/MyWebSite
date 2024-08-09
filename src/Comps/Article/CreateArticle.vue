@@ -1,5 +1,5 @@
 <template>
-  <navigate-one  :origin-tab="'功能'"></navigate-one>
+  <navigate-one  :origin-tab="'创建文章'"></navigate-one>
   <el-container class="layout-container-demo" style="height: 100%;">
     <el-aside width="200px" >
       <el-scrollbar >

@@ -126,15 +126,23 @@ async function addLikeToArtApi(articleId) {
         })
             .then((response) => {
                 res = 'success'
-                if(response.data.code.startsWith("1000")){
+                console.log(response.data.code)
+                console.log(response.data)
+                if(response.data.code >1000){
                     ElMessage({
                         message: '请先登录！',
                         type: 'error',
                     });
                     res = "notLogin"
+                } else {
+                    ElMessage({
+                        message: '点赞！',
+                        type: 'info',
+                    });
                 }
             });
     } catch (error) {
+        console.log(error)
         ElMessage({
             message: '点赞失败！',
             type: 'error',
@@ -146,13 +154,16 @@ async function addLikeToArtApi(articleId) {
 async function cancelLikeToArtApi(articleId) {
     let res = ""
     try {
-        await myHttp.post(`/article/addLikeToArt/${articleId}`, {
+        await myHttp.post(`/article/deductLikeToArt/${articleId}`, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then(() => {
-                res = 'success'
+                ElMessage({
+                    message: '取消点赞！',
+                    type: 'info',
+                });
             });
 
     } catch (error) {
