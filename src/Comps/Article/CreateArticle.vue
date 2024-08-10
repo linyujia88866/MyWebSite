@@ -11,7 +11,7 @@
               <el-icon><icon-menu /></el-icon>快速导航
             </template>
 <!--            <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
-            <el-menu-item index="1-2" @click="router.push('/notes')">返回文章管理
+            <el-menu-item index="1-2" @click="router.push('/manageArticle')">返回文章管理
               <el-icon><Setting /></el-icon>
             </el-menu-item>
           </el-sub-menu>

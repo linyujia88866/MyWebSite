@@ -1,6 +1,8 @@
 <template>
   <div class="login-container">
-    <img alt="Vue logo" src="../assets/logo.png" >
+    <div>
+      <img alt="Vue logo" style="height: 300px; width: 300px;" src="../assets/燕子.jpg" >
+    </div>
     <h1>千里之行，始于足下</h1>
     <form @submit.prevent="postData">
       <div style="display: flex">

@@ -115,19 +115,34 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
     closeLoading()
     return sameFilesToUpload
 }
-
 async function addLikeToArtApi(articleId) {
+    return await addOperationToArtApi(articleId, "like")
+}
+
+async function addGoodToArtApi(articleId) {
+    return await addOperationToArtApi(articleId, "good")
+}
+
+
+async function addOperationToArtApi(articleId, type="like") {
+    let url = ""
+    let msg = ""
+    if(type === "like"){
+        url = `/article/addLikeToArt/${articleId}`
+        msg = "收藏"
+    } else {
+        url = `/article/addGoodToArt/${articleId}`
+        msg = "点赞"
+    }
     let res = ""
     try {
-        await myHttp.post(`/article/addLikeToArt/${articleId}`, {
+        await myHttp.post(url, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then((response) => {
                 res = 'success'
-                console.log(response.data.code)
-                console.log(response.data)
                 if(response.data.code >1000){
                     ElMessage({
                         message: '请先登录！',
@@ -136,7 +151,7 @@ async function addLikeToArtApi(articleId) {
                     res = "notLogin"
                 } else {
                     ElMessage({
-                        message: '点赞！',
+                        message: `${msg}！`,
                         type: 'info',
                     });
                 }
@@ -144,31 +159,49 @@ async function addLikeToArtApi(articleId) {
     } catch (error) {
         console.log(error)
         ElMessage({
-            message: '点赞失败！',
+            message: `${msg}失败！`,
             type: 'error',
         });
     }
     return res
 }
 
-async function cancelLikeToArtApi(articleId) {
+async function cancelLikeToArtApi(articleId){
+    return await cancelOperationToArtApi(articleId, "like")
+}
+
+async function cancelGoodToArtApi(articleId){
+    return await cancelOperationToArtApi(articleId, "good")
+}
+
+async function cancelOperationToArtApi(articleId, type="like") {
+    let url = ""
+    let msg = ""
+    if(type === "like"){
+        url = `/article/deductLikeToArt/${articleId}`
+        msg = "收藏"
+    } else {
+        url = `/article/deductGoodToArt/${articleId}`
+        msg = "点赞"
+    }
     let res = ""
     try {
-        await myHttp.post(`/article/deductLikeToArt/${articleId}`, {
+        await myHttp.post(url, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then(() => {
+                res = 'success'
                 ElMessage({
-                    message: '取消点赞！',
+                    message: `取消${msg}！`,
                     type: 'info',
                 });
             });
 
     } catch (error) {
         ElMessage({
-            message: '点赞失败！',
+            message: `取消${msg}失败！`,
             type: 'error',
         });
     }
@@ -176,9 +209,26 @@ async function cancelLikeToArtApi(articleId) {
 }
 
 async function checkLikeToArtApi(articleId) {
+    return await checkOperationToArtApi(articleId, "like")
+}
+
+async function checkGoodToArtApi(articleId) {
+    return await checkOperationToArtApi(articleId, "good")
+}
+
+async function checkOperationToArtApi(articleId, type) {
+    let url = ""
+    let msg = ""
+    if(type === "like"){
+        url = `/article/checkLikeToArt/${articleId}`
+        msg = "收藏"
+    } else {
+        url = `/article/checkGoodToArt/${articleId}`
+        msg = "点赞"
+    }
     let res = ""
     try {
-        await myHttp.get(`/article/checkLikeToArt/${articleId}`)
+        await myHttp.get(url)
             .then((response) => {
                 if(response.data.data !== null && response.data.data.articleId !== undefined){
                     res = "yes"
@@ -189,7 +239,7 @@ async function checkLikeToArtApi(articleId) {
 
     } catch (error) {
         ElMessage({
-            message: '查询点赞信息失败！',
+            message: `查询${msg}信息失败！`,
             type: 'error',
         });
     }
@@ -338,5 +388,8 @@ export {
     deleteFolderApi,
     addLikeToArtApi,
     checkLikeToArtApi,
-    cancelLikeToArtApi
+    cancelLikeToArtApi,
+    addGoodToArtApi,
+    cancelGoodToArtApi,
+    checkGoodToArtApi
 }

@@ -11,7 +11,10 @@ async function viewArt(artId) {
                     content: response.data.data.content,
                     username: response.data.data.username,
                     createdAt: response.data.data.createdAt,
-                    publish: response.data.data.publish
+                    publish: response.data.data.publish,
+                    readCount: response.data.data.readCount,
+                    likeCount: response.data.data.likeCount,
+                    goodCount: response.data.data.goodCount,
                 }
 
             } else {
@@ -44,6 +47,23 @@ async function pubArt(artId) {
         })
         .catch(error => console.error('Error:', error));
     return res
+}
+
+async function getMyFavoriteArtApi() {
+    let array
+    await myHttp.get('/article/MyFavoriteArticles')
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章列表失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    return array
 }
 
 async function saveArtApi(title, content ,publish, emit) {
@@ -213,5 +233,6 @@ export {
     pubArt,
     saveArtApi,
     updateArtApi,
-    getAllPubArticles
+    getAllPubArticles,
+    getMyFavoriteArtApi
 }

@@ -52,7 +52,7 @@ function gotoCreateArt() {
 }
 
 function gotoManage() {
-  router.push({name: 'notes'});
+  router.push({name: 'manageArticle'});
 }
 
 function gotoReadArticles() {

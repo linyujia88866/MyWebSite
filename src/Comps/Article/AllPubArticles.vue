@@ -44,7 +44,7 @@ async function getArtList() {
       title: item.title,
       reads: item.readCount,
       comments: item.commentCount,
-      likes: item.likeCount,
+      likes: item.goodCount,
       username: item.username,
       date: item.createdAt.replace(/\.0$/, '')
     })

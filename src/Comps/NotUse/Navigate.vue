@@ -137,8 +137,8 @@ defineExpose({
 
         <ul v-if="menuVisible" class="menu" >
           <!-- 菜单项 -->
-          <li><a href="/#/profile">个人信息</a></li>
-          <li><a href="/#/setting">设置</a></li>
+          <li><a href="/public#/profile">个人信息</a></li>
+          <li><a href="/public#/setting">设置</a></li>
           <li><a href="#" @click="logout">退出登录</a></li>
         </ul>
       </div>

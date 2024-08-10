@@ -29,121 +29,145 @@ const routes = [
   {
     path: '/',
     name: 'default',
-    component: EveryBodysArticlesNotLogin
+    component: EveryBodysArticles,
+    meta: { title: '浏览文章' }
   },{
     path: '/home',
     name: 'home',
-    component: HomePage
+    component: HomePage,
+    meta: { title: '首页' }
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
+    meta: { title: '登录' }
   },
   {
     path: '/memory',
     name: 'memory',
-    component: Memorandum
+    component: Memorandum,
+    meta: { title: '待办详情' }
   },
   {
     path: '/memoryCards',
     name: 'memoryCards',
-    component: MemoryCards
+    component: MemoryCards,
+    meta: { title: '待办列表' }
   },
   {
     path: '/message',
     name: 'message',
-    component: Message
+    component: Message,
+    meta: { title: '消息' }
   },
   {
     path: '/setting',
     name: 'setting',
-    component: Setting
+    component: Setting,
+    meta: { title: '设置' }
   },
   {
     path: '/profile',
     name: 'profile',
-    component: Profile
+    component: Profile,
+    meta: { title: '个人中心' }
   },
   {
     path: '/help',
     name: 'help',
-    component: Help
+    component: Help,
+    meta: { title: '帮助' }
   },
   {
     path: '/registry',
     name: 'registry',
-    component: Registry
+    component: Registry,
+    meta: { title: '注册' }
   },
   {
     path: '/manager',
     name: 'manager',
-    component: UserManager
+    component: UserManager,
+    meta: { title: '用户管理' }
   },
   {
     path: '/edit',
     name: 'edit',
-    component: NoteEditor
+    component: NoteEditor,
+    meta: { title: '编辑文章' }
   },
   {
     path: '/articles',
     name: 'articles',
-    component: Articles
+    component: Articles,
+    meta: { title: '文章列表' }
   },
   {
-    path: '/notes',
-    name: 'notes',
-    component: NotePage
+    path: '/manageArticle',
+    name: 'manageArticle',
+    component: NotePage,
+    meta: { title: '管理文章' }
   },
   {
     path: '/fileTrans',
     name: 'fileTrans',
-    component: TransNew
+    component: TransNew,
+    meta: { title: '文件传输' }
   },
   {
     path: '/viewWord',
     name: 'viewWord',
-    component: ViewWord
+    component: ViewWord,
+    meta: { title: 'word文件浏览' }
   },
   {
     path: '/viewExcel',
     name: 'viewExcel',
-    component: ViewExcel
+    component: ViewExcel,
+    meta: { title: 'excel文件浏览' }
   },
   {
     path: '/viewPPT',
     name: 'viewPPT',
-    component: ViewPPT
+    component: ViewPPT,
+    meta: { title: 'ppt文件浏览' }
   },
   {
     path: '/test',
     name: 'test',
-    component: FileInfoData
+    component: FileInfoData,
+    meta: { title: '测试' }
   },
   {
     path: '/viewArticle',
     name: 'viewArticle',
-    component: ViewArticle
+    component: ViewArticle,
+    meta: { title: '查看文章' }
   },
   {
     path: '/viewArticleNotLogin',
     name: 'viewArticleNotLogin',
-    component: ViewArticleNotLogin
+    component: ViewArticleNotLogin,
+    meta: { title: '查看文章' }
   },
   {
     path: '/createArticle',
     name: 'createArticle',
-    component: CreateArticle
+    component: CreateArticle,
+    meta: { title: '创建文章' }
   },
   {
     path: '/articleHome',
     name: 'articleHome',
-    component: ArticleHome
+    component: ArticleHome,
+    meta: { title: '文章首页' }
   },
   {
     path: '/EveryBodyArticle',
     name: 'EveryBodyArticle',
-    component: EveryBodysArticles
+    component: EveryBodysArticles,
+    meta: { title: '浏览文章' }
   }
 ]
 

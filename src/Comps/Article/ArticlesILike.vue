@@ -10,7 +10,6 @@
           <span>评论数: {{ article.comments }}</span>
           <span>点赞数: {{ article.likes }}</span>
           <span>发表时间： {{ formatDate(article.date) }}</span>
-          <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
           <a
               @click="viewArticleById(article.id)"
               style="text-decoration: underline;
@@ -28,7 +27,7 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getPubArticles, viewArt} from "@/utils/articleApi";
+import {getMyFavoriteArtApi, getPriArticles, pubArt, viewArt} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
@@ -36,7 +35,7 @@ const router = useRouter();
 
 getArtList()
 async function getArtList() {
-  let array = await  getPubArticles()
+  let array = await  getMyFavoriteArtApi()
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({
@@ -49,13 +48,10 @@ async function getArtList() {
     })
   }
 }
-
-const filteredArticles = computed(() => {
-  return articles.value.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-});
-
+async function publishArticleById(artId) {
+  await  pubArt(artId)
+  await viewArticleById(artId)
+}
 async function viewArticleById(artId) {
   let res = await  viewArt(artId)
   await router.push({
@@ -63,6 +59,12 @@ async function viewArticleById(artId) {
     state: res
   });
 }
+const filteredArticles = computed(() => {
+  return articles.value.filter(article =>
+      article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
 };

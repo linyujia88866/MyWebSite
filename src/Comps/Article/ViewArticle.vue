@@ -1,7 +1,6 @@
 <template>
   <div>
-    <navigate-one  :origin-tab="'查看文章'"></navigate-one>
-
+    <navigate-one @check-auth-finished="decideContentToShow" ref="nav"   :origin-tab="'查看文章'"></navigate-one>
     <el-container class="layout-container-demo" style="height: 100%;">
       <el-aside width="200px" >
         <el-scrollbar >
@@ -11,11 +10,10 @@
               <template #title>
                 <el-icon><icon-menu /></el-icon>快速导航
               </template>
-<!--              <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
-              <el-menu-item index="1-2" @click="router.push('/notes')">返回文章管理
+              <el-menu-item index="1-2" v-if="isLogin" @click="router.push('/manageArticle')">返回文章管理
                 <el-icon><Setting /></el-icon>
               </el-menu-item>
-              <el-menu-item index="1-3" @click="router.push('/EveryBodyArticle')">返回浏览文章
+              <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章
                 <el-icon><View /></el-icon>
               </el-menu-item>
             </el-sub-menu>
@@ -25,7 +23,7 @@
 
       <el-container>
         <el-main>
-          <div style=" margin: 12px auto auto;width: 70%;">
+          <div style="margin: 12px auto auto;width: 70%;">
             <div> <h1>{{title}}</h1></div>
             <!--    ===============================================================================================-->
             <!--      一共24列，自由配置-->
@@ -33,11 +31,11 @@
               <el-col :span="4">
                 <el-statistic title="作者" :value="username" />
               </el-col>
-              <el-col :span="5">
+              <el-col :span="4">
                 <el-statistic title="发布时间" :value="`${timestampToDate(createdAt)}`" />
               </el-col>
-              <el-col :span="5">
-                <el-statistic title="阅读数" :value="562">
+              <el-col :span="4">
+                <el-statistic title="阅读数" :value="readCount">
                   <template #suffix>
                     <el-icon style="vertical-align: -0.125em">
                       <View />
@@ -45,17 +43,28 @@
                   </template>
                 </el-statistic>
               </el-col>
-              <el-col :span="5">
-                <el-statistic title="收藏数" :value="562">
+              <el-col :span="4">
+                <el-statistic title="点赞数" :value="goodCount">
                   <template #suffix>
-                    <el-icon style="vertical-align: -0.125em">
-                      <StarFilled />
+                    <el-icon >
+                      <template #default>
+                        <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/点赞线条.svg">
+                      </template>
                     </el-icon>
                   </template>
                 </el-statistic>
               </el-col>
-              <el-col :span="5">
-                <el-statistic title="评论数" :value="562">
+              <el-col :span="4">
+                <el-statistic title="收藏数" :value="likeCount">
+                  <template #suffix>
+                    <el-icon  style="vertical-align: -0.125em">
+                      <Star />
+                    </el-icon>
+                  </template>
+                </el-statistic>
+              </el-col>
+              <el-col :span="4">
+                <el-statistic title="评论数" :value="commentCount">
                   <template #suffix>
                     <el-icon style="vertical-align: -0.125em">
                       <ChatLineRound />
@@ -64,9 +73,7 @@
                 </el-statistic>
               </el-col>
             </el-row>
-
             <!--    ===============================================================================================-->
-
             <el-divider content-position="center">文章内容</el-divider>
             <div style="text-align: left; margin-left: 20px;" v-html="content"></div>
             <div style="display: flex; width: 100%;
@@ -84,7 +91,7 @@
                 <el-button
                     circle
                     style="margin: 0 0 0 8px; "
-                    @click.stop="addLikeToArt"
+                    @click.stop="addGoodToArt"
                     size="small">
                   <template #default>
                     <el-icon>
@@ -106,7 +113,7 @@
                 <el-button
                     circle
                     style="margin: 0 0 0 8px; "
-                    @click.stop="cancelLikeToArt"
+                    @click.stop="cancelGoodToArt"
                     size="small">
                   <template #default>
                     <el-icon>
@@ -117,8 +124,6 @@
                   </template>
                 </el-button>
               </el-tooltip>
-
-
 <!--              =========================================================================-->
               <el-tooltip
                   v-if="hasLike"
@@ -134,7 +139,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/关注-可关注-列表.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/已收藏.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -168,15 +173,9 @@
               <!--              =========================================================================-->
             </div>
           </div>
-
-
-
         </el-main>
       </el-container>
     </el-container>
-
-
-
 
     <el-backtop :right="100" :bottom="100" style="width: 150px">
       <div
@@ -200,18 +199,31 @@
 import {nextTick, ref} from "vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
-import {Menu as IconMenu,ChatLineRound, StarFilled, Star, View, Setting} from '@element-plus/icons-vue'
+import {Menu as IconMenu,ChatLineRound, StarFilled,Star, View, Setting} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
-import {addLikeToArtApi, cancelLikeToArtApi, checkLikeToArtApi} from "@/utils/fileApi";
+import {
+  addGoodToArtApi,
+  addLikeToArtApi, cancelGoodToArtApi,
+  cancelLikeToArtApi,
+  checkGoodToArtApi,
+  checkLikeToArtApi
+} from "@/utils/fileApi";
+import {ElMessage} from "element-plus";
 
 const source = ref(0)
 source.value = 172000
 const router = useRouter();
+let nav = ref()
+let isLogin = ref(false)
 let title = ref("")
 let content = ref("")
 let createdAt = ref("")
 let username = ref("")
 let articleId = ref("")
+let readCount = ref(0)
+let goodCount = ref(0)
+let likeCount = ref(0)
+let commentCount = ref(0)
 let hasLike = ref(false)
 let hasGood = ref(false)
 
@@ -221,7 +233,12 @@ nextTick(()=>{
   createdAt.value = history.state.createdAt
   username.value = history.state.username
   articleId.value = history.state.articleId
+  readCount.value = history.state.readCount
+  goodCount.value = history.state.goodCount
+  likeCount.value = history.state.likeCount
+  commentCount.value = history.state.commentCount
   checkLikeToArt()
+  checkGoodToArt()
 })
 
 const props = defineProps({
@@ -233,19 +250,58 @@ const props = defineProps({
   },
 })
 
+function decideContentToShow(x) {
+  isLogin.value = x
+}
+
 async function addLikeToArt() {
-  await addLikeToArtApi(articleId.value)
+  let res = await addLikeToArtApi(articleId.value)
+  if(res === "notLogin"){
+    await router.push({name: 'login'});
+    return
+  }
+  if(res==="success"){
+    likeCount.value =  likeCount.value + 1
+  }
   await checkLikeToArt()
 }
 
+async function addGoodToArt() {
+  let res = await addGoodToArtApi(articleId.value)
+  if(res === "notLogin"){
+    await router.push({name: 'login'});
+    return
+  }
+  if(res==="success"){
+    goodCount.value =  goodCount.value + 1
+  }
+  await checkGoodToArt()
+}
+
 async function cancelLikeToArt() {
-  await cancelLikeToArtApi(articleId.value)
+  let res = await cancelLikeToArtApi(articleId.value)
+  if(res==="success"){
+    likeCount.value =  likeCount.value - 1
+  }
   await checkLikeToArt()
+}
+
+async function cancelGoodToArt() {
+  let res = await cancelGoodToArtApi(articleId.value)
+  if(res==="success"){
+    goodCount.value  =  goodCount.value -1
+  }
+  await checkGoodToArt()
 }
 
 async function checkLikeToArt() {
   let res = await checkLikeToArtApi(articleId.value)
   hasLike.value = res === "yes";
+}
+
+async function checkGoodToArt() {
+  let res = await checkGoodToArtApi(articleId.value)
+  hasGood.value = res === "yes";
 }
 
 </script>

@@ -5,6 +5,7 @@ import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, Message, Management, Setting} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
+import {getUrlHash} from "@/utils/commonApi";
 
 const props = defineProps({
   originTab: {
@@ -12,12 +13,14 @@ const props = defineProps({
     default: "",
   }
 });
+
+let emit = defineEmits(["checkAuthFinished"])
 function handleMouseLeave(){
   menuVisible.value = false
 }
 let activeTab= ref('首页');
 let authority= ref('');
-let isLogin= false;
+let isLogin= ref(false);
 const router = useRouter();
 useRoute();
 const url = '/verify';
@@ -28,12 +31,16 @@ function toggleMenu() {
   menuVisible.value = !menuVisible.value;
 }
 
+function gotoLogin() {
+  router.push({name: 'login'});
+}
+
 async function verify() {
   authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
       .then(response => {
         if (response.data.code === 200) {
-          isLogin = true;
+          isLogin.value = true;
           authority.value = response.data.data;
           localStorage.setItem('curAuth', authority.value);
         }
@@ -42,10 +49,14 @@ async function verify() {
 }
 
 onMounted( async () => {
-  // activeTab.value = props.originTab;
-  isLogin=false;
+  isLogin.value=false;
   await verify();
-  if (!isLogin) {
+  let hash  = getUrlHash()
+  emit("checkAuthFinished", isLogin.value)
+  if(hash.endsWith("viewArticle")  || hash.endsWith("EveryBodyArticle") || hash === "#/"){
+    return
+  }
+  if (!isLogin.value) {
     // 要执行的代码;
     await router.push({name: 'login'});
     ElMessage({
@@ -53,7 +64,6 @@ onMounted( async () => {
       type: 'error',
     });
   }
-
 })
 
 function changeTab(tab){
@@ -91,7 +101,7 @@ function logout() {
   myHttp.post('/logout')
       .then(response => {
         if(response.data.code === 200){
-          isLogin = false;
+          isLogin.value = false;
           router.push({name: 'login'});
         }
       })
@@ -99,7 +109,7 @@ function logout() {
 }
 
 defineExpose({
-  updateTab
+  updateTab,
 })
 </script>
 
@@ -119,26 +129,36 @@ defineExpose({
       </div>
     </div>
     <div class="user-actions">
-      <el-icon color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
-<!--      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp"><HelpFilled /></el-icon>-->
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
+      <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
+      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
         <template #default>
           <img style="height: 100%; width: 100%" src="@/assets/帮助.svg">
         </template>
       </el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage" v-if="authority === '0'"><Management /></el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="toggleMenu"><Avatar /></el-icon>
-      <div class="user-menu" @mouseleave="handleMouseLeave">
-
-        <ul v-if="menuVisible" class="menu" >
+      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage" v-if="authority === '0' && isLogin"><Management /></el-icon>
+      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="toggleMenu"><Avatar /></el-icon>
+      <el-tooltip
+          v-else
+          effect="dark"
+          content="前往登录"
+          placement="top"
+          :show-after="500"
+      >
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="gotoLogin">
+          <template #default>
+            <img style="height: 100%; width: 100%" src="../../assets/登录.svg">
+          </template>
+        </el-icon>
+      </el-tooltip>
+      <div class="user-menu" v-if="menuVisible" @mouseleave="handleMouseLeave">
+        <ul  class="menu" >
           <!-- 菜单项 -->
           <li><a href="/#/profile">个人信息</a></li>
           <li><a href="/#/setting">设置</a></li>
           <li><a href="#" @click="logout">退出登录</a></li>
         </ul>
       </div>
-
     </div>
   </div>
 </template>
