@@ -10,7 +10,6 @@
             <template #title>
               <el-icon><icon-menu /></el-icon>快速导航
             </template>
-<!--            <el-menu-item index="1-1" @click="router.push('/articleHome')">返回文章主页</el-menu-item>-->
             <el-menu-item index="1-2" @click="router.push('/manageArticle')">返回文章管理
               <el-icon><Setting /></el-icon>
             </el-menu-item>
@@ -22,6 +21,9 @@
     <el-container>
       <el-main>
         <note-editor
+            :article-id="articleId"
+            :content="content"
+            :title="title"
             style=" margin: 12px;"/>
       </el-main>
     </el-container>
@@ -33,7 +35,29 @@ import NoteEditor from "@/Comps/Article/NoteEditor.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import {Menu as IconMenu,Setting} from "@element-plus/icons-vue";
+import {ref} from "vue";
 const router = useRouter();
+
+let title = ref("")
+let content = ref("")
+let createdAt = ref("")
+let username = ref("")
+let articleId = ref("")
+let readCount = ref(0)
+let goodCount = ref(0)
+let likeCount = ref(0)
+let commentCount = ref(0)
+
+title.value = history.state.title
+content.value = history.state.content
+createdAt.value = history.state.createdAt
+username.value = history.state.username
+articleId.value = history.state.articleId
+readCount.value = history.state.readCount
+goodCount.value = history.state.goodCount
+likeCount.value = history.state.likeCount
+commentCount.value = history.state.commentCount
+
 
 </script>
 

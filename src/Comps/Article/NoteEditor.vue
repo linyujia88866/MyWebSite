@@ -22,7 +22,23 @@ const router = useRouter();
 import {pubArt, saveArtApi, updateArtApi, viewArt} from "@/utils/articleApi";
 
 const emit = defineEmits(['save-event']);
+const props = defineProps({
+  articleId: {
+    type: String,
+    default: ""
+  },
+  content: {
+    type: String,
+    default: ""
+  },
+  title: {
+    type: String,
+    default: ""
+  },
+})
 let curArtId = ref("")
+curArtId.value = props.articleId
+
 const emailForm = reactive({
   test_msg: "<p>#创作灵感# </p>" +
       "<p>• 记录工作实践、项目复盘</p>" +
@@ -31,11 +47,17 @@ const emailForm = reactive({
       "<p>• 搬运自己的原创文章到这</p>",
   msg: ''
 })
+
 const getMsg = (val) => {
   emailForm.msg = val
 }
 
 let title = ref('')
+if(curArtId.value.length > 0){
+  emailForm.test_msg = props.content
+  title.value = props.title
+}
+
 async function saveAndView() {
   let res = await saveDefault(false)
   if(res.length === 0){

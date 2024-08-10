@@ -10,7 +10,10 @@
           <span>评论数: {{ article.comments }}</span>
           <span>点赞数: {{ article.likes }}</span>
           <span>发表时间： {{ formatDate(article.date) }}</span>
-          <a style="text-decoration: underline; float: right; color: dodgerblue; ">编辑</a>
+          <a @click="editArticleById(article.id)"
+              style="text-decoration: underline;
+              cursor: pointer;
+              float: right; color: dodgerblue; ">编辑</a>
           <a
               @click="viewArticleById(article.id)"
               style="text-decoration: underline;
@@ -60,6 +63,14 @@ async function viewArticleById(artId) {
   let res = await  viewArt(artId)
   await router.push({
     name: 'viewArticle',
+    state: res
+  });
+}
+
+async function editArticleById(artId) {
+  let res = await viewArt(artId)
+  await router.push({
+    name: 'createArticle',
     state: res
   });
 }
