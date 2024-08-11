@@ -21,6 +21,11 @@
               cursor: pointer;
               color: dodgerblue;
               margin: 0 8px;">浏览</a>
+          <a @click="cancelPublishArticleById(article.id)"
+             style="text-decoration: underline;
+              cursor: pointer;
+              float: right;
+              color: dodgerblue; ">撤回发布</a>
         </div>
       </li>
     </ul>
@@ -31,15 +36,21 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getPubArticles, viewArt} from "@/utils/articleApi";
+import {cancelPubArt, getPubArticles, pubArt, viewArt} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
 const router = useRouter();
 
 getArtList()
+
+async function cancelPublishArticleById(artId) {
+  await  cancelPubArt(artId)
+  await getArtList()
+}
 async function getArtList() {
   let array = await  getPubArticles()
+  articles.value = []
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({
@@ -60,10 +71,11 @@ const filteredArticles = computed(() => {
 });
 
 async function viewArticleById(artId) {
-  let res = await  viewArt(artId)
+  // let res = await  viewArt(artId)
   await router.push({
     name: 'viewArticle',
-    state: res
+    // state: res,
+    query:{articleId: artId}
   });
 }
 

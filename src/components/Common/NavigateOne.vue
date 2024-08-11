@@ -53,7 +53,7 @@ onMounted( async () => {
   await verify();
   let hash  = getUrlHash()
   emit("checkAuthFinished", isLogin.value)
-  if(hash.endsWith("viewArticle")  || hash.endsWith("EveryBodyArticle") || hash === "#/"){
+  if(hash.startsWith("#/viewArticle")  || hash.endsWith("EveryBodyArticle") || hash === "#/"){
     return
   }
   if (!isLogin.value) {
@@ -103,6 +103,11 @@ function logout() {
         if(response.data.code === 200){
           isLogin.value = false;
           router.push({name: 'login'});
+        } else if(response.data.code === 50002){
+          ElMessage({
+            message: "登出失败" ,
+            type: 'error',
+          });
         }
       })
       .catch(error => console.error('Error:', error));

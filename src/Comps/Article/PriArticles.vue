@@ -71,10 +71,11 @@ async function publishArticleById(artId) {
   await viewArticleById(artId)
 }
 async function viewArticleById(artId) {
-  let res = await  viewArt(artId)
+  // let res = await  viewArt(artId)
   await router.push({
     name: 'viewArticle',
-    state: res
+    // state: res,
+    query:{articleId: artId}
   });
 }
 const filteredArticles = computed(() => {

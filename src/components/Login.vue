@@ -73,7 +73,7 @@ const postData = async () => {
             localStorage.setItem('curUser', user.value)
             localStorage.setItem('curPwd', pwd.value)
           }
-        } else if(response.data.code === 500){
+        } else if(response.data.code === 50001){
           ElMessage({
             message: "账号或密码错误",
             type: 'error',

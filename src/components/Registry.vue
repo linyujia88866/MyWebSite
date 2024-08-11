@@ -44,7 +44,7 @@ const postData = async () => {
   };
   myHttp.post(url, requestBody)
       .then(response => {
-        if (response.data.code === 333) {
+        if (response.data.code === 30001) {
           ElMessage({
             message: response.data.message,
             type: 'warning',

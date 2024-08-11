@@ -58,10 +58,11 @@ const filteredArticles = computed(() => {
 });
 
 async function viewArticleById(artId) {
-  let res = await  viewArt(artId)
+  // let res = await  viewArt(artId)
   await router.push({
     name: 'viewArticle',
-    state: res
+    // state: res,
+    query:{articleId: artId}
   });
 }
 const formatDate = (date) => {

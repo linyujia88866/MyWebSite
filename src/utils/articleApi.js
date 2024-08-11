@@ -49,6 +49,27 @@ async function pubArt(artId) {
     return res
 }
 
+async function cancelPubArt(artId) {
+    let res = {}
+    await myHttp.post(`/article/cancelPublish/${artId}`)
+        .then(response => {
+            if (response.data.code === 200) {
+                ElMessage({
+                    message: `取消发布文章${artId}成功！`,
+                    type: 'success',
+                });
+
+            } else {
+                ElMessage({
+                    message: `取消发布文章${artId}失败！`,
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    return res
+}
+
 async function getMyFavoriteArtApi() {
     let array
     await myHttp.get('/article/MyFavoriteArticles')
@@ -231,6 +252,7 @@ export {
     getPubArticles,
     getPriArticles,
     pubArt,
+    cancelPubArt,
     saveArtApi,
     updateArtApi,
     getAllPubArticles,

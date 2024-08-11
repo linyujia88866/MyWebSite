@@ -198,7 +198,7 @@
 <script setup>
 import {nextTick, ref} from "vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {Menu as IconMenu,ChatLineRound, StarFilled,Star, View, Setting} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
 import {
@@ -208,7 +208,7 @@ import {
   checkGoodToArtApi,
   checkLikeToArtApi
 } from "@/utils/fileApi";
-import {ElMessage} from "element-plus";
+import {viewArt} from "@/utils/articleApi";
 
 const source = ref(0)
 source.value = 172000
@@ -226,19 +226,23 @@ let likeCount = ref(0)
 let commentCount = ref(0)
 let hasLike = ref(false)
 let hasGood = ref(false)
+const route=useRoute()
 
-nextTick(()=>{
-  title.value = history.state.title
-  content.value = history.state.content
-  createdAt.value = history.state.createdAt
-  username.value = history.state.username
-  articleId.value = history.state.articleId
-  readCount.value = history.state.readCount
-  goodCount.value = history.state.goodCount
-  likeCount.value = history.state.likeCount
-  commentCount.value = history.state.commentCount
-  checkLikeToArt()
-  checkGoodToArt()
+articleId.value = route.query.articleId
+
+nextTick(async () => {
+  let res = await viewArt(articleId.value)
+  title.value = res.title
+  content.value = res.content
+  createdAt.value = res.createdAt
+  username.value = res.username
+  articleId.value = res.articleId
+  readCount.value = res.readCount
+  goodCount.value = res.goodCount
+  likeCount.value = res.likeCount
+  commentCount.value = res.commentCount
+  await checkLikeToArt()
+  await checkGoodToArt()
 })
 
 const props = defineProps({

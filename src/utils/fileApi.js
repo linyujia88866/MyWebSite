@@ -143,7 +143,7 @@ async function addOperationToArtApi(articleId, type="like") {
         })
             .then((response) => {
                 res = 'success'
-                if(response.data.code >1000){
+                if(response.data.code >10000){
                     ElMessage({
                         message: '请先登录！',
                         type: 'error',

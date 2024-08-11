@@ -63,10 +63,11 @@ async function saveAndView() {
   if(res.length === 0){
     return
   }
-  let artData = await viewArt(res)
+  // let artData = await viewArt(res)
   await router.push({
     name: 'viewArticle',
-    state: artData
+    // state: artData,
+    query:{articleId: res}
   });
 }
 
@@ -91,10 +92,11 @@ async function saveAndPublish() {
     return
   }
   await pubArt(res)
-  let artData = await viewArt(res)
+  // let artData = await viewArt(res)
   await router.push({
     name: 'viewArticle',
-    state: artData
+    // state: artData,
+    query:{articleId: res}
   });
 }
 
