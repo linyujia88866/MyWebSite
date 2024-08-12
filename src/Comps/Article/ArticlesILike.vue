@@ -2,7 +2,7 @@
   <div class="article-list">
     <input type="text" v-model="searchQuery" placeholder="Search..." />
     <h1 style="margin: 0;">文章列表</h1>
-    <ul>
+    <ul v-if="filteredArticles.length > 0">
       <li v-for="article in filteredArticles" :key="article.id">
         <h2>{{ article.title }}</h2>
         <div class="meta">
@@ -20,6 +20,7 @@
         </div>
       </li>
     </ul>
+    <el-empty  v-else description="没有文章" />
   </div>
 </template>
 
@@ -27,7 +28,7 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getMyFavoriteArtApi, getPriArticles, pubArt, viewArt} from "@/utils/articleApi";
+import {getMyFavoriteArtApi} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
@@ -48,12 +49,7 @@ async function getArtList() {
     })
   }
 }
-async function publishArticleById(artId) {
-  await  pubArt(artId)
-  await viewArticleById(artId)
-}
 async function viewArticleById(artId) {
-  // let res = await  viewArt(artId)
   await router.push({
     name: 'viewArticle',
     // state: res,

@@ -2,7 +2,7 @@
   <div class="article-list">
     <input type="text" v-model="searchQuery" placeholder="Search..." />
     <h1 style="margin: 0;">文章列表</h1>
-    <ul>
+    <ul v-if="filteredArticles.length > 0">
       <li v-for="article in filteredArticles" :key="article.id">
         <h2>{{ article.title }}</h2>
         <div class="meta">
@@ -29,6 +29,7 @@
         </div>
       </li>
     </ul>
+    <el-empty  v-else description="没有文章" />
   </div>
 </template>
 
