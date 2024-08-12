@@ -177,7 +177,6 @@ function handleConfirm() {
 }
 
 async function handleConfirmBatchMode() {
-  console.log("批量移动")
   for (let i = 0; i < selectionFiles.value.length; i++) {
     let row = selectionFiles.value[i]
     if (row.type === 'file') {

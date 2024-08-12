@@ -19,7 +19,6 @@ function showUrlInfo() {
 
 // 哈希部分，以 '#' 开头的部分，除非没有哈希值
     let hash = window.location.hash;
-    console.log(`${fullUrl}\n${protocol}\n${hostname}\n${port}\n${pathname}\n${search}\n${hash}`)
 }
 
 function getUrlHash(){

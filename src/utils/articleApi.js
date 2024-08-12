@@ -1,5 +1,6 @@
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import {getUuid} from "@/utils/getUuid";
 async function viewArt(artId) {
     let res = {}
     await myHttp.get(`/article/get/${artId}`)
@@ -87,7 +88,7 @@ async function getMyFavoriteArtApi() {
     return array
 }
 
-async function saveArtApi(title, content ,publish, emit) {
+async function saveArtApi(title, content ,publish, emit, artId) {
     let res = ""
     if (title === "") {
         ElMessage({
@@ -113,7 +114,8 @@ async function saveArtApi(title, content ,publish, emit) {
     let requestBody = {
         title: title,
         content: content,
-        publish: publish
+        publish: publish,
+        articleId:  artId
     };
 
     await myHttp.post("/article/save", requestBody)

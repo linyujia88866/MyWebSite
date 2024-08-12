@@ -108,6 +108,20 @@
           </el-tooltip>
           <el-tooltip
               effect="dark"
+              content="分享"
+              placement="top"
+              :show-after="500"
+          >
+            <el-button   circle
+                         v-if="scope.row.show && scope.row.type==='file'"
+                         style="margin: 0 0 0 8px;"
+                         @click.stop="shareFile(scope.row.name, scope.row.type)"
+                         type="warning"
+                         size="small"
+                         :icon="Share" ></el-button>
+          </el-tooltip>
+          <el-tooltip
+              effect="dark"
               content="删除"
               placement="top"
               :show-after="500"
@@ -152,9 +166,9 @@
 
 <script setup>
 import {ElMessageBox, ElTable} from 'element-plus'
-import {deleteFileApi, deleteFolderApi, downloadFileApi, getFileListApi} from "@/utils/fileApi";
+import {deleteFileApi, deleteFolderApi, downloadFileApi, getFileListApi, shareFileApi} from "@/utils/fileApi";
 import {ref} from "vue";
-import {CopyDocument, Delete, TopRight, Download, Edit, View} from "@element-plus/icons-vue";
+import {CopyDocument, Delete, TopRight, Download, Edit, View, Share} from "@element-plus/icons-vue";
 import fl from "@/assets/wenjian.jpg";
 import fd from "@/assets/wenjianjia.png";
 
@@ -179,22 +193,18 @@ function getMapBg(markNumber) {
 
 function moveTheFile(fileName){
   emit('moveFile', fileName)
-  console.log('移动文件')
 }
 
 function copyFile(fileName){
   emit('copyFile', fileName)
-  console.log('复制文件')
 }
 
 function renameFile(fileName){
   emit('renameFile', fileName)
-  console.log('重命名文件')
 }
 
 function showTheFile(fileName) {
   emit('viewFile', fileName)
-  console.log('预览文件')
 }
 
 function deleteFile(row){
@@ -271,6 +281,10 @@ function handleDbClick(row) {
 
 async function downloadFile(fileName, fileType) {
   await downloadFileApi(fileName, fileType, curPath.value)
+}
+
+async function shareFile(fileName, fileType) {
+  await shareFileApi(fileName, fileType, curPath.value)
 }
 
 function clearSelection(){

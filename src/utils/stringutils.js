@@ -36,7 +36,12 @@ function getFirstAndLastChars(str) {
     }
     return first+ '...' + reverseString(last)
 }
-
+function truncateString(str) {
+    if (str.length > 30) {
+        return str.substring(0, 30) + '...';
+    }
+    return str;
+}
 function reverseString(str) {
     return str.split('').reverse().join('');
 }
@@ -184,6 +189,15 @@ function genNewFolderName(oldName, allFolderNames){
     return newName
 }
 
+function copyToClipboard(text) {
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    input.value = text;
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+}
+
 export  {
     getFirstAndLastChars,
     timePatternChange,
@@ -200,5 +214,7 @@ export  {
     transToDirPath,
     genNewFileName,
     genNewFolderName,
-    timestampToDate
+    timestampToDate,
+    truncateString,
+    copyToClipboard
 }

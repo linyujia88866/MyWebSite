@@ -24,6 +24,7 @@
             :article-id="articleId"
             :content="content"
             :title="title"
+            :type="type"
             style=" margin: 12px;"/>
       </el-main>
     </el-container>
@@ -36,6 +37,7 @@ import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import {Menu as IconMenu,Setting} from "@element-plus/icons-vue";
 import {ref} from "vue";
+import {getUuid} from "@/utils/getUuid";
 const router = useRouter();
 
 let title = ref("")
@@ -43,21 +45,28 @@ let content = ref("")
 let createdAt = ref("")
 let username = ref("")
 let articleId = ref("")
+let type = ref("")
 let readCount = ref(0)
 let goodCount = ref(0)
 let likeCount = ref(0)
 let commentCount = ref(0)
 
-title.value = history.state.title
-content.value = history.state.content
-createdAt.value = history.state.createdAt
-username.value = history.state.username
-articleId.value = history.state.articleId
-readCount.value = history.state.readCount
-goodCount.value = history.state.goodCount
-likeCount.value = history.state.likeCount
-commentCount.value = history.state.commentCount
 
+articleId.value = history.state.articleId
+type.value = history.state.type
+
+if(articleId.value  === undefined){
+  articleId.value = getUuid()
+} else {
+  title.value = history.state.title
+  content.value = history.state.content
+  createdAt.value = history.state.createdAt
+  username.value = history.state.username
+  readCount.value = history.state.readCount
+  goodCount.value = history.state.goodCount
+  likeCount.value = history.state.likeCount
+  commentCount.value = history.state.commentCount
+}
 
 </script>
 

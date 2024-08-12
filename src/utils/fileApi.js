@@ -1,13 +1,13 @@
 import {myHttp} from "@/request/myrequest";
 import {
-    calSize,
+    calSize, copyToClipboard, genNewFileName,
     getFirstAndLastChars,
     hasName,
     removePrefix,
     replaceSuffix,
-    timePatternChange
+    timePatternChange, truncateString
 } from "@/utils/stringutils";
-import {ElMessage, ElNotification} from "element-plus";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 import {closeLoading, openLoadingDialog} from "@/utils/loading";
 
 async function getFileListApi(path, res, folders, fileNames) {
@@ -72,7 +72,24 @@ async function getFileListApi(path, res, folders, fileNames) {
     return [res, folders, fileNames]
 }
 
-
+const uploadArtPicApi = async (formData, ) => {
+    let res
+    openLoadingDialog(`文件正在努力上传中，请耐心等待。。。`)
+    await myHttp.post("/minio/upload-art-pic", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    }).then((response) => {
+        res = response.data
+    }).catch(() => {
+        ElMessage({
+            message: '文件上传失败！',
+            type: 'error',
+        });
+    });
+    closeLoading()
+    return res
+}
 
 async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, uploadPath) {
     openLoadingDialog(`文件正在努力上传中，请耐心等待...`)
@@ -324,7 +341,6 @@ async function deleteFileApi(filename, curPath) {
     })
     .then(response => {
         if (response.status === 200 && response.data === true) {
-            console.log("删除成功")
             res = "success"
         }
     });
@@ -379,6 +395,55 @@ async function downloadFileApi(filename, type, curPath) {
 }
 
 
+async function shareFileApi(filename, type, curPath) {
+    openLoadingDialog('正在创建分享链接...')
+    let finalPath;
+    let url = "/minio/get-shared-link"
+    let res;
+    if(curPath.length > 0){
+        finalPath = curPath + '/' + filename
+    } else {
+        finalPath = filename
+    }
+    try {
+        await myHttp.get(url, {
+            params: {
+                objectName: finalPath,
+                bucketName:"test",
+                expiresSeconds: 24*3600
+            },
+        })
+            .then(response => {
+
+                if (response.status === 200) {
+                    res = response.data.data
+                }
+            });
+
+    } catch (error) {
+        console.error(error);
+    }
+    closeLoading()
+    await ElMessageBox.alert(truncateString(res), '文件分享', {
+        confirmButtonText: '复制链接',
+    })
+        .then(({ value }) => {
+            copyToClipboard(res)
+            ElMessage({
+                type: 'success',
+                message: `链接已复制`,
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '已取消',
+            })
+        })
+}
+
+
+
 export {
     getFileListApi,
     uploadFileApi,
@@ -391,5 +456,7 @@ export {
     cancelLikeToArtApi,
     addGoodToArtApi,
     cancelGoodToArtApi,
-    checkGoodToArtApi
+    checkGoodToArtApi,
+    shareFileApi,
+    uploadArtPicApi
 }

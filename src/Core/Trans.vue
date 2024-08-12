@@ -465,7 +465,6 @@ const openLoadingDialog = (text) => {
 }
 
 function confirmRename(newName){
-  console.log(newName)
   getFileList()
 }
 
@@ -604,14 +603,6 @@ function  customUpload(request) {
   // files.value = [...files.value, {name: fileObject.value.name, size: fileObject.value.size}];
   afterFileSelected(request)
 }
-function  handleSuccess(response, file, fileList) {
-  // 成功处理逻辑
-  console.log('Upload success:');
-}
-function  handleError(err, file, fileList) {
-  // 错误处理逻辑
-  console.error('Upload failed:');
-}
 
 // 创建文件夹
 function makeDir() {
@@ -739,29 +730,8 @@ function moveTheFile(filename) {
 
 function renameFile(name){
   renameFileDialog.value.open(name)
-  // renameInput.value
-  // fileName.fileEdit = 'true'
-  // if(activeInputs.value.length > 0){
-  //   activeInputs.value.pop().fileEdit = 'false'
-  // }
-  // activeInputs.value.push(fileName)
-  // nextTick(()=>{
-  //   renameInput.value[0].select()
-  // })
 }
 
-function finishEdit(fileName) {
-  // nextTick(()=>{
-  //   fileName.fileEdit = 'false'
-  //   activeInputs.value = []
-  //   console.log(renameInput.value)
-  // })
-
-}
-
-function changeFileName(fileName) {
-  console.log(fileName)
-}
 
 function copyTheFile(filename) {
   copyFile.value.changeVisibleStatus(curPath.value, filename)

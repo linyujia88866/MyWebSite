@@ -4,7 +4,7 @@
     <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">
   </header>
   <div style="width: 100%; margin-bottom: 100px">
-    <Editor :value="emailForm.test_msg" @updateValue="getMsg"  />
+    <Editor :value="emailForm.test_msg" :article-id="props.articleId" @updateValue="getMsg"  />
   </div>
   <div class="fixed-bar">
     <button @click.prevent="saveDefault(false)">保存文章</button>
@@ -35,8 +35,14 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  type: {
+    type: String,
+    default: "create"
+  },
 })
 let curArtId = ref("")
+let type = ref("")
+type.value = props.type
 curArtId.value = props.articleId
 
 const emailForm = reactive({
@@ -53,7 +59,7 @@ const getMsg = (val) => {
 }
 
 let title = ref('')
-if(curArtId.value.length > 0){
+if(props.content.length > 0){
   emailForm.test_msg = props.content
   title.value = props.title
 }
@@ -74,13 +80,13 @@ async function saveAndView() {
 async function saveDefault(publish) {
   let artData = {}
   let res = ""
-  if (curArtId.value.length > 0) {
+  if (type.value === "update") {
     artData = await viewArt(curArtId.value)
     curArtId.value = artData.articleId
     await updateArtApi(title.value, emailForm.msg , curArtId.value )
     return curArtId.value
   }
-  res =  await save(publish)
+  res =  await save(publish, curArtId.value)
   curArtId.value = res
   return res
 }
@@ -100,8 +106,9 @@ async function saveAndPublish() {
   });
 }
 
-async function save(publish) {
-  return  await saveArtApi(title.value, emailForm.msg, publish, emit)
+async function save(publish, artId) {
+  type.value = "update"
+  return  await saveArtApi(title.value, emailForm.msg, publish, emit, artId)
 }
 </script>
 <style scoped>

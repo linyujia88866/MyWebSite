@@ -16,8 +16,9 @@
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { reactive, onMounted, ref, toRaw, watch } from 'vue'
+import {uploadArtPicApi} from "@/utils/fileApi";
 
-const props = defineProps(['value'])
+const props = defineProps(['value', 'articleId'])
 const emit = defineEmits(['updateValue'])
 const content = ref('')
 const myQuillEditor = ref()
@@ -55,24 +56,24 @@ const setValue = () => {
   const text = toRaw(myQuillEditor.value).getHTML()
   emit('updateValue', text)
 }
-const handleUpload = (e) => {
+const handleUpload = async (e) => {
   const files = Array.prototype.slice.call(e.target.files)
   if (!files) {
     return
   }
-  const formdata = new FormData()
-  formdata.append('file', files[0])
-
+  const formData = new FormData()
+  formData.append('file', files[0])
+  let res = await uploadArtPicApi(formData)
   // backsite.uploadFile(formdata)
   //   .then(res => {
   //     if (res.data.url) {
-        const quill = toRaw(myQuillEditor.value).getQuill()
-        const length = quill.getSelection().index
-        // 插入图片，res为服务器返回的图片链接地址
-        // quill.insertEmbed(length, 'image', res.data.url)
-        quill.insertEmbed(length, 'image', 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png')
-        // 调整光标到最后
-        quill.setSelection(length + 1)
+  const quill = toRaw(myQuillEditor.value).getQuill()
+  const length = quill.getSelection().index
+  // 插入图片，res为服务器返回的图片链接地址
+  // quill.insertEmbed(length, 'image', res.data.url)
+  quill.insertEmbed(length, 'image', res)
+  // 调整光标到最后
+  quill.setSelection(length + 1)
   //     }
   //   })
 }

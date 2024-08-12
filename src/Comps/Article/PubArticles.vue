@@ -81,6 +81,7 @@ async function viewArticleById(artId) {
 
 async function editArticleById(artId) {
   let res = await viewArt(artId)
+  res.type = "update"
   await router.push({
     name: 'createArticle',
     state: res

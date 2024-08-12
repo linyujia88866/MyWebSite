@@ -56,9 +56,6 @@ function transData(files, path, allFiles, origin) {
   curPath.value = path     // 复制的目标目录
   originPath.value = origin    // 复制的初始目录
   allFileNames.value = allFiles   // 目标目录下所有文件列表，用于计算新文件名
-  console.log(fileObjects.value)
-  console.log(curPath.value)
-  console.log(allFileNames.value)
 }
 
 function  handleCancel(){
