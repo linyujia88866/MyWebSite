@@ -85,7 +85,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/点赞.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/giveGood.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -107,7 +107,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/已点赞.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/alGood.svg">
                       </template>
                     </el-icon>
                   </template>

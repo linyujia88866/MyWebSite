@@ -48,7 +48,7 @@
                   <template #suffix>
                     <el-icon >
                       <template #default>
-                        <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/点赞线条.svg">
+                        <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/giveGoodLine.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -96,7 +96,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/点赞.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/giveGood.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -118,7 +118,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/已点赞.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/alGood.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -139,7 +139,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/已收藏.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/alLike.svg">
                       </template>
                     </el-icon>
                   </template>
@@ -163,7 +163,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/收藏.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/like.svg">
                       </template>
                     </el-icon>
                   </template>

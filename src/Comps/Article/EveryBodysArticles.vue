@@ -19,14 +19,14 @@
             <el-menu-item index="1-3" @click="showILike = false" v-if="isLogin">浏览所有文章
               <el-icon >
                 <template #default>
-                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/所有文章.svg">
+                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/allArt.svg">
                 </template>
               </el-icon>
             </el-menu-item>
             <el-menu-item index="1-4" @click="showILike = true" v-if="isLogin">我收藏的文章
               <el-icon >
                 <template #default>
-                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/收藏的文章.svg">
+                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/myfavor.svg">
                 </template>
               </el-icon>
             </el-menu-item>

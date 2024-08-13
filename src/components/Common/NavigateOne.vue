@@ -137,7 +137,7 @@ defineExpose({
       <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
         <template #default>
-          <img style="height: 100%; width: 100%" src="@/assets/帮助.svg">
+          <img style="height: 100%; width: 100%" src="@/assets/help.svg">
         </template>
       </el-icon>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
@@ -152,7 +152,7 @@ defineExpose({
       >
         <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="gotoLogin">
           <template #default>
-            <img style="height: 100%; width: 100%" src="../../assets/登录.svg">
+            <img style="height: 100%; width: 100%" src="../../assets/login.svg">
           </template>
         </el-icon>
       </el-tooltip>

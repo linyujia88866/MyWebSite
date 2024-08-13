@@ -124,7 +124,7 @@ function gotoTrans() {
    background-repeat: no-repeat;
  }
 .card-notebook{
-  background-image: url('../assets/报刊杂志.jpg');
+  background-image: url('../assets/paper.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
