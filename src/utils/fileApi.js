@@ -66,7 +66,7 @@ async function getFileListApi(path, res, folders, fileNames) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
 
     closeLoading()
     return [res, folders, fileNames]
@@ -120,7 +120,7 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
         }).then(() => {
 
         }).catch((error) => {
-            console.log(error)
+            
             ElNotification({
                 title: '错误',
                 message: `文件【${file.name}】上传失败！`,
@@ -174,7 +174,7 @@ async function addOperationToArtApi(articleId, type="like") {
                 }
             });
     } catch (error) {
-        console.log(error)
+        
         ElMessage({
             message: `${msg}失败！`,
             type: 'error',
@@ -315,7 +315,7 @@ async function deleteFolderApi(dirName, curPath) {
                 }
             });
     } catch (error) {
-        console.error(error);
+        
     }
     closeLoading()
     return res
@@ -389,7 +389,7 @@ async function downloadFileApi(filename, type, curPath) {
             });
 
     } catch (error) {
-        console.error(error);
+        
     }
     closeLoading()
 }
@@ -421,7 +421,7 @@ async function shareFileApi(filename, type, curPath) {
             });
 
     } catch (error) {
-        console.error(error);
+        
     }
     closeLoading()
     await ElMessageBox.alert(truncateString(res), '文件分享', {

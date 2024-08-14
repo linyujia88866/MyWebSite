@@ -777,7 +777,7 @@ async function downloadFile(filename, type) {
       });
 
   } catch (error) {
-    console.error(error);
+
   }
     loading?.close()
     loading = null
@@ -825,7 +825,7 @@ async function doDeleteFile(filename) {
           }
         });
   } catch (error) {
-    console.error(error);
+
   }
     loading?.close()
     loading = null
@@ -873,7 +873,7 @@ async function doDeleteFolder(dirName) {
           }
         });
   } catch (error) {
-    console.error(error);
+
   }
     loading?.close()
     loading = null

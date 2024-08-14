@@ -25,10 +25,10 @@ excel.value = route.query.excelUrl
 
 // docx作为参数通过父组件传参
 const renderedHandler=()=>{
-  console.log("渲染完成")
+
 }
 const errorHandler=()=>{
-  console.log("渲染失败")
+
 }
 
 </script>

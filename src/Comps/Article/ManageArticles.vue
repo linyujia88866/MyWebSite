@@ -23,7 +23,7 @@
                 </template>
               </el-icon>
             </el-menu-item>
-            <el-menu-item index="1-4" @click="showPublish = true">文章
+            <el-menu-item index="1-4" @click="showPublish = true">已发布文章
               <el-icon>
                 <template #default>
                   <img style="height: 100%; width: 100%" src="@/assets/alreadyPub.svg">

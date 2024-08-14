@@ -71,7 +71,7 @@ async function getTaskList() {
         });
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {});
 }
 async function deleteTask(taskId) {
   await myHttp.post("/task/delete/" + taskId)
@@ -84,7 +84,7 @@ async function deleteTask(taskId) {
         getTaskList()
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {});
 }
 
 </script>

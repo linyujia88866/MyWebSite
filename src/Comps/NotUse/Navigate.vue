@@ -36,7 +36,7 @@ async function verify() {
           localStorage.setItem('curAuth', authority.value);
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {});
 }
 
 onMounted( async () => {
@@ -86,7 +86,7 @@ function logout() {
           router.push({name: 'login'});
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {});
 }
 
 defineExpose({

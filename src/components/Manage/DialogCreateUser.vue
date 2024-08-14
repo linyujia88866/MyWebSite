@@ -93,7 +93,7 @@ const postData = async () => {
           closeDialog()
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {});
 };
 
 </script>

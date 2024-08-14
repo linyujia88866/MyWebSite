@@ -70,7 +70,7 @@ async function viewPhotos(filename, curPath) {
         });
 
   } catch (error) {
-    console.log(error)
+
     ElMessage({
       message: '预览图片失败！',
       type: 'warning',

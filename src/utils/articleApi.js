@@ -1,6 +1,6 @@
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
-import {getUuid} from "@/utils/getUuid";
+
 async function viewArt(artId) {
     let res = {}
     await myHttp.get(`/article/get/${artId}`)
@@ -25,7 +25,7 @@ async function viewArt(artId) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return res
 }
 
@@ -46,7 +46,7 @@ async function pubArt(artId) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return res
 }
 
@@ -67,7 +67,7 @@ async function cancelPubArt(artId) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return res
 }
 
@@ -84,7 +84,7 @@ async function getMyFavoriteArtApi() {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return array
 }
 
@@ -129,7 +129,7 @@ async function saveArtApi(title, content ,publish, emit, artId) {
                 emit('save-event', 'Hello from child with Composition API');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return res
 }
 
@@ -173,7 +173,7 @@ async function updateArtApi(title, content , articleId) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return res
 }
 
@@ -191,7 +191,7 @@ async function getPubArticles() {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return array
 }
 
@@ -209,7 +209,7 @@ async function addOneRead(articleId) {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return array
 }
 
@@ -227,7 +227,7 @@ async function getAllPubArticles() {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return array
 }
 
@@ -244,7 +244,7 @@ async function getPriArticles() {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {});
     return array
 }
 

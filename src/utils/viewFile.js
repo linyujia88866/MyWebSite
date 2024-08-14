@@ -84,7 +84,6 @@ async function showTheFileApi(filename, curPath) {
             });
 
     } catch (error) {
-        console.log(error)
         ElMessage({
             message: '获取文件失败！',
             type: 'warning',

@@ -107,7 +107,7 @@ async function updateTask(requestBody) {
           router.push({name: 'memoryCards'})
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {});
 }
 
 async function createNewTask(requestBody) {
@@ -122,7 +122,7 @@ async function createNewTask(requestBody) {
           router.push({name: 'memoryCards'})
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {});
 }
 
 function gotoMemoryCards(){
