@@ -24,6 +24,8 @@ import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
 import EveryBodysArticlesNotLogin from "@/components/NotLogin/EveryBodysArticlesNotLogin.vue";
 import ViewArticleNotLogin from "@/components/NotLogin/ViewArticleNotLogin.vue";
+import FileConvertHome from "@/convert/FileConvertHome.vue";
+import DownLoadGif from "@/convert/DownLoadGif.vue";
 
 const routes = [
   {
@@ -114,6 +116,18 @@ const routes = [
     name: 'fileTrans',
     component: TransNew,
     meta: { title: '文件传输' }
+  },
+  {
+    path: '/fileConvert',
+    name: 'fileConvert',
+    component: FileConvertHome,
+    meta: { title: '文件转换' }
+  },
+  {
+    path: '/downloadGif',
+    name: 'downloadGif',
+    component: DownLoadGif,
+    meta: { title: '文件转换' }
   },
   {
     path: '/viewWord',

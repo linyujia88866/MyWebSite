@@ -225,9 +225,7 @@ function deleteFile(row){
         res = await deleteFolderApi(row.name, curPath.value)
       }
       if (res === 'success') {
-        let a
-        let b
-        [tableData.value, a, b] = await getFileListApi(curPath.value + '/', [])
+        await updateTableData()
       }
     })
     .catch(() => {

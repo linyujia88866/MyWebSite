@@ -75,7 +75,7 @@ async function saveTask() {
   }
   if(items.length === 0){
     ElMessage({
-      message: "请添加至少一个任务",
+      message: "请添加至少一个事项",
       type: 'warning',
     });
     return
@@ -134,13 +134,13 @@ function gotoMemoryCards(){
   <div>
     <navigate-one ref="childRef" :origin-tab="originTab"></navigate-one>
     <h4 style="text-align: left; padding-top: 12px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
-        @click="gotoMemoryCards">返回任务清单列表</h4>
+        @click="gotoMemoryCards">返回清单列表</h4>
     <header>
       <span class="the-title-label">标题：</span><input class="the-title" type="text" placeholder="请输入标题" v-model.trim="title" autocomplete="off">
     </header>
     <section >
       <div class="title">
-        <input type="text" placeholder="请输入待做事项(按ENTER键添加任务)" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
+        <input type="text" placeholder="请输入事项(按ENTER键添加事项)" v-model.trim="msg" @keyup.enter="add" autocomplete="off">
         <button style="margin: 0 12px ; width: 80px; height: 32px; text-align: center; padding: 0" @click="add">添加</button>
       </div>
       <el-empty v-if="items.length === 0" description="暂无事项" />
@@ -152,8 +152,8 @@ function gotoMemoryCards(){
         </ul>
       </div>
       <div class="tongji" v-show="items.length!==0">
-        <div class="left">当前共有<span style="text-align: center;">{{items.length}}</span>个待办任务</div>
-        <div class="clear"><span @click="clear">清空所有任务</span></div>
+        <div class="left">当前共有<span style="text-align: center;">{{items.length}}</span>个事项</div>
+        <div class="clear"><span @click="clear">清空所有事项</span></div>
       </div>
     </section>
     <div style="height: 2px"></div>

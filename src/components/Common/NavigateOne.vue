@@ -52,8 +52,11 @@ onMounted( async () => {
   isLogin.value=false;
   await verify();
   let hash  = getUrlHash()
+  // 不校验登录的页面
   emit("checkAuthFinished", isLogin.value)
-  if(hash.startsWith("#/viewArticle")  || hash.endsWith("EveryBodyArticle") || hash === "#/"){
+  if(hash.startsWith("#/viewArticle")
+      || hash.endsWith("EveryBodyArticle")
+      || hash === "#/"){
     return
   }
   if (!isLogin.value) {

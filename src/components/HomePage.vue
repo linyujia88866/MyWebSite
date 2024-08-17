@@ -15,8 +15,8 @@
           </p>
         </div>
       <!--=================================================分割线================================================================-->
-      <div  v-if="false">
-        <div class="card card-fileChange" @click="gotoTrans">
+      <div  v-if="true">
+        <div class="card card-fileChange" @click="gotoConvert">
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
@@ -38,7 +38,7 @@
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          待办任务
+          清单
         </p>
       </div>
       <!--=================================================分割线================================================================-->
@@ -57,16 +57,25 @@
       </div>
     </div>
   </div>
+
+
+  <div class="status-bar">
+    <p style="margin-left: 20px;">粤ICP备2024288007</p>     <p style="margin-left: 20px">有任何疑问请联系</p>
+    <p style="text-decoration-line: underline; margin-left: 8px; cursor: pointer" @click="sendEmail"  >linyujia619@qq.com</p>
+  </div>
 </template>
 
 <script setup>
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
+
 const router = useRouter();
 
 const childRef = ref(null);
-
+const sendEmail = () => {
+  window.location.href = 'mailto:example@example.com?subject=邮件主题&body=邮件内容';
+};
 function gotoNotebook() {
   router.push({name: 'EveryBodyArticle'});
 }
@@ -81,6 +90,10 @@ function gotoMemory() {
 
 function gotoTrans() {
   router.push({name: 'fileTrans'});
+}
+
+function gotoConvert() {
+  router.push({name: 'fileConvert'});
 }
 
 </script>
@@ -182,6 +195,19 @@ function gotoTrans() {
 }
 .menu a:hover {
   background-color: #f0f0f0;
+}
+
+.status-bar {
+  align-items: center;  /* align-item是垂直居中 */
+  display: flex;
+  position: fixed;      /* 固定位置 */
+  left: 0;              /* 左边距为0 */
+  bottom: 0;            /* 底部边距为0 */
+  width: 100%;          /* 宽度为100% */
+  height: 40px;         /* 高度设置为你需要的值 */
+  background-color: #333; /* 背景颜色 */
+  color: white;         /* 文字颜色 */
+  /* 其他样式 */
 }
 
 </style>

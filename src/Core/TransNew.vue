@@ -3,7 +3,7 @@
   <div @click="reset" style="height: 90vh; display: flex;">
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">
-        <div  style=" margin: 12px 0 0;padding: 0;display: flex">
+        <div  style=" margin: 0 0 0;padding: 0;display: flex; align-items: center">
           <div style="margin-left: 12px; margin-right: 12px; padding: 0;" v-if="!batchOperationStatus">
             <el-upload
                 @click="clearFiles"
@@ -27,6 +27,12 @@
           <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchDelete">删除</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchCopy">复制</el-button>
           <el-button v-if="batchOperationStatus" type="primary" size="default" @click.stop="batchMove">移动</el-button>
+          <div class="demo-progress">
+            <p style=" margin-left: 12px;">已使用空间：</p>
+            <el-progress :percentage=sizeUsedRatio >
+              <span><p>{{sizeUsed}} MB / {{sizeAll}} MB </p></span>
+            </el-progress>
+          </div>
         </div>
       </div>
       <!--      =====================================================================================================================================================-->
@@ -83,12 +89,18 @@
   <ViewPhotoes ref="viewPhotos"></ViewPhotoes>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
   <RenameFile ref="renameFileDialog" @confirm="confirmRename"></RenameFile>
+    <div class="status-bar">
+      免责声明：
+      1、本站属于开源免费，不会对您的文件安全提供保障，如发生文件丢失或被窃取，后果自负。
+      2、如您将商业机密文件上传到此，本站不承担任何法律责任。
+      3、请不要上传非法内容，一经发现，报警处理。
+    </div>
 </template>
 
 <script setup>
 import {nextTick, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {getParentDirectory} from "@/utils/stringutils";
+import {getExtension, getParentDirectory} from "@/utils/stringutils";
 import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
@@ -99,11 +111,16 @@ import RenameFile from "@/Core/RenameFile.vue";
 import MakingDir from "@/Core/MakingDir.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {showTheFileApi} from "@/utils/viewFile";
-import {downloadFileApi, uploadFileApi} from "@/utils/fileApi";
+import {downloadFileApi, getSizeLeftApi, uploadFileApi} from "@/utils/fileApi";
 import ViewPhotoes from "@/Core/ViewPhotoes.vue";
 
 const router = useRouter();           // 理由处理
 const topLine = ref('-')
+let sizeLeftRatio = ref(0)
+let sizeUsedRatio = ref(0)
+let sizeUsed = ref(0)
+let sizeLeft = ref(0)
+let sizeAll = ref(0)
 topLine.value = topLine.value.repeat(200)   // 用于显示一条横线
 let curPath = ref('')     // 当前文件路径
 const upload_drag = ref(null)       // 右边的上传文件拖动区对象
@@ -119,10 +136,8 @@ const fileObject = ref(null)   // 正在上传或处理的文件对象
 const fileNames = ref([]);    // 当前页面的文件名列表
 let batchOperationStatus = ref(false)
 let selectionFiles = ref([])
-
 let makingDir=ref()   // 正在创建  文件夹
 let viewPhotos=ref()   // 正在创建  文件夹
-
 let loading = null;
 let uploading = ref(false)
 let fileNamesToUpload = ref([])
@@ -139,6 +154,7 @@ async function confirmRename(newName) {
 
 function updateCurPath(res){
   [curPath.value, folders.value, fileNames.value] = [...res]
+  getSizeLeft()
 }
 
 function handleSelectionChange(selections) {
@@ -163,7 +179,6 @@ function handleChange(file, fileList) {
     uploading.value = true
     setTimeout(function() {
       uploadFile()
-
     }, 100);
   }
 }
@@ -230,8 +245,9 @@ function gotoParentPath() {
 function reset(){
   makingDir.value.close()
 }
+let supportPicFileSuffixList = ["png", "jpg", "gif"]
 async function showTheFile(filename) {
-  if(filename.endsWith('.png') || filename.endsWith('.jpg')){
+  if(supportPicFileSuffixList.includes(getExtension(filename))){
     viewPhotos.value.open(filename, curPath.value)
   } else {
     await showTheFileApi(filename, curPath.value)
@@ -262,6 +278,19 @@ function clearFiles(){
 async function getFileList() {
   await table.value.updateTableData()
 }
+async function getSizeLeft() {
+  let res = await getSizeLeftApi()
+  sizeLeftRatio.value = res.left / res.all * 100
+  sizeUsedRatio.value = res.used / res.all * 100
+  sizeAll.value = res.all / (1024 *1024)
+  sizeAll.value = Math.round(sizeAll.value * 1000) / 1000;
+  sizeLeft.value = res.left / (1024 *1024)
+  sizeLeft.value = Math.round(sizeLeft.value * 1000) / 1000;
+  sizeUsed.value = res.used / (1024 *1024)
+  sizeUsed.value = Math.round(sizeUsed.value * 1000) / 1000;
+  console.log(res)
+}
+
 </script>
 <style scoped>
 
@@ -283,5 +312,23 @@ ul {
 
 /deep/ .custom-input .el-input__inner {
   color: #42b983; /* 修改为需要的颜色 */
+}
+.demo-progress{
+  display: flex;
+  align-items: center;
+}
+.demo-progress .el-progress--line {
+  width: 500px;
+}
+
+.status-bar {
+  position: fixed;      /* 固定位置 */
+  left: 0;              /* 左边距为0 */
+  bottom: 0;            /* 底部边距为0 */
+  width: 100%;          /* 宽度为100% */
+  height: 40px;         /* 高度设置为你需要的值 */
+  background-color: #333; /* 背景颜色 */
+  color: white;         /* 文字颜色 */
+  /* 其他样式 */
 }
 </style>

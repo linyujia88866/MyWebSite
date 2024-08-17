@@ -26,8 +26,8 @@ function gotoExcelView(excelUrl){
     // 使用window.open在新标签页中打开URL
     window.open(urlWithQuery, '_blank');
 }
-let supportList = ['pdf', 'docx', 'jpg', 'png', 'pptx', 'xlsx']
-
+let supportList = ['pdf', 'docx', 'jpg', 'png', 'pptx', 'xlsx', 'gif']
+let openInNewWindowList = ['pdf', 'gif']
 
 async function showTheFileApi(filename, curPath) {
 
@@ -62,7 +62,7 @@ async function showTheFileApi(filename, curPath) {
                     const myBlob = response.data
                     const qrUrl = window.URL.createObjectURL(myBlob);
                     // pdf文件类型
-                    if(filename.endsWith('.pdf')){
+                    if(openInNewWindowList.includes(getExtension(filename))){
                         window.open(qrUrl, '_blank');
                     }
                     else if(filename.endsWith('.pptx')){

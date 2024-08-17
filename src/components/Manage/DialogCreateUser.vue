@@ -87,8 +87,8 @@ const postData = async () => {
           });
         }else {
           ElMessage({
-            message: "注册成功",
-            type: 'info',
+            message: "创建用户成功",
+            type: 'success',
           });
           closeDialog()
         }

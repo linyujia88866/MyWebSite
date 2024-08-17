@@ -117,10 +117,14 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-        }).then(() => {
-
+        }).then((response) => {
+            if(response.data.code === 60001){
+                ElMessage({
+                    message: '空间不足！',
+                    type: 'error',
+                });
+            }
         }).catch((error) => {
-            
             ElNotification({
                 title: '错误',
                 message: `文件【${file.name}】上传失败！`,
@@ -131,6 +135,22 @@ async function uploadFileApi(fileNamesToUpload, filesToUpload, existFileNames, u
     }
     closeLoading()
     return sameFilesToUpload
+}
+// 获取剩余空间
+async function getSizeLeftApi() {
+    let url = "/minio/size-left"
+    let res = {}
+    await myHttp.get(url)
+        .then((response) => {
+            res =  response.data.data
+            return res
+        }).catch(()=>{
+            ElMessage({
+                message: '获取剩余空间大小失败！',
+                type: 'error',
+            });
+        })
+    return res
 }
 async function addLikeToArtApi(articleId) {
     return await addOperationToArtApi(articleId, "like")
@@ -458,5 +478,6 @@ export {
     cancelGoodToArtApi,
     checkGoodToArtApi,
     shareFileApi,
-    uploadArtPicApi
+    uploadArtPicApi,
+    getSizeLeftApi
 }
