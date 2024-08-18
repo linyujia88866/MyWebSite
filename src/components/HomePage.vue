@@ -52,7 +52,7 @@
       </div>
 
 
-      <div  v-if="false" class="card" @click.stop="gotoTest()" >
+      <div  v-if="true" class="card" @click.stop="gotoTest()" >
 
       </div>
     </div>

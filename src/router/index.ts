@@ -26,6 +26,7 @@ import EveryBodysArticlesNotLogin from "@/components/NotLogin/EveryBodysArticles
 import ViewArticleNotLogin from "@/components/NotLogin/ViewArticleNotLogin.vue";
 import FileConvertHome from "@/convert/FileConvertHome.vue";
 import DownLoadGif from "@/convert/DownLoadGif.vue";
+import test from "@/websocket/test.vue";
 
 const routes = [
   {
@@ -45,6 +46,12 @@ const routes = [
     component: Login,
     meta: { title: '登录' }
   },
+  // {
+  //   path: '/login',
+  //   name: 'login',
+  //   component: Login,
+  //   meta: { title: '登录' }
+  // },
   {
     path: '/memory',
     name: 'memory',
@@ -150,7 +157,7 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: FileInfoData,
+    component: test,
     meta: { title: '测试' }
   },
   {
