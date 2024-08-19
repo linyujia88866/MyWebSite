@@ -2,7 +2,6 @@
 <template>
   <div class="home-page">
     <div>
-<!--      <navigate-one ref="childRef"></navigate-one>-->
     </div>
       <div style="margin: 20px 0 0 20px; display: flex">
         请输入您要下载的图片文件地址
@@ -42,11 +41,8 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {downFile} from "@/utils/fileConvertApis";
 const router = useRouter();
-
-const childRef = ref(null);
 const input = ref('')
 input.value = ""
 const value = ref('.gif')
@@ -74,24 +70,7 @@ const options = [
 ]
 
 async function download() {
-  // await downloadPic(input.value)
   downFile(input.value, value.value)
-}
-
-function gotoNotebook() {
-  router.push({name: 'EveryBodyArticle'});
-}
-
-function gotoTest() {
-  router.push({name: 'test'});
-}
-
-function gotoMemory() {
-  router.push({name: 'memoryCards'});
-}
-
-function gotoDownloadPic() {
-  router.push({name: 'fileConvert'});
 }
 
 </script>

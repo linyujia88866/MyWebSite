@@ -17,13 +17,10 @@ import ViewPPT from "@/ViewFile/ViewPPT.vue";
 import Profile from "@/components/Basic/Profile.vue";
 import Help from "@/components/Basic/Help.vue";
 import TransNew from "@/Core/TransNew.vue";
-import FileInfoData from "@/Core/FileInfoData.vue";
 import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 import CreateArticle from "@/Comps/Article/CreateArticle.vue";
 import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
-import EveryBodysArticlesNotLogin from "@/components/NotLogin/EveryBodysArticlesNotLogin.vue";
-import ViewArticleNotLogin from "@/components/NotLogin/ViewArticleNotLogin.vue";
 import FileConvertHome from "@/convert/FileConvertHome.vue";
 import DownLoadGif from "@/convert/DownLoadGif.vue";
 import test from "@/websocket/test.vue";
@@ -46,12 +43,6 @@ const routes = [
     component: Login,
     meta: { title: '登录' }
   },
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: Login,
-  //   meta: { title: '登录' }
-  // },
   {
     path: '/memory',
     name: 'memory',
@@ -164,12 +155,6 @@ const routes = [
     path: '/viewArticle',
     name: 'viewArticle',
     component: ViewArticle,
-    meta: { title: '查看文章' }
-  },
-  {
-    path: '/viewArticleNotLogin',
-    name: 'viewArticleNotLogin',
-    component: ViewArticleNotLogin,
     meta: { title: '查看文章' }
   },
   {

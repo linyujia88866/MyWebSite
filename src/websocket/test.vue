@@ -1,9 +1,7 @@
 <template>
   <div>
-<!--    <navigate-one ref="childRef"></navigate-one>-->
   </div>
   <div style="margin-top: 12px; margin-left: 12px; margin-right: 12px; text-align: left">
-<!--    <el-input v-model="url" type="text" style="width: 20%" /> &nbsp; &nbsp;-->
     <el-button @click="initWebsocket" type="primary">连接</el-button>
     <el-button @click="exit" type="danger">断开</el-button>
 
@@ -21,8 +19,6 @@
 <script>
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import bus from "@/utils/eventBus";
-import {getCurrentInstance} from "vue";
-
 export default {
   name: 'HomeView',
   components: {NavigateOne},
@@ -39,18 +35,6 @@ export default {
   destroyed() {
     this.exit()
   },
-  // mounted() {
-  //   const instance = getCurrentInstance();
-  //   if (!instance.appContext.config.globalProperties.$componentMounted) {
-  //     console.log('Component is mounted for the first time.');
-  //     // 执行组件首次挂载时需要的操作
-  //
-  //     // 更新全局状态，表示组件已挂载
-  //     instance.appContext.config.globalProperties.$componentMounted = true;
-  //   } else {
-  //     console.log('Component has already been mounted.');
-  //   }
-  // },
 
   methods:{
     initWebsocket(){

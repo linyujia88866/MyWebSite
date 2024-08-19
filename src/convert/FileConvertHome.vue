@@ -2,7 +2,6 @@
 <template>
   <div class="home-page">
     <div>
-<!--      <navigate-one ref="childRef"></navigate-one>-->
     </div>
     <div class="card-container">
       <!-- 卡片内容 -->
@@ -20,24 +19,7 @@
 
 <script setup>
 import {useRouter} from 'vue-router';
-import {ref} from "vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 const router = useRouter();
-
-const childRef = ref(null);
-
-function gotoNotebook() {
-  router.push({name: 'EveryBodyArticle'});
-}
-
-function gotoTest() {
-  router.push({name: 'test'});
-}
-
-function gotoMemory() {
-  router.push({name: 'memoryCards'});
-}
-
 function gotoDownloadPic() {
   router.push({name: 'downloadGif'});
 }
