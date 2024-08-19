@@ -38,7 +38,7 @@ const routes = [
     path: '/home',
     name: 'home',
     component: HomePage,
-    meta: { title: '首页' }
+    meta: { title: '' }
   },
   {
     path: '/login',

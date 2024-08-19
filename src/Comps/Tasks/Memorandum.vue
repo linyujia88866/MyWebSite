@@ -132,7 +132,7 @@ function gotoMemoryCards(){
 
 <template>
   <div>
-    <navigate-one ref="childRef" :origin-tab="originTab"></navigate-one>
+<!--    <navigate-one ref="childRef" :origin-tab="originTab"></navigate-one>-->
     <h4 style="text-align: left; padding-top: 12px; padding-left: 10px;text-decoration: underline;cursor: pointer;"
         @click="gotoMemoryCards">返回清单列表</h4>
     <header>

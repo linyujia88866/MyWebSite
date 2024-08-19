@@ -1,5 +1,5 @@
 <template>
-  <navigate-one ref="childRef" :origin-tab="'文件传输助手'" style="z-index: 100;"></navigate-one>
+<!--  <navigate-one ref="childRef" :origin-tab="'文件传输助手'" style="z-index: 100;"></navigate-one>-->
   <div @click="reset" style="height: 98vh; display: flex; ">
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">

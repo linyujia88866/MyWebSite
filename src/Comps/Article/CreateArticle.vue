@@ -1,5 +1,4 @@
 <template>
-  <navigate-one  :origin-tab="'创建文章'"></navigate-one>
   <el-container class="layout-container-demo" style="height: 100%;">
     <el-aside width="200px" >
       <el-scrollbar >
@@ -33,13 +32,12 @@
 
 <script setup>
 import NoteEditor from "@/Comps/Article/NoteEditor.vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import {Menu as IconMenu,Setting} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import {getUuid} from "@/utils/getUuid";
-const router = useRouter();
 
+const router = useRouter();
 let title = ref("")
 let content = ref("")
 let createdAt = ref("")
@@ -50,7 +48,6 @@ let readCount = ref(0)
 let goodCount = ref(0)
 let likeCount = ref(0)
 let commentCount = ref(0)
-
 
 articleId.value = history.state.articleId
 type.value = history.state.type
@@ -67,7 +64,6 @@ if(articleId.value  === undefined){
   likeCount.value = history.state.likeCount
   commentCount.value = history.state.commentCount
 }
-
 </script>
 
 <style scoped>
@@ -82,8 +78,6 @@ if(articleId.value  === undefined){
 .el-tabs--left .el-tabs__content {
   height: 100%;
 }
-
-
 .layout-container-demo .el-header {
   position: relative;
 }

@@ -1,6 +1,6 @@
 <template>
   <div >
-    <navigate-one ref="childRef" :origin-tab="'管理中心'"></navigate-one>
+<!--    <navigate-one ref="childRef" :origin-tab="'管理中心'"></navigate-one>-->
 <!--    <h1>管理员页面</h1>-->
     <div style="text-align: left;" >
       <el-button type="success" @click="openCreateUserDialog" style="margin: 20px 20px 0;">创建用户</el-button>

@@ -4,7 +4,7 @@ import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 <template>
 <div>
-  <navigate-one  :origin-tab="'通知'"></navigate-one>
+<!--  <navigate-one  :origin-tab="'通知'"></navigate-one>-->
   <h1 style="padding-top: 60px">暂无消息</h1>
 </div>
 </template>

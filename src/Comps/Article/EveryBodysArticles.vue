@@ -1,5 +1,4 @@
 <template>
-  <navigate-one @check-auth-finished="decideContentToShow" ref="nav"  :origin-tab="'浏览文章'"></navigate-one>
   <el-container class="layout-container-demo" style="height: 100%">
     <el-aside width="200px">
       <el-scrollbar>
@@ -63,22 +62,28 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {Menu as IconMenu, Edit, Setting} from '@element-plus/icons-vue'
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
 import ArticlesILike from "@/Comps/Article/ArticlesILike.vue";
+import bus from "@/utils/eventBus";
 
 const router = useRouter();
 let showILike = ref(false)
 let nav = ref()
 let isLogin = ref(false)
 
+onMounted(() => {
+  bus.$on('loginStatus', decideContentToShow);
+  onUnmounted(()=>{
+    bus.$off('loginStatus', decideContentToShow)
+  }); // 确保在组件卸载时移除监听器
+});
+
 function decideContentToShow(x) {
   isLogin.value = x
 }
-
 </script>
 
 <style scoped>

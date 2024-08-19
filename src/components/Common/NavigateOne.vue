@@ -1,12 +1,13 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, Message, Management, Setting} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
-
+import bus from "@/utils/eventBus";
+const route = useRoute();
 const props = defineProps({
   originTab: {
     type: String,
@@ -14,10 +15,26 @@ const props = defineProps({
   }
 });
 
+onMounted(() => {
+  bus.$on('myEvent', foo);
+  onUnmounted(()=>{
+    bus.$off('myEvent', foo)
+  }); // 确保在组件卸载时移除监听器
+});
+
+// 测试方法
+function foo(message) {
+  messageNum.value = messageNum.value + 1
+}
+
 let emit = defineEmits(["checkAuthFinished"])
 function handleMouseLeave(){
   menuVisible.value = false
 }
+const messageNum = ref(0)
+const messageTipHidden = computed(()=>{
+  return messageNum.value <= 0;
+})
 let activeTab= ref('首页');
 let authority= ref('');
 let isLogin= ref(false);
@@ -49,25 +66,30 @@ async function verify() {
 }
 
 onMounted( async () => {
-  isLogin.value=false;
+  await reset()
+})
+
+async function reset() {
+  isLogin.value = false;
   await verify();
-  let hash  = getUrlHash()
+  let hash = getUrlHash()
   // 不校验登录的页面
   emit("checkAuthFinished", isLogin.value)
-  if(hash.startsWith("#/viewArticle")
+  bus.$emit("loginStatus", isLogin.value)
+  if (hash.startsWith("#/viewArticle")
       || hash.endsWith("EveryBodyArticle")
-      || hash === "#/"){
+      || hash === "#/") {
     return
   }
   if (!isLogin.value) {
     // 要执行的代码;
     await router.push({name: 'login'});
     ElMessage({
-      message: "请先登录" ,
+      message: "请先登录",
       type: 'error',
     });
   }
-})
+}
 
 function changeTab(tab){
   activeTab.value = tab;
@@ -115,6 +137,9 @@ function logout() {
       })
       .catch(error => {});
 }
+watch(() => route.fullPath, (newPath, oldPath) => {
+  reset()
+});
 
 defineExpose({
   updateTab,
@@ -137,7 +162,11 @@ defineExpose({
       </div>
     </div>
     <div class="user-actions">
-      <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage" style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
+      <el-badge :offset="[-40, 30]" :value="messageNum" :hidden="messageTipHidden" class="item">
+        <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage"
+                 style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
+      </el-badge>
+
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
         <template #default>
           <img style="height: 100%; width: 100%" src="@/assets/help.svg">
@@ -214,8 +243,6 @@ defineExpose({
   font-size: 24px;
   color: white;
 }
-
-
 
 .user-menu {
   position: relative;

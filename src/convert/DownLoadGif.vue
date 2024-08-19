@@ -2,7 +2,7 @@
 <template>
   <div class="home-page">
     <div>
-      <navigate-one ref="childRef"></navigate-one>
+<!--      <navigate-one ref="childRef"></navigate-one>-->
     </div>
       <div style="margin: 20px 0 0 20px; display: flex">
         请输入您要下载的图片文件地址

@@ -2,7 +2,6 @@
 <template>
   <div class="home-page">
     <div>
-      <navigate-one ref="childRef"></navigate-one>
     </div>
     <div class="card-container">
         <!-- 卡片内容 -->
@@ -23,7 +22,7 @@
           文件转换助手
         </p>
       </div>
-<!--=================================================分割线================================================================-->
+      <!--=================================================分割线================================================================-->
       <div>
         <div class="card card-notebook" @click="gotoNotebook">
 
@@ -68,8 +67,6 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
-
 const router = useRouter();
 
 const childRef = ref(null);

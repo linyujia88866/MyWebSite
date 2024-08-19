@@ -1,5 +1,4 @@
 <template>
-  <navigate-one  :origin-tab="'管理我的文章'"></navigate-one>
   <el-container class="layout-container-demo" style="height: 100%">
     <el-aside width="200px">
       <el-scrollbar>
@@ -65,7 +64,6 @@
 <script setup>
 import {ref} from "vue";
 import { Menu as IconMenu, Message, Setting, View, Edit } from '@element-plus/icons-vue'
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from "vue-router";
 import PubArticles from "@/Comps/Article/PubArticles.vue";
 import PriArticles from "@/Comps/Article/PriArticles.vue";
@@ -86,7 +84,6 @@ const router = useRouter();
 .el-tabs--left .el-tabs__content {
   height: 100%;
 }
-
 
 .layout-container-demo .el-header {
   position: relative;

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <navigate-one @check-auth-finished="decideContentToShow" ref="nav"   :origin-tab="'查看文章'"></navigate-one>
     <el-container class="layout-container-demo" style="height: 100%;">
       <el-aside width="200px" >
         <el-scrollbar >
@@ -124,7 +123,7 @@
                   </template>
                 </el-button>
               </el-tooltip>
-<!--              =========================================================================-->
+              <!--              =========================================================================-->
               <el-tooltip
                   v-if="hasLike"
                   effect="dark"
@@ -196,8 +195,7 @@
 </template>
 
 <script setup>
-import {nextTick, ref} from "vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
+import {nextTick, onMounted, onUnmounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {Menu as IconMenu,ChatLineRound, StarFilled,Star, View, Setting} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
@@ -209,6 +207,7 @@ import {
   checkLikeToArtApi
 } from "@/utils/fileApi";
 import {viewArt} from "@/utils/articleApi";
+import bus from "@/utils/eventBus";
 
 const source = ref(0)
 source.value = 172000
@@ -229,7 +228,12 @@ let hasGood = ref(false)
 const route=useRoute()
 
 articleId.value = route.query.articleId
-
+onMounted(() => {
+  bus.$on('loginStatus', decideContentToShow);
+  onUnmounted(()=>{
+    bus.$off('loginStatus', decideContentToShow)
+  }); // 确保在组件卸载时移除监听器
+});
 nextTick(async () => {
   let res = await viewArt(articleId.value)
   title.value = res.title
@@ -307,7 +311,6 @@ async function checkGoodToArt() {
   let res = await checkGoodToArtApi(articleId.value)
   hasGood.value = res === "yes";
 }
-
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navigate-one  :origin-tab="'任务列表'"></navigate-one>
+<!--    <navigate-one  :origin-tab="'任务列表'"></navigate-one>-->
     <div >
       <div style="margin: 12px 0 0 8px;padding: 0; display: flex ">
         <el-button type="primary"  @click.prevent="gotoShowCase()"  size="large">创建清单</el-button>

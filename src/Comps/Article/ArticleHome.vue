@@ -2,7 +2,7 @@
 <template>
   <div class="home-page">
     <div>
-      <navigate-one ref="childRef" :origin-tab="'文章社区首页'"></navigate-one>
+    <!--      <navigate-one ref="childRef" :origin-tab="'文章社区首页'"></navigate-one>-->
     </div>
     <div class="card-container">
       <!-- 卡片内容 -->
@@ -24,7 +24,7 @@
         </p>
       </div>
 
-<!--      ================================================-->
+      <!--      ================================================-->
       <div>
         <div class="card card-tushuguan" @click="gotoReadArticles">
 
@@ -33,8 +33,6 @@
           浏览别人的文章
         </p>
       </div>
-
-<!--      ================================-->
     </div>
   </div>
 </template>
@@ -58,8 +56,6 @@ function gotoManage() {
 function gotoReadArticles() {
   router.push({name: 'EveryBodyArticle'});
 }
-
-
 </script>
 
 <style scoped>
@@ -89,25 +85,6 @@ function gotoReadArticles() {
   text-align: center;
 
   background-image: url('@/assets/more.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card-table{
-  background-image: url('@/assets/table.png');
-  background-size: cover;
-  background-position: 0 -20px;
-  background-repeat: no-repeat;
-}
-.card-notebook{
-  background-image: url('@/assets/note.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.card-memory{
-  background-image: url('@/assets/remember.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
