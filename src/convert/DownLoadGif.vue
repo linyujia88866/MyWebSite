@@ -4,7 +4,7 @@
     <div>
     </div>
       <div style="margin: 20px 0 0 20px; display: flex">
-        请输入您要下载的图片文件地址
+        请输入您要下载的图片文件地址, 例如:https://linyujia.cn/img/yanzi.de8fb8f1.jpg
       </div>
       <div style="margin: 20px; display: flex">
         <el-input input-style="width: 800px;  " v-model="input" style="width: 240px" placeholder="Please input" />

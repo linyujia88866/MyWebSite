@@ -1,11 +1,7 @@
 <template>
   <div >
-<!--    <navigate-one ref="childRef" :origin-tab="'管理中心'"></navigate-one>-->
-<!--    <h1>管理员页面</h1>-->
     <div style="text-align: left;" >
       <el-button type="success" @click="openCreateUserDialog" style="margin: 20px 20px 0;">创建用户</el-button>
-<!--      <button @click="openCreateUserDialog"-->
-<!--              style="background-color: green;float: left; margin: 60px 0 10px;">创建用户</button>-->
     </div>
     <div>
       <el-table :data="users" style="width: 90%; margin: 0 20px 20px 20px">
@@ -29,29 +25,6 @@
         </el-table-column>
       </el-table>
     </div>
-<!--    <table>-->
-<!--      <thead>-->
-<!--      <tr>-->
-<!--        <th>用户名</th>-->
-<!--        <th>用户权限</th>-->
-<!--        <th>状态</th>-->
-<!--        <th>操作</th>-->
-
-<!--      </tr>-->
-<!--      </thead>-->
-<!--      <tbody>-->
-<!--      <tr v-for="user in users" :key="user.userId">-->
-<!--        <td>{{ user.username }}</td>-->
-<!--        <td>{{ user.authority === 0 ?  '超级管理员': '普通用户' }}</td>-->
-<!--        <td>正常</td>-->
-<!--        <td>-->
-<!--          <button @click="deleteUser(user.userId)">删除用户</button>-->
-<!--          <button @click="deleteUser(user.userId)">冻结/解冻</button>-->
-<!--          <button @click="openUpdateUserDialog(user.username)">修改密码</button>-->
-<!--        </td>-->
-<!--      </tr>-->
-<!--      </tbody>-->
-<!--    </table>-->
   </div>
   <DialogCreateUser v-if="createStatus" @close-event="closeDialog"></DialogCreateUser>
   <DialogUpdateUser ref="updateDialog"
@@ -67,7 +40,6 @@ import {myHttp} from "@/request/myrequest";
 import DialogCreateUser from "@/components/Manage/DialogCreateUser.vue";
 import DialogUpdateUser from "@/components/Manage/DialogUpdateUser.vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 const url = '/user/all';
 defineComponent({
   DialogUpdateUser

@@ -1,5 +1,4 @@
 <template>
-<!--  <navigate-one ref="childRef" :origin-tab="'文件传输助手'" style="z-index: 100;"></navigate-one>-->
   <div @click="reset" style="height: 90vh; display: flex;">
     <div>
       <div style="margin-bottom: 0; padding-bottom: 0; ">
@@ -57,7 +56,7 @@
           @selection-change="handleSelectionChange"
           style="width: 1200px; " ref="table"></FileInfoData>
     </div>
-<!--    上面这个高度值要注意，要和el-table那边的设置一致，否则会出现末尾行遮挡现象-->
+    <!--    上面这个高度值要注意，要和el-table那边的设置一致，否则会出现末尾行遮挡现象-->
     <!--      =====================================================================================================================================================-->
     <div
         style="display: flex;
@@ -109,7 +108,6 @@ import { ElNotification } from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
 import MakingDir from "@/Core/MakingDir.vue";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {showTheFileApi} from "@/utils/viewFile";
 import {downloadFileApi, getSizeLeftApi, uploadFileApi} from "@/utils/fileApi";
 import ViewPhotoes from "@/Core/ViewPhotoes.vue";
@@ -164,7 +162,6 @@ function handleSelectionChange(selections) {
 function handleExceed(files, fileList) {
   ElNotification({
     title: '文件数量限制',
-    // message: `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`,
     message: `最多同时只能上传 10 个文件，本次选择了 ${files.length + fileList.length} 个文件`,
     duration: 10000,
     type: 'warning',
@@ -227,10 +224,6 @@ function batchMove() {
   moveFile.value.openDialog(curPath.value, selectionFiles.value)
 }
 
-function clearSelection() {
-  table.value.clearSelection()
-}
-
 // 返回上一层
 function gotoParentPath() {
   if(curPath.value === ''){
@@ -288,13 +281,9 @@ async function getSizeLeft() {
   sizeLeft.value = Math.round(sizeLeft.value * 1000) / 1000;
   sizeUsed.value = res.used / (1024 *1024)
   sizeUsed.value = Math.round(sizeUsed.value * 1000) / 1000;
-  console.log(res)
 }
-
 </script>
 <style scoped>
-
-
 /deep/ .custom-upload{
   width: 100%;
 }

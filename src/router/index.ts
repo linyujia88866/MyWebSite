@@ -23,7 +23,9 @@ import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
 import FileConvertHome from "@/convert/FileConvertHome.vue";
 import DownLoadGif from "@/convert/DownLoadGif.vue";
-import test from "@/websocket/test.vue";
+import WebSocketExample from "@/websocket/WebSocketExample.vue";
+import MessageManage from "@/components/Manage/MessageManage/MessageManage.vue";
+import MessageDetail from "@/components/Basic/MessageDetail.vue";
 
 const routes = [
   {
@@ -92,6 +94,18 @@ const routes = [
     meta: { title: '用户管理' }
   },
   {
+    path: '/messageManage',
+    name: 'messageManage',
+    component: MessageManage,
+    meta: { title: '消息管理' }
+  },
+  {
+    path: '/messageDetail',
+    name: 'messageDetail',
+    component: MessageDetail,
+    meta: { title: '消息详情' }
+  },
+  {
     path: '/edit',
     name: 'edit',
     component: NoteEditor,
@@ -148,7 +162,7 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: test,
+    component: WebSocketExample,
     meta: { title: '测试' }
   },
   {

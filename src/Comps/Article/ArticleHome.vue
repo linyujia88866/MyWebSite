@@ -2,7 +2,6 @@
 <template>
   <div class="home-page">
     <div>
-    <!--      <navigate-one ref="childRef" :origin-tab="'文章社区首页'"></navigate-one>-->
     </div>
     <div class="card-container">
       <!-- 卡片内容 -->

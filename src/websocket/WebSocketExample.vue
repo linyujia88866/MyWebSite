@@ -17,11 +17,9 @@
 </template>
 
 <script>
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 import bus from "@/utils/eventBus";
 export default {
   name: 'HomeView',
-  components: {NavigateOne},
   data() {
     return {
       url: "ws://127.0.0.1:9802/websocket",

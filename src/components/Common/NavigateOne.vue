@@ -17,8 +17,10 @@ const props = defineProps({
 
 onMounted(() => {
   bus.$on('myEvent', foo);
+  bus.$on('sendMessage', sendWebsocket);
   onUnmounted(()=>{
     bus.$off('myEvent', foo)
+    bus.$off('sendMessage', sendWebsocket)
   }); // 确保在组件卸载时移除监听器
 });
 
@@ -41,6 +43,7 @@ let isLogin= ref(false);
 const router = useRouter();
 useRoute();
 const url = '/verify';
+let ws = ref();
 
 const menuVisible = ref(false);
 
@@ -69,6 +72,61 @@ onMounted( async () => {
   await reset()
 })
 
+
+function initWebsocket(){
+  ws.value = new WebSocket("ws://127.0.0.1:9802/websocket");
+  ws.value.onopen = function (event) {
+
+  };
+  ws.value.onmessage = function (event) {
+    let res = event.data
+    let jsonObj = JSON.parse(res)
+    if(jsonObj.type === "system_notice"){
+      bus.$emit('myEvent', 'test');
+    }
+  };
+  ws.value.onclose = function (event) {
+    ElMessage({
+      message: event.reason,
+      type: 'error',
+    });
+  };
+}
+
+async function countAllNotRead() {
+  let array
+  await myHttp.get('/message/count')
+      .then(response => {
+        if (response.data.code === 200) {
+          messageNum.value = response.data.data
+        } else {
+          ElMessage({
+            message: '获取消息列表失败！',
+            type: 'error',
+          });
+        }
+      })
+      .catch(error => {
+      });
+  return array
+}
+function exitWebsocket() {
+  if (ws.value) {
+    ws.value.close();
+    ws.value = null;
+  }
+}
+function  sendWebsocket(message) {
+  if (ws.value) {
+    ws.value.send(message);
+  } else {
+    ElMessage({
+      message: "未连接到服务器",
+      type: 'error',
+    });
+  }
+}
+
 async function reset() {
   isLogin.value = false;
   await verify();
@@ -88,6 +146,9 @@ async function reset() {
       message: "请先登录",
       type: 'error',
     });
+  } else {
+    initWebsocket()
+    await countAllNotRead()
   }
 }
 
@@ -96,10 +157,6 @@ function changeTab(tab){
   if(tab==="首页"){
     router.push({name: 'home'});
   }
-}
-
-function updateTab() {
-  // changeTab('功能');
 }
 
 function gotoHelp(){
@@ -117,6 +174,10 @@ function gotoSetting(){
 
 function gotoManage(){
   router.push({name: 'manager'});
+}
+
+function gotoMessageManage(){
+  router.push({name: 'messageManage'});
 }
 
 function logout() {
@@ -142,7 +203,8 @@ watch(() => route.fullPath, (newPath, oldPath) => {
 });
 
 defineExpose({
-  updateTab,
+  exitWebsocket,
+  sendWebsocket
 })
 </script>
 
@@ -162,7 +224,7 @@ defineExpose({
       </div>
     </div>
     <div class="user-actions">
-      <el-badge :offset="[-40, 30]" :value="messageNum" :hidden="messageTipHidden" class="item">
+      <el-badge :offset="[-10, 5]" :is-dot="true" :value="messageNum" :hidden="messageTipHidden" class="item">
         <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage"
                  style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
       </el-badge>
@@ -173,7 +235,18 @@ defineExpose({
         </template>
       </el-icon>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage" v-if="authority === '0' && isLogin"><Management /></el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage"
+               v-if="authority === '0' && isLogin">
+        <template #default>
+          <img style="height: 100%; width: 100%" src="@/assets/peopleManage.svg" alt="用户管理">
+        </template>
+      </el-icon>
+      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoMessageManage"
+               v-if="authority === '0' && isLogin">
+          <template #default>
+            <img style="height: 100%; width: 100%" src="@/assets/messageManage.svg" alt="消息管理">
+          </template>
+      </el-icon>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="toggleMenu"><Avatar /></el-icon>
       <el-tooltip
           v-else
