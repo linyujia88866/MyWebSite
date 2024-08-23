@@ -3,10 +3,11 @@ import {useRoute, useRouter} from 'vue-router';
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, Message, Management, Setting} from "@element-plus/icons-vue";
+import {Avatar, Message, Setting} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
+import {Enums} from "@/enums/enums";
 const route = useRoute();
 const props = defineProps({
   originTab: {
@@ -26,7 +27,7 @@ onMounted(() => {
 
 // 测试方法
 function foo(message) {
-  messageNum.value = messageNum.value + 1
+  countAllNotRead()
 }
 
 let emit = defineEmits(["checkAuthFinished"])
@@ -74,22 +75,24 @@ onMounted( async () => {
 
 
 function initWebsocket(){
-  ws.value = new WebSocket("ws://127.0.0.1:9802/websocket");
+  const domain = window.location.hostname;
+  if(domain === "127.0.0.1"){
+    ws.value = new WebSocket("ws://127.0.0.1/websocket/link");
+  }else {
+    ws.value = new WebSocket("wss://linyujia.cn/websocket/link");
+  }
+
   ws.value.onopen = function (event) {
 
   };
   ws.value.onmessage = function (event) {
     let res = event.data
     let jsonObj = JSON.parse(res)
-    if(jsonObj.type === "system_notice"){
+    if(jsonObj.type === Enums.MessageType.system_notice || jsonObj.type === Enums.MessageType.disk_expansion_application){
       bus.$emit('myEvent', 'test');
     }
   };
   ws.value.onclose = function (event) {
-    ElMessage({
-      message: event.reason,
-      type: 'error',
-    });
   };
 }
 
@@ -119,6 +122,11 @@ function exitWebsocket() {
 function  sendWebsocket(message) {
   if (ws.value) {
     ws.value.send(message);
+    ElMessage({
+      message: "消息已发送",
+      type: 'success',
+    });
+    bus.emit("sendMessageFinished", "消息已发送")
   } else {
     ElMessage({
       message: "未连接到服务器",

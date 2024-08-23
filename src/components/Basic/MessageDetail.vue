@@ -22,6 +22,12 @@
         <div>
           <h3>{{title}}</h3>
           <span>{{content}}</span>
+
+        </div>
+        <div style="margin-top: 20px;">
+          <span  v-if="link.length>0">详情链接：
+          <a style="text-decoration: underline" :href="link">{{link}}</a>
+        </span>
         </div>
       </el-main>
     </el-container>
@@ -35,10 +41,12 @@ import {View} from "@element-plus/icons-vue";
 
 const  title = ref("")
 const  content = ref("")
+const  link = ref("")
 const router = useRouter();
 const route=useRoute()
 title.value = route.query.title
 content.value = history.state.content
+link.value = history.state.link
 
 </script>
 

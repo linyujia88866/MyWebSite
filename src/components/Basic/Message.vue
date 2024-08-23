@@ -7,7 +7,11 @@
       <el-table-column prop="messageId" label="消息ID" width="120" />
       <el-table-column prop="sender" label="发送者" width="120" />
       <el-table-column prop="receiver" label="接收者" width="120" />
-      <el-table-column prop="type" label="消息类型"  width="120" />
+      <el-table-column prop="type" label="消息类型"  width="120" >
+        <template #default="scope">
+          {{describeMessage(scope.row.type)}}
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="消息状态"  width="80" >
         <template #default="scope">
           {{scope.row.status === 0?"未读":"已读"}}
@@ -20,7 +24,7 @@
       </el-table-column>
       <el-table-column  label="操作" >
         <template #default="scope">
-          <el-button type="success" @click="maskRead(scope.row.messageId)">标为已读</el-button>
+          <el-button type="success" :disabled="scope.row.status === 1" @click="maskRead(scope.row.messageId)">标为已读</el-button>
           <el-button type="primary" @click="gotoMsgDetail(scope.row)">查看详情</el-button>
         </template>
       </el-table-column>
@@ -34,11 +38,29 @@ import {ElMessage} from "element-plus";
 import {onMounted, onUnmounted, ref} from "vue";
 import bus from "@/utils/eventBus";
 import {useRouter} from "vue-router";
+import {describeMessage, Enums} from "../../enums/enums";
 
 let messages = ref([])
 const router = useRouter();
 
-function maskRead(msgId){
+async function maskRead(msgId) {
+  let array
+  await myHttp.put(`/message/${msgId}`)
+      .then(response => {
+        if (response.data.code === 200) {
+            array=response.data.data
+        } else {
+          ElMessage({
+            message: '标记已读失败！',
+            type: 'error',
+          });
+        }
+      })
+      .catch(error => {
+      });
+  await getAllNotRead()
+  bus.emit('myEvent', "");
+  return array
 }
 
 function getMsgTitle(jsonString){
@@ -58,13 +80,24 @@ function getMsgBody(jsonString){
   }
 }
 
+function getMsgLink(jsonString){
+  try {
+    let jsonObject = JSON.parse(jsonString);
+    return jsonObject.link?jsonObject.link:""
+  }catch (e){
+    return ""
+  }
+}
+
 function gotoMsgDetail(row){
   router.push({name: 'messageDetail',
     query:{title: getMsgTitle(row.content)},
     state: {
-      content: getMsgBody(row.content)
+      content: getMsgBody(row.content),
+      link: getMsgLink(row.content)
     }
   });
+  maskRead(row.messageId)
 }
 
 async function getAllNotRead() {

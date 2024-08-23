@@ -4,6 +4,9 @@
       <el-form-item label="消息标题">
         <el-input v-model="form.name" />
       </el-form-item>
+      <el-form-item label="详情链接">
+        <el-input v-model="form.link" />
+      </el-form-item>
       <el-form-item label="消息内容">
         <el-input v-model="form.desc" type="textarea" />
       </el-form-item>
@@ -18,10 +21,12 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import bus from "@/utils/eventBus";
+import {Enums} from "@/enums/enums";
 
 // do not use same name with ref
 const form = reactive({
   name: '',
+  link: '',
   region: '',
   date1: '',
   date2: '',
@@ -32,17 +37,19 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  console.log('submit!')
   let msg = {
     title: form.name,
-    content: form.desc
+    content: form.desc,
+    link: form.link
   }
   let obj = {
     receiver:"all",
     content: JSON.stringify(msg),
-    type: "system_notice"
+    type: Enums.MessageType.system_notice
   }
-
   bus.emit('sendMessage', JSON.stringify(obj));
+  setTimeout(()=>{
+    bus.emit('myEvent', "");
+  }, 3000)
 }
 </script>

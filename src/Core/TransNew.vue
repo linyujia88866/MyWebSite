@@ -32,6 +32,7 @@
               <span><p>{{sizeUsed}} MB / {{sizeAll}} MB </p></span>
             </el-progress>
           </div>
+          <el-button style="margin-left: 8px" type="success" size="small" @click.stop="resize">扩容</el-button>
         </div>
       </div>
       <!--      =====================================================================================================================================================-->
@@ -84,6 +85,7 @@
   </div>
   <MoveFile   @update-value="getFileList" ref="moveFile"></MoveFile>
   <CopyFile  @update-value="getFileList" ref="copyFile"></CopyFile>
+  <Expansion ref="expansionDialog"></Expansion>
   <MakingDir ref="makingDir" @confirm="getFileList"></MakingDir>
   <ViewPhotoes ref="viewPhotos"></ViewPhotoes>
   <Repeat ref="repeatFiledDialog"   @closeEvent="handleCloseSameFileDialog" @close="handleCloseSameFileDialog"></Repeat>
@@ -111,6 +113,7 @@ import MakingDir from "@/Core/MakingDir.vue";
 import {showTheFileApi} from "@/utils/viewFile";
 import {downloadFileApi, getSizeLeftApi, uploadFileApi} from "@/utils/fileApi";
 import ViewPhotoes from "@/Core/ViewPhotoes.vue";
+import Expansion from "@/Core/Expansion.vue";
 
 const router = useRouter();           // 理由处理
 const topLine = ref('-')
@@ -127,6 +130,7 @@ const upload_top = ref(null)   // 顶部的上传文件操作区对象
 const renameFileDialog = ref(null)   // 顶部的上传文件操作区对象
 const moveFile = ref(null);    // 移动文件夹弹窗对象
 const copyFile = ref(null);    // 移动文件夹弹窗对象
+const expansionDialog = ref(null);    // 移动文件夹弹窗对象
 const repeatFiledDialog = ref(null);    // 移动文件夹弹窗对象
 const files = ref([]);       // 上传文件时提示
 const folders = ref([]);     // 当前页面的文件夹名称列表
@@ -220,8 +224,17 @@ function batchCopy() {
   copyFile.value.openDialog(curPath.value, selectionFiles.value)
 }
 
+function openExpansion(){
+  expansionDialog.value.openDialog()
+}
+
 function batchMove() {
   moveFile.value.openDialog(curPath.value, selectionFiles.value)
+}
+
+// 扩容
+function resize(){
+  openExpansion()
 }
 
 // 返回上一层
