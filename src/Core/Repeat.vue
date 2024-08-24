@@ -21,7 +21,6 @@
 import {ref} from 'vue'
 import {
   genNewFileName,
-  getFileNameWithoutExtension,
 } from "@/utils/stringutils";
 import {myHttp} from "@/request/myrequest";
 import {ElNotification} from "element-plus";
