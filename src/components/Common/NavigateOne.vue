@@ -7,7 +7,7 @@ import {Avatar, Message, Setting} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
-import {Enums} from "@/enums/enums";
+
 const route = useRoute();
 const props = defineProps({
   originTab: {
@@ -27,7 +27,10 @@ onMounted(() => {
 
 // 测试方法
 function foo(message) {
-  countAllNotRead()
+  setTimeout(()=>{
+    countAllNotRead()
+  }, 1000)
+
 }
 
 let emit = defineEmits(["checkAuthFinished"])
@@ -57,6 +60,7 @@ function gotoLogin() {
 }
 
 async function verify() {
+  let res = false
   authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
       .then(response => {
@@ -64,9 +68,11 @@ async function verify() {
           isLogin.value = true;
           authority.value = response.data.data;
           localStorage.setItem('curAuth', authority.value);
+          res = true
         }
       })
       .catch(error => {});
+  return res
 }
 
 onMounted( async () => {
@@ -88,11 +94,16 @@ function initWebsocket(){
   ws.value.onmessage = function (event) {
     let res = event.data
     let jsonObj = JSON.parse(res)
-    if(jsonObj.type === Enums.MessageType.system_notice || jsonObj.type === Enums.MessageType.disk_expansion_application){
+    if(jsonObj.type > 1){
       bus.$emit('myEvent', 'test');
     }
   };
   ws.value.onclose = function (event) {
+    if(verify()){
+      initWebsocket()
+    } else {
+      reset()
+    }
   };
 }
 
@@ -122,10 +133,6 @@ function exitWebsocket() {
 function  sendWebsocket(message) {
   if (ws.value) {
     ws.value.send(message);
-    ElMessage({
-      message: "消息已发送",
-      type: 'success',
-    });
     bus.emit("sendMessageFinished", "消息已发送")
   } else {
     ElMessage({
@@ -222,10 +229,14 @@ defineExpose({
       <!-- 页签内容 -->
       <div class="nav-bar">
         <ul>
-          <li :class="{active: activeTab === '首页'}">
+          <li >
+            <img @click="changeTab('首页')" src="@/assets/yanzilogo.svg" width="36px"  alt=""/>
+          </li>
+          <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
             <a @click="changeTab('首页')">首页</a>
           </li>
-          <li style="margin-left: 12px; cursor: default " v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">
+          <li style="margin-left: 12px; cursor: default;min-width: 80px"
+              v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">
             <a >{{props.originTab}}</a>
           </li>
         </ul>

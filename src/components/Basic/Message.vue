@@ -17,14 +17,24 @@
           {{descStatus(scope.row.status)}}
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="消息标题" width="380"  >
+      <el-table-column prop="content" label="消息标题" width="280"  >
         <template #default="scope">
           {{getMsgTitle(scope.row.content)}}
         </template>
       </el-table-column>
-      <el-table-column  label="操作" >
+      <el-table-column prop="createdAt" label="创建时间" width="120"  >
         <template #default="scope">
-          <el-button type="success" :disabled="scope.row.status >= 1" @click="maskRead(scope.row.messageId)">标为已读</el-button>
+          {{formatDate(scope.row.createdAt)}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="updatedAt" label="更新时间" width="120"  >
+        <template #default="scope">
+          {{formatDate(scope.row.updatedAt)}}
+        </template>
+      </el-table-column>
+      <el-table-column  label="操作" min-width="250">
+        <template #default="scope">
+          <el-button v-if="props.tab==='receive'" type="success" :disabled="scope.row.status >= 1" @click="maskRead(scope.row.messageId)">标为已读</el-button>
           <el-button type="primary" @click="gotoMsgDetail(scope.row)">查看详情</el-button>
         </template>
       </el-table-column>
@@ -42,6 +52,29 @@ import {describeMessage, Enums} from "@/enums/enums";
 
 let messages = ref([])
 const router = useRouter();
+
+const props = defineProps({
+  tab: {
+    type: String,
+    default: "receive"
+  }
+})
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  function pad(number) {
+    return ('0' + number).slice(-2);
+  }
+
+  return (
+      date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      ' ' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds())
+  );
+}
+
 
 async function maskRead(msgId) {
   let array
@@ -61,7 +94,7 @@ async function maskRead(msgId) {
       })
       .catch(error => {
       });
-  await getAllNotRead()
+  await refresh()
   bus.emit('myEvent', "");
   return array
 }
@@ -86,44 +119,10 @@ function descStatus(status){
     return "拒绝"
   }
 }
-function getMsgBody(jsonString){
-  try {
-    let jsonObject = JSON.parse(jsonString);
-    return jsonObject.content
-  }catch (e){
-    return jsonString
-  }
-}
-
-function getMsgLink(jsonString){
-  try {
-    let jsonObject = JSON.parse(jsonString);
-    return jsonObject.link?jsonObject.link:""
-  }catch (e){
-    return ""
-  }
-}
-
-function getMsgSize(jsonString){
-  try {
-    let jsonObject = JSON.parse(jsonString);
-    return jsonObject.size?jsonObject.size:0
-  }catch (e){
-    return 0
-  }
-}
 
 function gotoMsgDetail(row){
   router.push({name: 'messageDetail',
-    query:{title: getMsgTitle(row.content)},
-    state: {
-      content: getMsgBody(row.content),
-      link: getMsgLink(row.content),
-      size: getMsgSize(row.content),
-      messageId: row.messageId,
-      messageType: row.type,
-      status: row.status
-    }
+    query:{messageId: row.messageId},
   });
   if(row.status === 0){
     maskRead(row.messageId)
@@ -148,7 +147,33 @@ async function getAllNotRead() {
   return array
 }
 
-getAllNotRead()
+async function getAllMySend() {
+  let array
+  await myHttp.get('/message/send')
+      .then(response => {
+        if (response.data.code === 200) {
+          messages.value = response.data.data
+        } else {
+          ElMessage({
+            message: '获取消息列表失败！',
+            type: 'error',
+          });
+        }
+      })
+      .catch(error => {
+      });
+  return array
+}
+
+refresh()
+
+async function refresh() {
+  if (props.tab === "receive") {
+    await getAllNotRead()
+  } else {
+    await getAllMySend()
+  }
+}
 
 onMounted(() => {
   bus.$on('myEvent', getAllNotReadLater);
@@ -159,9 +184,13 @@ onMounted(() => {
 
 function getAllNotReadLater(){
   setTimeout(()=>{
-    getAllNotRead()
+    refresh()
   }, 1000)
 }
+
+defineExpose({
+  refresh
+})
 </script>
 
 <style scoped>

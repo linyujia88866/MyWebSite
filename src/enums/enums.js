@@ -11,11 +11,12 @@ const Enums = {
         WEST: 'west',
     },
     MessageType:{
+        simple_message: 0,
         system_info: 1,
         system_notice: 2,
-        simple_message: 0,
         disk_expansion_application: 3,
         heartbeat: 4,
+        disk_expansion_application_deal: 5,
     }
 };
 
@@ -32,6 +33,8 @@ function describeMessage(msg) {
             return '空间申请';
         case Enums.MessageType.heartbeat:
             return '心跳检查';
+        case Enums.MessageType.disk_expansion_application_deal:
+            return '空间申请处理结果';
         default:
             return '未知消息';
     }

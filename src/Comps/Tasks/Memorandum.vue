@@ -146,7 +146,9 @@ function gotoMemoryCards(){
       <div v-else class="items">
         <ul type="1">
           <li v-for="(item,index) in items">
-            <span class="order">{{index+1}}.</span><input style="text-align: left;display: block; width: 80%"  v-model.trim="item.content"> <span class="delete" @click="remove(index)">x</span>
+            <span class="order">{{index+1}}.</span>
+            <input style="text-align: left;display: block; width: 80%"  v-model.trim="item.content" readonly disabled>
+            <span class="delete" @click="remove(index)">x</span>
           </li>
         </ul>
       </div>
@@ -250,6 +252,7 @@ li{
 .order{
   padding-top: 15px;
   text-align: left;
+  margin-right: 8px;
   float: left;
   width: 10px;
 }

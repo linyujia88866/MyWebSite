@@ -26,6 +26,7 @@ import DownLoadGif from "@/convert/DownLoadGif.vue";
 import WebSocketExample from "@/websocket/WebSocketExample.vue";
 import MessageManage from "@/components/Manage/MessageManage/MessageManage.vue";
 import MessageDetail from "@/components/Basic/MessageDetail.vue";
+import MessageTabs from "@/components/Basic/MessageTabs.vue";
 
 const routes = [
   {
@@ -60,7 +61,7 @@ const routes = [
   {
     path: '/message',
     name: 'message',
-    component: Message,
+    component: MessageTabs,
     meta: { title: '消息' }
   },
   {

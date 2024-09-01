@@ -2,10 +2,10 @@
 <div>
 
       <el-card :body-style="{ padding: '0px' }">
-        <img
-            src="../../bianlitie/1.png"
-            class="image"
-         alt=""/>
+<!--        <img-->
+<!--            src="../../bianlitie/1.png"-->
+<!--            class="image"-->
+<!--         alt=""/>-->
         <div style="padding: 14px; height: 120px; ">
 <!--          上下左右都居中-->
           <div style="display :flex; min-height: 80px; align-items: center;justify-content: center;">

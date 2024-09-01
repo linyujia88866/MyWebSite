@@ -19,12 +19,12 @@
       <div class="card-container2" v-else-if="showMode==='2'">
         <ul style="padding: 0;">
           <li style="display: flex; margin: 0; padding: 0; ">
-            <h3 style="width: 700px; line-height: 28px;text-align: left;">标题</h3>
+            <h3 style="width: 500px; line-height: 28px;text-align: left;">标题</h3>
             <h3 style="width: 200px; line-height: 28px;text-align: left;">创建时间</h3>
             <h3 style="width: 200px; line-height: 28px; text-align: left;">操作按钮</h3>
           </li>
           <li v-for="task in tasks" style="display: flex;">
-            <h4 style="width: 700px; line-height: 28px;text-align: left;margin: 0; padding: 0; ">{{task.title}}</h4>
+            <h4 style="width: 500px; line-height: 28px;text-align: left;margin: 0; padding: 0; ">{{task.title}}</h4>
             <p style="width: 200px; line-height: 28px;text-align: left;
           margin: 0; padding: 0;">{{task.createdAt.replace(/\.0$/, '')}}</p>
 
@@ -47,7 +47,7 @@ import {useRouter} from 'vue-router';
 
 const router = useRouter();
 const tasks = ref([])
-let showMode = ref('2')
+let showMode = ref('1')
 getTaskList()
 
 function gotoShowCase(taskId){
