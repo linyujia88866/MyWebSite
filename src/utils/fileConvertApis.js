@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import Cookie from "quill-editor";
 import {getUuid} from "@/utils/getUuid";
@@ -26,9 +25,6 @@ async function downloadPic(url) {
     }
 }
 
-
-
-
 function downFile(url, suffix) {
     console.log(url)
     fetch(url, {
@@ -43,9 +39,6 @@ function downFile(url, suffix) {
             a.click();
         });
 }
-
-
-
 
 export {
     downloadPic,

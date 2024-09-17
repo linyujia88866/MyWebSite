@@ -51,7 +51,7 @@
       </div>
 
 
-      <div  v-if="true" class="card" @click.stop="gotoTest()" >
+      <div  v-if="false" class="card" @click.stop="gotoTest()" >
 
       </div>
     </div>
@@ -140,7 +140,7 @@ function gotoConvert() {
   background-repeat: no-repeat;
 }
 .card-memory{
-  background-image: url('../assets/remember.jpg');
+  background-image: url('../assets/allright.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

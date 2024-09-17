@@ -3,7 +3,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, Message, Setting} from "@element-plus/icons-vue";
+import {Avatar, Message} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
@@ -43,6 +43,7 @@ const messageTipHidden = computed(()=>{
 })
 let activeTab= ref('首页');
 let authority= ref('');
+let curUsername= ref('');
 let isLogin= ref(false);
 const router = useRouter();
 useRoute();
@@ -63,7 +64,7 @@ async function verify() {
   let res = false
   authority.value = localStorage.getItem('curAuth')
   await myHttp.post(url)
-      .then(response => {
+      .then(async response => {
         if (response.data.code === 200) {
           isLogin.value = true;
           authority.value = response.data.data;
@@ -75,11 +76,26 @@ async function verify() {
   return res
 }
 
+async function getCurUser() {
+  let res = false
+  curUsername.value = localStorage.getItem('curUsername')
+  await myHttp.post('/current-user')
+      .then(response => {
+        if (response.data.code === 200) {
+          curUsername.value = response.data.data;
+          localStorage.setItem('curUsername', curUsername.value);
+          res = true
+        }
+      })
+      .catch(error => {});
+  return res
+}
+
 onMounted( async () => {
   await reset()
 })
 
-
+// 下面这个函数暂时不触发了，没有服务器来通知前端获取消息数量和列表了
 function initWebsocket(){
   const domain = window.location.hostname;
   if(domain === "127.0.0.1"){
@@ -110,10 +126,12 @@ function initWebsocket(){
 async function countAllNotRead() {
   let array
   await myHttp.get('/message/count')
-      .then(response => {
+      .then(async response => {
         if (response.data.code === 200) {
           messageNum.value = response.data.data
-        } else {
+        } else if(response.data.code > 10000){
+          await router.push({name: 'login'});
+        }else {
           ElMessage({
             message: '获取消息列表失败！',
             type: 'error',
@@ -143,8 +161,9 @@ function  sendWebsocket(message) {
 }
 
 async function reset() {
-  isLogin.value = false;
+  // isLogin.value = false;
   await verify();
+  await getCurUser();
   let hash = getUrlHash()
   // 不校验登录的页面
   emit("checkAuthFinished", isLogin.value)
@@ -162,8 +181,11 @@ async function reset() {
       type: 'error',
     });
   } else {
-    initWebsocket()
-    await countAllNotRead()
+    // initWebsocket()
+    // 不采取消息模式，而是直接触发事件，只要用户的路由发生变化，就触发本事件
+    bus.$emit('myEvent', 'test');
+    // 由于直接触发事件，所以这里不用主动发起消息数量请求了
+    // await countAllNotRead()
   }
 }
 
@@ -235,25 +257,25 @@ defineExpose({
           <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
             <a @click="changeTab('首页')">首页</a>
           </li>
-          <li style="margin-left: 12px; cursor: default;min-width: 80px"
-              v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">
-            <a >{{props.originTab}}</a>
-          </li>
+<!--          <li style="margin-left: 12px; cursor: default;min-width: 80px"-->
+<!--              v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">-->
+<!--            <a >{{props.originTab}}</a>-->
+<!--          </li>-->
         </ul>
       </div>
     </div>
     <div class="user-actions">
-      <el-badge :offset="[-10, 5]" :is-dot="true" :value="messageNum" :hidden="messageTipHidden" class="item">
-        <el-icon v-if="isLogin"  color="white" :size="30" @click="gotoMessage"
+      <el-badge :offset="[-10, 5]" :is-dot="true" :value="messageNum" :hidden="messageTipHidden" style="margin-top: 4px">
+        <el-icon v-if="false"  color="white" :size="30" @click="gotoMessage"
                  style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
       </el-badge>
 
-      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">
-        <template #default>
-          <img style="height: 100%; width: 100%" src="@/assets/help.svg">
-        </template>
-      </el-icon>
-      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>
+<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">-->
+<!--        <template #default>-->
+<!--          <img style="height: 100%; width: 100%" src="@/assets/help.svg" alt="">-->
+<!--        </template>-->
+<!--      </el-icon>-->
+<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>-->
       <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage"
                v-if="authority === '0' && isLogin">
         <template #default>
@@ -261,12 +283,14 @@ defineExpose({
         </template>
       </el-icon>
       <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoMessageManage"
-               v-if="authority === '0' && isLogin">
+               v-if="false">
+<!--               v-if="authority === '0' && isLogin">-->
           <template #default>
             <img style="height: 100%; width: 100%" src="@/assets/messageManage.svg" alt="消息管理">
           </template>
       </el-icon>
-      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="toggleMenu"><Avatar /></el-icon>
+      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleMenu"><Avatar /></el-icon>
+      <div v-if="isLogin" style="margin-right: 25px; color: white">Hi, {{curUsername}} !</div>
       <el-tooltip
           v-else
           effect="dark"
@@ -276,16 +300,16 @@ defineExpose({
       >
         <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="gotoLogin">
           <template #default>
-            <img style="height: 100%; width: 100%" src="../../assets/login.svg">
+            <img style="height: 100%; width: 100%" src="../../assets/login.svg" alt="">
           </template>
         </el-icon>
       </el-tooltip>
       <div class="user-menu" v-if="menuVisible" @mouseleave="handleMouseLeave">
         <ul  class="menu" >
           <!-- 菜单项 -->
-          <li><a href="/#/profile">个人信息</a></li>
-          <li><a href="/#/setting">设置</a></li>
-          <li><a href="#" @click="logout">退出登录</a></li>
+<!--          <li><a href="/#/profile">个人信息</a></li>-->
+<!--          <li><a href="/#/setting">设置</a></li>-->
+          <li style="cursor: pointer"><a href="#" @click="logout">退出登录</a></li>
         </ul>
       </div>
     </div>

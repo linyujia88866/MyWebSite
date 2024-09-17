@@ -34,7 +34,7 @@ function describeMessage(msg) {
         case Enums.MessageType.heartbeat:
             return '心跳检查';
         case Enums.MessageType.disk_expansion_application_deal:
-            return '空间申请处理结果';
+            return '空间申请结果';
         default:
             return '未知消息';
     }

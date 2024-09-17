@@ -5,10 +5,10 @@
         <el-menu
             :default-active="'1-3'"
             :default-openeds="['1']">
-          <el-sub-menu index="1">
-            <template #title>
-              <el-icon><icon-menu /></el-icon>快速导航
-            </template>
+<!--          <el-sub-menu index="1" :collapse="false">-->
+<!--            <template #title>-->
+<!--              <el-icon><icon-menu /></el-icon>快速导航-->
+<!--            </template>-->
             <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章
               <el-icon><Edit /></el-icon>
             </el-menu-item>
@@ -18,18 +18,18 @@
             <el-menu-item index="1-3" @click="showILike = false" v-if="isLogin">浏览所有文章
               <el-icon >
                 <template #default>
-                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/allArt.svg">
+                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/allArt.svg" alt="">
                 </template>
               </el-icon>
             </el-menu-item>
             <el-menu-item index="1-4" @click="showILike = true" v-if="isLogin">我收藏的文章
               <el-icon >
                 <template #default>
-                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/myfavor.svg">
+                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/myfavor.svg" alt="">
                 </template>
               </el-icon>
             </el-menu-item>
-          </el-sub-menu>
+<!--          </el-sub-menu>-->
         </el-menu>
       </el-scrollbar>
     </el-aside>

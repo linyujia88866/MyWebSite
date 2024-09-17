@@ -106,7 +106,7 @@ import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
 import {Upload} from '@element-plus/icons-vue'
-import { ElNotification } from 'element-plus'
+import {ElMessage, ElMessageBox, ElNotification} from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
 import MakingDir from "@/Core/MakingDir.vue";
@@ -234,7 +234,18 @@ function batchMove() {
 
 // 扩容
 function resize(){
-  openExpansion()
+  ElMessageBox.alert('请发送邮件到 linyujia619@qq.com 申请扩容', '扩容方法', {
+    // if you want to disable its autofocus
+    // autofocus: false,
+    confirmButtonText: '确定',
+    callback: (action) => {
+      // ElMessage({
+      //   type: 'info',
+      //   message: `action: ${action}`,
+      // })
+    },
+  })
+  // openExpansion()
 }
 
 // 返回上一层

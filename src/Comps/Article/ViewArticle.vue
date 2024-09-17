@@ -5,17 +5,17 @@
         <el-scrollbar >
           <el-menu
               :default-openeds="['1']">
-            <el-sub-menu index="1">
-              <template #title>
-                <el-icon><icon-menu /></el-icon>快速导航
-              </template>
+<!--            <el-sub-menu index="1">-->
+<!--              <template #title>-->
+<!--                <el-icon><icon-menu /></el-icon>快速导航-->
+<!--              </template>-->
               <el-menu-item index="1-2" v-if="isLogin" @click="router.push('/manageArticle')">返回文章管理
                 <el-icon><Setting /></el-icon>
               </el-menu-item>
               <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章
                 <el-icon><View /></el-icon>
               </el-menu-item>
-            </el-sub-menu>
+<!--            </el-sub-menu>-->
           </el-menu>
         </el-scrollbar>
       </el-aside>

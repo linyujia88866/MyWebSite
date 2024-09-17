@@ -28,7 +28,7 @@
             <p style="width: 200px; line-height: 28px;text-align: left;
           margin: 0; padding: 0;">{{task.createdAt.replace(/\.0$/, '')}}</p>
 
-            <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >编辑</el-button>
+            <el-button type="primary" size="small"  @click.prevent="gotoShowCase(task.taskId)"  >查看</el-button>
             <el-button size="small"  @click.prevent="deleteTask(task.taskId)" type="danger" >删除</el-button>
           </li>
         </ul>
@@ -40,14 +40,14 @@
 <script setup>
 import {reactive, ref} from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import Card from "@/Comps/Tasks/Card.vue";
 import NavigateOne from "@/components/Common/NavigateOne.vue";
 import {useRouter} from 'vue-router';
 
 const router = useRouter();
 const tasks = ref([])
-let showMode = ref('1')
+let showMode = ref('2')
 getTaskList()
 
 function gotoShowCase(taskId){
@@ -73,17 +73,39 @@ async function getTaskList() {
     .catch(error => {});
 }
 async function deleteTask(taskId) {
-  await myHttp.post("/task/delete/" + taskId)
-    .then(response => {
-      if (response.data.code === 200) {
-        ElMessage({
-          message: "任务删除成功" + taskId,
-          type: 'success',
-        });
-        getTaskList()
+  ElMessageBox.confirm(
+      '删除清单后不可恢复，确定删除吗?',
+      'Warning',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }
-    })
-    .catch(error => {});
+  )
+      .then(async () => {
+        await myHttp.post("/task/delete/" + taskId)
+            .then(response => {
+              if (response.data.code === 200) {
+                ElMessage({
+                  message: "清单删除成功" + taskId,
+                  type: 'success',
+                });
+                getTaskList()
+              }
+            })
+            .catch(error => {
+            });
+        // ElMessage({
+        //   type: 'success',
+        //   message: '删除清单成功',
+        // })
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消删除清单',
+        })
+      })
 }
 
 </script>
@@ -92,7 +114,7 @@ async function deleteTask(taskId) {
 /* 在这里添加全局样式 */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-gap: 5px;
   margin: 12px 8px 8px;
   flex-grow: 1;

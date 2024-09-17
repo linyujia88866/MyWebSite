@@ -5,14 +5,14 @@
       <el-scrollbar>
         <el-menu
             :default-openeds="['1']">
-          <el-sub-menu index="1">
-            <template #title>
-              <el-icon><icon-menu /></el-icon>快速导航
-            </template>
+<!--          <el-sub-menu index="1">-->
+<!--            <template #title>-->
+<!--              <el-icon><icon-menu /></el-icon>快速导航-->
+<!--            </template>-->
               <el-menu-item index="1" @click="router.push('/message')">返回消息列表
                 <el-icon><View /></el-icon>
               </el-menu-item>
-          </el-sub-menu>
+<!--          </el-sub-menu>-->
         </el-menu>
       </el-scrollbar>
     </el-aside>
@@ -203,7 +203,7 @@ async function getMsgDetail() {
 
 const sendAgree = () => {
   let msg = {
-    title: "网盘空间申请处理结果",
+    title: "网盘空间申请结果",
     content: "管理员已经同意了你的申请",
     link: "/#/fileTrans",
     origin: messageId.value
@@ -218,7 +218,7 @@ const sendAgree = () => {
 
 const sendReject = () => {
   let msg = {
-    title: "网盘空间申请处理结果",
+    title: "网盘空间申请结果",
     content: "管理员拒绝了你的申请",
     link: "/#/fileTrans",
     origin: messageId.value
