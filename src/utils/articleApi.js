@@ -168,7 +168,7 @@ async function updateArtApi(title, content , articleId) {
             if (response.data.code === 200) {
                 res = response.data.data
                 ElMessage({
-                    message: "文章保存成功" + response.data.data,
+                    message: "文章保存成功" + articleId,
                     type: 'success',
                 });
             }

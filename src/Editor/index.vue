@@ -63,6 +63,7 @@ const handleUpload = async (e) => {
   }
   const formData = new FormData()
   formData.append('file', files[0])
+  formData.append('article_id',props.articleId)
   let res = await uploadArtPicApi(formData)
   // backsite.uploadFile(formdata)
   //   .then(res => {
