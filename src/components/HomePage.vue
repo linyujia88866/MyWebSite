@@ -19,7 +19,7 @@
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          文件转换助手
+          工具箱
         </p>
       </div>
       <!--=================================================分割线================================================================-->
@@ -154,7 +154,7 @@ function gotoConvert() {
 }
 
 .card-fileChange{
-  background-image: url('../assets/trans.jpg');
+  background-image: url('../assets/toolBox.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

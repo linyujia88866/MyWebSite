@@ -1,8 +1,6 @@
 /* eslint-disable */
 <template>
   <div class="home-page">
-    <div>
-    </div>
     <div class="card-container">
       <!-- 卡片内容 -->
       <div>
@@ -11,6 +9,15 @@
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
           图片下载
+        </p>
+      </div>
+      <!-- 卡片内容 -->
+      <div>
+        <div class="card card-base64" @click="gotoBase64">
+
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          Base64加解密
         </p>
       </div>
     </div>
@@ -22,6 +29,10 @@ import {useRouter} from 'vue-router';
 const router = useRouter();
 function gotoDownloadPic() {
   router.push({name: 'downloadGif'});
+}
+
+function gotoBase64() {
+  router.push({name: 'base64'});
 }
 
 </script>
@@ -58,39 +69,19 @@ function gotoDownloadPic() {
   background-repeat: no-repeat;
 }
 
-.card-table{
-  background-image: url('../assets/table.png');
-  background-size: cover;
-  background-position: 0 -20px;
-  background-repeat: no-repeat;
-}
-.card-notebook{
-  background-image: url('../assets/paper.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.card-memory{
-  background-image: url('../assets/remember.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 .card-fileTrans{
-  background-image: url('../assets/pic-download.jpeg');
+  background-image: url('../assets/imgDownload.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.card-fileChange{
-  background-image: url('../assets/trans.jpg');
+.card-base64{
+  background-image: url('../assets/base64.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
-
 .nav-bar ul {
   list-style-type: none;
   padding: 0;

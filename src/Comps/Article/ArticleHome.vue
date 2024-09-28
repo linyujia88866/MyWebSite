@@ -90,7 +90,7 @@ function gotoReadArticles() {
 }
 
 .card-fileTrans{
-  background-image: url('@/assets/createArticle.png');
+  background-image: url('@/assets/imgDownload.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -85,61 +85,6 @@ async function download() {
   flex-direction: column;
 }
 
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 10px;
-  padding: 12px 10px 10px;
-  flex-grow: 1;
-}
-
-.card {
-  /* 卡片样式 */
-  border: 1px solid #ddd;
-  height: 30%;
-  border-radius: 4px;
-  padding: 10px;
-  text-align: center;
-
-  background-image: url('../assets/more.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card-table{
-  background-image: url('../assets/table.png');
-  background-size: cover;
-  background-position: 0 -20px;
-  background-repeat: no-repeat;
-}
-.card-notebook{
-  background-image: url('../assets/paper.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.card-memory{
-  background-image: url('../assets/remember.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card-fileTrans{
-  background-image: url('../assets/pic-download.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card-fileChange{
-  background-image: url('../assets/trans.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 .nav-bar ul {
   list-style-type: none;
   padding: 0;

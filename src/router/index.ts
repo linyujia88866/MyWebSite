@@ -27,6 +27,7 @@ import WebSocketExample from "@/websocket/WebSocketExample.vue";
 import MessageManage from "@/components/Manage/MessageManage/MessageManage.vue";
 import MessageDetail from "@/components/Basic/MessageDetail.vue";
 import MessageTabs from "@/components/Basic/MessageTabs.vue";
+import Base64 from "@/convert/Base64.vue";
 
 const routes = [
   {
@@ -141,6 +142,12 @@ const routes = [
     name: 'downloadGif',
     component: DownLoadGif,
     meta: { title: '文件转换' }
+  },
+  {
+    path: '/base64',
+    name: 'base64',
+    component: Base64,
+    meta: { title: 'Base64加解密' }
   },
   {
     path: '/viewWord',
