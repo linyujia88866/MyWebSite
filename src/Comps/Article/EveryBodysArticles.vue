@@ -1,4 +1,21 @@
 <template>
+<!--  <el-affix :offset="100" style="text-align: right;">-->
+
+<!--  </el-affix>-->
+  <div style="width: 100%; text-align: right; position: absolute; margin-top: 80px">
+    <el-tooltip
+        effect="dark"
+        content="发现更多好玩"
+        placement="right-start"
+        :show-after="500"
+    >
+      <el-icon size="60" style="margin-right: 60px; cursor: pointer" @click="router.push('/home')">
+        <template #default>
+          <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/find_more.svg" alt="">
+        </template>
+      </el-icon>
+    </el-tooltip>
+  </div>
   <el-container class="layout-container-demo" style="height: 100%">
 <!--    <el-aside width="200px">-->
 <!--      <el-scrollbar>-->

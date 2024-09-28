@@ -1,9 +1,9 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {computed, onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, CirclePlusFilled, Notification, Star} from "@element-plus/icons-vue";
+import {Avatar, CirclePlusFilled, List, Postcard} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
@@ -37,11 +37,11 @@ function toggleMenu() {
 }
 
 function toggleFavorite() {
-  router.push({name: 'favoriteArticle'})
+  bus.emit("changeShowMode", '1')
 }
 
 function toggleCreateCenter() {
-  router.push({name: 'manageArticle'})
+  bus.emit("changeShowMode", '2')
 }
 
 function gotoLogin() {
@@ -111,12 +111,8 @@ async function reset() {
 function changeTab(tab){
   activeTab.value = tab;
   if(tab==="首页"){
-    router.push({name: 'EveryBodyArticle'});
+    router.push({name: 'home'});
   }
-}
-
-function gotoManage(){
-  router.push({name: 'manager'});
 }
 function logout() {
   // 执行退出登录的操作，例如清除token或调用API
@@ -136,6 +132,7 @@ function logout() {
       })
       .catch(error => {});
 }
+
 watch(() => route.fullPath, (newPath, oldPath) => {
   reset()
 });
@@ -152,44 +149,44 @@ watch(() => route.fullPath, (newPath, oldPath) => {
             <img @click="changeTab('首页')" src="@/assets/yanzilogo.svg" width="36px"  alt=""/>
           </li>
           <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
-            <a @click="changeTab('首页')">社区首页</a>
+            <a @click="changeTab('首页')">首页</a>
           </li>
         </ul>
       </div>
     </div>
     <div class="user-actions">
-      <el-button round type="primary" style="margin-right: 8px" @click="router.push('/createArticle')">
+      <el-button round type="primary" style="margin-right: 8px" @click="router.push('/memory')">
         <el-icon color="white" :size="20" style="cursor: pointer;margin-right: 8px;"><CirclePlusFilled /></el-icon>
-        发布文章
+        创建清单
       </el-button>
       <el-tooltip
           v-if="isLogin"
           effect="dark"
-          content="创作中心"
+          content="列表式显示"
           placement="top"
           :show-after="500"
       >
-        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleCreateCenter"><Notification /></el-icon>
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleCreateCenter"><List /></el-icon>
       </el-tooltip>
       <div @click="toggleCreateCenter"
            style="color: white;
               font-weight: bold;
               cursor: pointer;
-              margin-right: 8px;">创作中心</div>
+              margin-right: 8px;">列表式显示</div>
       <el-tooltip
           v-if="isLogin"
           effect="dark"
-          content="收藏夹"
+          content="卡片式显示"
           placement="top"
           :show-after="500"
       >
-        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleFavorite"><Star /></el-icon>
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleFavorite"><Postcard /></el-icon>
       </el-tooltip>
       <div @click="toggleFavorite"
            style="color: white;
               font-weight: bold;
               cursor: pointer;
-              margin-right: 8px;">收藏夹</div>
+              margin-right: 8px;">卡片式显示</div>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleMenu"><Avatar /></el-icon>
       <div v-if="isLogin" style="margin-right: 25px; color: white">Hi, {{curUsername}} !</div>
       <el-tooltip

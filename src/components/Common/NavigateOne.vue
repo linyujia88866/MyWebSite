@@ -31,7 +31,6 @@ function foo(message) {
   setTimeout(()=>{
     countAllNotRead()
   }, 1000)
-
 }
 
 let emit = defineEmits(["checkAuthFinished"])
