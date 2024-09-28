@@ -20,13 +20,13 @@ async function decode() {
     <div>
       请输入要进行 Base64 编码或解码的字符
     </div>
-    <el-input v-model="desc" type="textarea" style="margin-top: 12px; margin-bottom: 12px" />
+    <el-input show-word-limit maxlength="5000" :rows="10" v-model="desc" type="textarea" style="margin-top: 12px; margin-bottom: 12px; " />
     <el-button type="primary" @click="encode">编码(Encode)</el-button>
     <el-button type="primary" @click="decode">解码(Decode)</el-button>
     <div style="margin-top: 12px; margin-bottom: 12px">
       Base64 编码或解码的结果：
     </div>
-    <el-input v-model="result" type="textarea" />
+    <el-input :rows="10" v-model="result" type="textarea" />
   </div>
 </template>
 

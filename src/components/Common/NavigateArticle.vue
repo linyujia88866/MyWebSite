@@ -1,9 +1,9 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {computed, onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, CirclePlusFilled, Notification, Star} from "@element-plus/icons-vue";
+import {Avatar, CirclePlusFilled, HomeFilled, Notification, Star} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
@@ -42,6 +42,10 @@ function toggleFavorite() {
 
 function toggleCreateCenter() {
   router.push({name: 'manageArticle'})
+}
+
+function toggleBlogHome() {
+  router.push({name: 'EveryBodyArticle'})
 }
 
 function gotoLogin() {
@@ -111,7 +115,7 @@ async function reset() {
 function changeTab(tab){
   activeTab.value = tab;
   if(tab==="首页"){
-    router.push({name: 'EveryBodyArticle'});
+    router.push({name: 'home'});
   }
 }
 
@@ -152,16 +156,31 @@ watch(() => route.fullPath, (newPath, oldPath) => {
             <img @click="changeTab('首页')" src="@/assets/yanzilogo.svg" width="36px"  alt=""/>
           </li>
           <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
-            <a @click="changeTab('首页')">社区首页</a>
+            <a @click="changeTab('首页')">首页</a>
           </li>
         </ul>
       </div>
     </div>
     <div class="user-actions">
-      <el-button round type="primary" style="margin-right: 8px" @click="router.push('/createArticle')">
+      <el-button v-if="isLogin" round type="primary" style="margin-right: 8px" @click="router.push('/createArticle')">
         <el-icon color="white" :size="20" style="cursor: pointer;margin-right: 8px;"><CirclePlusFilled /></el-icon>
         发布文章
       </el-button>
+      <el-tooltip
+          v-if="isLogin"
+          effect="dark"
+          content="社区首页"
+          placement="top"
+          :show-after="500"
+      >
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleBlogHome"><HomeFilled /></el-icon>
+      </el-tooltip>
+      <div @click="toggleBlogHome"
+           v-if="isLogin"
+           style="color: white;
+              font-weight: bold;
+              cursor: pointer;
+              margin-right: 8px;">社区首页</div>
       <el-tooltip
           v-if="isLogin"
           effect="dark"
@@ -172,6 +191,7 @@ watch(() => route.fullPath, (newPath, oldPath) => {
         <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleCreateCenter"><Notification /></el-icon>
       </el-tooltip>
       <div @click="toggleCreateCenter"
+           v-if="isLogin"
            style="color: white;
               font-weight: bold;
               cursor: pointer;
@@ -186,6 +206,7 @@ watch(() => route.fullPath, (newPath, oldPath) => {
         <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleFavorite"><Star /></el-icon>
       </el-tooltip>
       <div @click="toggleFavorite"
+           v-if="isLogin"
            style="color: white;
               font-weight: bold;
               cursor: pointer;
@@ -199,12 +220,18 @@ watch(() => route.fullPath, (newPath, oldPath) => {
           placement="top"
           :show-after="500"
       >
-        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 20px;" @click="gotoLogin">
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoLogin">
           <template #default>
             <img style="height: 100%; width: 100%" src="../../assets/login.svg" alt="">
           </template>
         </el-icon>
       </el-tooltip>
+      <div @click="gotoLogin"
+           v-if="!isLogin"
+           style="color: white;
+              font-weight: bold;
+              cursor: pointer;
+              margin-right: 20px;">前往登录</div>
       <div class="user-menu" v-if="menuVisible" @mouseleave="handleMouseLeave">
         <ul  class="menu" >
           <li style="cursor: pointer"><a @click="logout">退出登录</a></li>
