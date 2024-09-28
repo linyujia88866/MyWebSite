@@ -9,12 +9,12 @@
 <!--              <template #title>-->
 <!--                <el-icon><icon-menu /></el-icon>快速导航-->
 <!--              </template>-->
-              <el-menu-item index="1-2" v-if="isLogin" @click="router.push('/manageArticle')">返回文章管理
-                <el-icon><Setting /></el-icon>
-              </el-menu-item>
-              <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章
-                <el-icon><View /></el-icon>
-              </el-menu-item>
+<!--              <el-menu-item index="1-2" v-if="isLogin" @click="router.push('/manageArticle')">返回文章管理-->
+<!--                <el-icon><Setting /></el-icon>-->
+<!--              </el-menu-item>-->
+<!--              <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章-->
+<!--                <el-icon><View /></el-icon>-->
+<!--              </el-menu-item>-->
 <!--            </el-sub-menu>-->
           </el-menu>
         </el-scrollbar>
@@ -208,6 +208,7 @@ import {
 } from "@/utils/fileApi";
 import {viewArt} from "@/utils/articleApi";
 import bus from "@/utils/eventBus";
+import {gotoLoginApi} from "@/utils/common";
 
 const source = ref(0)
 source.value = 172000
@@ -265,7 +266,7 @@ function decideContentToShow(x) {
 async function addLikeToArt() {
   let res = await addLikeToArtApi(articleId.value)
   if(res === "notLogin"){
-    await router.push({name: 'login'});
+    await gotoLoginApi(router)
     return
   }
   if(res==="success"){
@@ -277,7 +278,7 @@ async function addLikeToArt() {
 async function addGoodToArt() {
   let res = await addGoodToArtApi(articleId.value)
   if(res === "notLogin"){
-    await router.push({name: 'login'});
+    await gotoLoginApi(router)
     return
   }
   if(res==="success"){

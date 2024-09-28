@@ -65,7 +65,6 @@ const sendEmail = () => {
 };
 const url = '/login';
 
-
 const postData = async () => {
   const requestBody = {
     user: user.value,
@@ -74,7 +73,14 @@ const postData = async () => {
   myHttp.post(url, requestBody)
       .then(response => {
         if (response.data.code === 200) {
-          router.push({name: 'home'});
+          const redirectPath = sessionStorage.getItem('redirectPath');
+          if (redirectPath) {
+            sessionStorage.removeItem('redirectPath');
+            router.push(redirectPath);
+          } else {
+            // 如果没有之前的路由路径，跳转到默认页面
+            router.push({name: 'home'});
+          }
           localStorage.setItem('remember', isChecked.value.toString())
           if(isChecked.value){
             localStorage.setItem('curUser', user.value)

@@ -3,7 +3,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
-import {Avatar, Message} from "@element-plus/icons-vue";
+import {Avatar, CirclePlusFilled, Message, Notification, Star} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
 import {getUrlHash} from "@/utils/commonApi";
 import bus from "@/utils/eventBus";
@@ -16,23 +16,6 @@ const props = defineProps({
     default: "",
   }
 });
-
-onMounted(() => {
-  bus.$on('myEvent', foo);
-  bus.$on('sendMessage', sendWebsocket);
-  onUnmounted(()=>{
-    bus.$off('myEvent', foo)
-    bus.$off('sendMessage', sendWebsocket)
-  }); // 确保在组件卸载时移除监听器
-});
-
-// 测试方法
-function foo(message) {
-  setTimeout(()=>{
-    countAllNotRead()
-  }, 1000)
-
-}
 
 let emit = defineEmits(["checkAuthFinished"])
 function handleMouseLeave(){
@@ -55,6 +38,14 @@ const menuVisible = ref(false);
 
 function toggleMenu() {
   menuVisible.value = !menuVisible.value;
+}
+
+function toggleFavorite() {
+  router.push({name: 'favoriteArticle'})
+}
+
+function toggleCreateCenter() {
+  router.push({name: 'manageArticle'})
 }
 
 function gotoLogin() {
@@ -96,71 +87,6 @@ onMounted( async () => {
   await reset()
 })
 
-// 下面这个函数暂时不触发了，没有服务器来通知前端获取消息数量和列表了
-function initWebsocket(){
-  const domain = window.location.hostname;
-  if(domain === "127.0.0.1"){
-    ws.value = new WebSocket("ws://127.0.0.1/websocket/link");
-  }else {
-    ws.value = new WebSocket("wss://linyujia.cn/websocket/link");
-  }
-
-  ws.value.onopen = function (event) {
-
-  };
-  ws.value.onmessage = function (event) {
-    let res = event.data
-    let jsonObj = JSON.parse(res)
-    if(jsonObj.type > 1){
-      bus.$emit('myEvent', 'test');
-    }
-  };
-  ws.value.onclose = function (event) {
-    if(verify()){
-      initWebsocket()
-    } else {
-      reset()
-    }
-  };
-}
-
-async function countAllNotRead() {
-  let array
-  await myHttp.get('/message/count')
-      .then(async response => {
-        if (response.data.code === 200) {
-          messageNum.value = response.data.data
-        } else if(response.data.code > 10000){
-          await gotoLoginApi(router)
-        }else {
-          ElMessage({
-            message: '获取消息列表失败！',
-            type: 'error',
-          });
-        }
-      })
-      .catch(error => {
-      });
-  return array
-}
-function exitWebsocket() {
-  if (ws.value) {
-    ws.value.close();
-    ws.value = null;
-  }
-}
-function  sendWebsocket(message) {
-  if (ws.value) {
-    ws.value.send(message);
-    bus.emit("sendMessageFinished", "消息已发送")
-  } else {
-    ElMessage({
-      message: "未连接到服务器",
-      type: 'error',
-    });
-  }
-}
-
 async function reset() {
   // isLogin.value = false;
   await verify();
@@ -182,42 +108,20 @@ async function reset() {
       type: 'error',
     });
   } else {
-    // initWebsocket()
-    // 不采取消息模式，而是直接触发事件，只要用户的路由发生变化，就触发本事件
     bus.$emit('myEvent', 'test');
-    // 由于直接触发事件，所以这里不用主动发起消息数量请求了
-    // await countAllNotRead()
   }
 }
 
 function changeTab(tab){
   activeTab.value = tab;
   if(tab==="首页"){
-    router.push({name: 'home'});
+    router.push({name: 'EveryBodyArticle'});
   }
-}
-
-function gotoHelp(){
-  router.push({name: 'help'});
-}
-
-function gotoMessage(){
-  router.push({name: 'message'});
-
-}
-
-function gotoSetting(){
-  router.push({name: 'setting'});
 }
 
 function gotoManage(){
   router.push({name: 'manager'});
 }
-
-function gotoMessageManage(){
-  router.push({name: 'messageManage'});
-}
-
 function logout() {
   // 执行退出登录的操作，例如清除token或调用API
   menuVisible.value = false; // 可选：关闭菜单
@@ -240,10 +144,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
   reset()
 });
 
-defineExpose({
-  exitWebsocket,
-  sendWebsocket
-})
 </script>
 
 <template>
@@ -256,7 +156,7 @@ defineExpose({
             <img @click="changeTab('首页')" src="@/assets/yanzilogo.svg" width="36px"  alt=""/>
           </li>
           <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
-            <a @click="changeTab('首页')">首页</a>
+            <a @click="changeTab('首页')">社区首页</a>
           </li>
 <!--          <li style="margin-left: 12px; cursor: default;min-width: 80px"-->
 <!--              v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">-->
@@ -266,30 +166,38 @@ defineExpose({
       </div>
     </div>
     <div class="user-actions">
-      <el-badge :offset="[-10, 5]" :is-dot="true" :value="messageNum" :hidden="messageTipHidden" style="margin-top: 4px">
-        <el-icon v-if="false"  color="white" :size="30" @click="gotoMessage"
-                 style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
-      </el-badge>
-
-<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">-->
-<!--        <template #default>-->
-<!--          <img style="height: 100%; width: 100%" src="@/assets/help.svg" alt="">-->
-<!--        </template>-->
-<!--      </el-icon>-->
-<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>-->
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage"
-               v-if="authority === '0' && isLogin">
-        <template #default>
-          <img style="height: 100%; width: 100%" src="@/assets/peopleManage.svg" alt="用户管理">
-        </template>
-      </el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoMessageManage"
-               v-if="false">
-<!--               v-if="authority === '0' && isLogin">-->
-          <template #default>
-            <img style="height: 100%; width: 100%" src="@/assets/messageManage.svg" alt="消息管理">
-          </template>
-      </el-icon>
+      <el-button round type="primary" style="margin-right: 8px" @click="router.push('/createArticle')">
+        <el-icon color="white" :size="20" style="cursor: pointer;margin-right: 8px;" @click="toggleCreateCenter"><CirclePlusFilled /></el-icon>
+        发布
+      </el-button>
+      <el-tooltip
+          v-if="isLogin"
+          effect="dark"
+          content="创作中心"
+          placement="top"
+          :show-after="500"
+      >
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleCreateCenter"><Notification /></el-icon>
+      </el-tooltip>
+      <div @click="toggleCreateCenter"
+           style="color: white;
+              font-weight: bold;
+              cursor: pointer;
+              margin-right: 8px;">创作中心</div>
+      <el-tooltip
+          v-if="isLogin"
+          effect="dark"
+          content="收藏夹"
+          placement="top"
+          :show-after="500"
+      >
+        <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleFavorite"><Star /></el-icon>
+      </el-tooltip>
+      <div @click="toggleFavorite"
+           style="color: white;
+              font-weight: bold;
+              cursor: pointer;
+              margin-right: 8px;">收藏夹</div>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleMenu"><Avatar /></el-icon>
       <div v-if="isLogin" style="margin-right: 25px; color: white">Hi, {{curUsername}} !</div>
       <el-tooltip
@@ -307,9 +215,6 @@ defineExpose({
       </el-tooltip>
       <div class="user-menu" v-if="menuVisible" @mouseleave="handleMouseLeave">
         <ul  class="menu" >
-          <!-- 菜单项 -->
-<!--          <li><a href="/#/profile">个人信息</a></li>-->
-<!--          <li><a href="/#/setting">设置</a></li>-->
           <li style="cursor: pointer"><a @click="logout">退出登录</a></li>
         </ul>
       </div>

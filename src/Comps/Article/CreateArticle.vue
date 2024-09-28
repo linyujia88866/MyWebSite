@@ -1,21 +1,21 @@
 <template>
   <el-container class="layout-container-demo" style="height: 100%;">
-    <el-aside width="200px" >
-      <el-scrollbar >
-        <el-menu
-            :default-active="'1-3'"
-            :default-openeds="['1']">
+<!--    <el-aside width="200px" >-->
+<!--      <el-scrollbar >-->
+<!--        <el-menu-->
+<!--            :default-active="'1-3'"-->
+<!--            :default-openeds="['1']">-->
 <!--          <el-sub-menu index="1">-->
 <!--            <template #title>-->
 <!--              <el-icon><icon-menu /></el-icon>快速导航-->
 <!--            </template>-->
-            <el-menu-item index="1-2" @click="router.push('/manageArticle')">返回文章管理
-              <el-icon><Setting /></el-icon>
-            </el-menu-item>
+<!--            <el-menu-item index="1-2" @click="router.push('/manageArticle')">返回文章管理-->
+<!--              <el-icon><Setting /></el-icon>-->
+<!--            </el-menu-item>-->
 <!--          </el-sub-menu>-->
-        </el-menu>
-      </el-scrollbar>
-    </el-aside>
+<!--        </el-menu>-->
+<!--      </el-scrollbar>-->
+<!--    </el-aside>-->
 
     <el-container>
       <el-main>

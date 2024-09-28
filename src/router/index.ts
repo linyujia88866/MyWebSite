@@ -3,7 +3,6 @@ import HomePage from "@/components/HomePage.vue";
 
 import Memorandum from "@/Comps/Tasks/Memorandum.vue";
 import MemoryCards from "@/Comps/Tasks/MemoryCards.vue";
-import Message from "@/components/Basic/Message.vue";
 import Setting from "@/components/Basic/Setting.vue";
 import Login from "@/components/Login.vue";
 import Registry from "@/components/Registry.vue";
@@ -28,14 +27,22 @@ import MessageManage from "@/components/Manage/MessageManage/MessageManage.vue";
 import MessageDetail from "@/components/Basic/MessageDetail.vue";
 import MessageTabs from "@/components/Basic/MessageTabs.vue";
 import Base64 from "@/convert/Base64.vue";
+import FavoriteArticles from "@/Comps/Article/FavoriteArticles.vue";
 
 const routes = [
   {
     path: '/',
     name: 'default',
     component: EveryBodysArticles,
-    meta: { title: '浏览文章' }
-  },{
+    meta: { title: '社区首页' }
+  },
+  {
+    path: '/favoriteArticle',
+    name: 'favoriteArticle',
+    component: FavoriteArticles,
+    meta: { title: '我收藏的文章' }
+  },
+  {
     path: '/home',
     name: 'home',
     component: HomePage,
@@ -123,7 +130,7 @@ const routes = [
     path: '/manageArticle',
     name: 'manageArticle',
     component: NotePage,
-    meta: { title: '管理文章' }
+    meta: { title: '创作中心' }
   },
   {
     path: '/fileTrans',
@@ -195,7 +202,7 @@ const routes = [
     path: '/EveryBodyArticle',
     name: 'EveryBodyArticle',
     component: EveryBodysArticles,
-    meta: { title: '浏览文章' }
+    meta: { title: '社区首页' }
   }
 ]
 

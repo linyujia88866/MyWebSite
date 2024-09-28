@@ -32,6 +32,7 @@ let pwd = ref('');
 let userid = ref('');
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
+import {gotoLoginApi} from "@/utils/common";
 ref({ name: '', email: '' });
 const url = '/user/register';
 
@@ -54,10 +55,9 @@ const postData = async () => {
             message: "注册成功",
             type: 'info',
           });
-          router.push({name: 'login'});
+          gotoLoginApi(router)
         }
       })
-
       .catch(error => {});
 };
 </script>
