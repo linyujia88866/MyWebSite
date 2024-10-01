@@ -32,24 +32,32 @@
         </p>
       </div>
       <!--=================================================分割线================================================================-->
-      <div>
-        <div class="card card-memory" @click="gotoMemory">
+<!--      <div>-->
+<!--        <div class="card card-memory" @click="gotoMemory">-->
 
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          清单
-        </p>
-      </div>
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          清单-->
+<!--        </p>-->
+<!--      </div>-->
       <!--=================================================分割线================================================================-->
-      <div v-if="false">
-        <div class="card card-table" >
+<!--      <div v-if="false">-->
+<!--        <div class="card card-table" >-->
+
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          表格快捷变换-->
+<!--        </p>-->
+<!--      </div>-->
+      <!--=================================================分割线================================================================-->
+      <div>
+        <div class="card card-knowledge" @click="gotoKnowledge">
 
         </div>
         <p style="margin: 0; padding: 0; font-weight: bold;">
-          表格快捷变换
+          知识库
         </p>
       </div>
-
 
       <div  v-if="false" class="card" @click.stop="gotoTest()" >
 
@@ -76,7 +84,9 @@ const sendEmail = () => {
 function gotoNotebook() {
   router.push({name: 'EveryBodyArticle'});
 }
-
+function gotoKnowledge() {
+  router.push({name: 'knowledge'});
+}
 function gotoTest() {
   router.push({name: 'test'});
 }
@@ -135,6 +145,12 @@ function gotoConvert() {
  }
 .card-notebook{
   background-image: url('../assets/paper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.card-knowledge{
+  background-image: url('../assets/knowledge.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

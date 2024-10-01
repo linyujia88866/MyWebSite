@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, CirclePlusFilled, HomeFilled, Notification, Star} from "@element-plus/icons-vue";
@@ -82,10 +82,10 @@ async function getCurUser() {
       .catch(error => {});
   return res
 }
-
-onMounted( async () => {
-  await reset()
-})
+reset()
+// onMounted( async () => {
+//   await reset()
+// })
 
 async function reset() {
   // isLogin.value = false;
@@ -95,21 +95,18 @@ async function reset() {
   // 不校验登录的页面
   emit("checkAuthFinished", isLogin.value)
   bus.$emit("loginStatus", isLogin.value)
-  if (hash.startsWith("#/viewArticle")
-      || hash.endsWith("EveryBodyArticle")
+  if (hash.startsWith("#/knowledge")
+      // || hash.endsWith("EveryBodyArticle")
       || hash === "#/") {
     return
   }
   if (!isLogin.value) {
     // 要执行的代码;
     await gotoLoginApi(router)
-    ElMessage({
-      message: "请先登录",
-      type: 'error',
-    });
-  } else {
-    bus.$emit('myEvent', 'test');
   }
+  // else {
+  //   bus.$emit('myEvent', 'test');
+  // }
 }
 
 function changeTab(tab){

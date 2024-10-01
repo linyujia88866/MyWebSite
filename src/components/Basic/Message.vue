@@ -95,7 +95,7 @@ async function maskRead(msgId) {
       .catch(error => {
       });
   await refresh()
-  bus.emit('myEvent', "");
+  // bus.emit('myEvent', "");
   return array
 }
 
@@ -165,7 +165,7 @@ async function getAllMySend() {
   return array
 }
 
-refresh()
+// refresh()
 
 async function refresh() {
   if (props.tab === "receive") {
@@ -175,22 +175,22 @@ async function refresh() {
   }
 }
 
-onMounted(() => {
-  bus.$on('myEvent', getAllNotReadLater);
-  onUnmounted(()=>{
-    bus.$off('myEvent', getAllNotReadLater)
-  }); // 确保在组件卸载时移除监听器
-});
+// onMounted(() => {
+//   bus.$on('myEvent', getAllNotReadLater);
+//   onUnmounted(()=>{
+//     bus.$off('myEvent', getAllNotReadLater)
+//   }); // 确保在组件卸载时移除监听器
+// });
 
-function getAllNotReadLater(){
-  setTimeout(()=>{
-    refresh()
-  }, 1000)
-}
+// function getAllNotReadLater(){
+//   setTimeout(()=>{
+//     refresh()
+//   }, 1000)
+// }
 
-defineExpose({
-  refresh
-})
+// defineExpose({
+//   refresh
+// })
 </script>
 
 <style scoped>

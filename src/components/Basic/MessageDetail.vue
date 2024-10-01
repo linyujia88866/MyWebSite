@@ -158,7 +158,7 @@ async function agree(status) {
       })
       .catch(error => {
       });
-  bus.emit('myEvent', "");
+  // bus.emit('myEvent', "");
   return array
 }
 const user = ref("")

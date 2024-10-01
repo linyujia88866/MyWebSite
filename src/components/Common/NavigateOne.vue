@@ -17,21 +17,21 @@ const props = defineProps({
   }
 });
 
-onMounted(() => {
-  bus.$on('myEvent', foo);
-  bus.$on('sendMessage', sendWebsocket);
-  onUnmounted(()=>{
-    bus.$off('myEvent', foo)
-    bus.$off('sendMessage', sendWebsocket)
-  }); // 确保在组件卸载时移除监听器
-});
+// onMounted(() => {
+//   bus.$on('myEvent', foo);
+//   bus.$on('sendMessage', sendWebsocket);
+//   onUnmounted(()=>{
+//     bus.$off('myEvent', foo)
+//     bus.$off('sendMessage', sendWebsocket)
+//   }); // 确保在组件卸载时移除监听器
+// });
 
 // 测试方法
-function foo(message) {
-  setTimeout(()=>{
-    countAllNotRead()
-  }, 1000)
-}
+// function foo(message) {
+//   setTimeout(()=>{
+//     countAllNotRead()
+//   }, 1000)
+// }
 
 let emit = defineEmits(["checkAuthFinished"])
 function handleMouseLeave(){
@@ -90,38 +90,38 @@ async function getCurUser() {
       .catch(error => {});
   return res
 }
-
-onMounted( async () => {
-  await reset()
-})
+reset()
+// onMounted( async () => {
+//   await reset()
+// })
 
 // 下面这个函数暂时不触发了，没有服务器来通知前端获取消息数量和列表了
-function initWebsocket(){
-  const domain = window.location.hostname;
-  if(domain === "127.0.0.1"){
-    ws.value = new WebSocket("ws://127.0.0.1/websocket/link");
-  }else {
-    ws.value = new WebSocket("wss://linyujia.cn/websocket/link");
-  }
-
-  ws.value.onopen = function (event) {
-
-  };
-  ws.value.onmessage = function (event) {
-    let res = event.data
-    let jsonObj = JSON.parse(res)
-    if(jsonObj.type > 1){
-      bus.$emit('myEvent', 'test');
-    }
-  };
-  ws.value.onclose = function (event) {
-    if(verify()){
-      initWebsocket()
-    } else {
-      reset()
-    }
-  };
-}
+// function initWebsocket(){
+//   const domain = window.location.hostname;
+//   if(domain === "127.0.0.1"){
+//     ws.value = new WebSocket("ws://127.0.0.1/websocket/link");
+//   }else {
+//     ws.value = new WebSocket("wss://linyujia.cn/websocket/link");
+//   }
+//
+//   ws.value.onopen = function (event) {
+//
+//   };
+//   ws.value.onmessage = function (event) {
+//     let res = event.data
+//     let jsonObj = JSON.parse(res)
+//     if(jsonObj.type > 1){
+//       bus.$emit('myEvent', 'test');
+//     }
+//   };
+//   ws.value.onclose = function (event) {
+//     if(verify()){
+//       initWebsocket()
+//     } else {
+//       reset()
+//     }
+//   };
+// }
 
 async function countAllNotRead() {
   let array
@@ -168,25 +168,22 @@ async function reset() {
   // 不校验登录的页面
   emit("checkAuthFinished", isLogin.value)
   bus.$emit("loginStatus", isLogin.value)
-  if (hash.startsWith("#/viewArticle")
-      || hash.endsWith("EveryBodyArticle")
+  if (hash.startsWith("#/knowledge")
+      // || hash.endsWith("EveryBodyArticle")
       || hash === "#/") {
     return
   }
   if (!isLogin.value) {
     // 要执行的代码;
     await gotoLoginApi(router)
-    ElMessage({
-      message: "请先登录",
-      type: 'error',
-    });
-  } else {
-    // initWebsocket()
-    // 不采取消息模式，而是直接触发事件，只要用户的路由发生变化，就触发本事件
-    bus.$emit('myEvent', 'test');
-    // 由于直接触发事件，所以这里不用主动发起消息数量请求了
-    // await countAllNotRead()
   }
+  // else {
+  //   initWebsocket()
+  //   // 不采取消息模式，而是直接触发事件，只要用户的路由发生变化，就触发本事件
+  //   bus.$emit('myEvent', 'test');
+  //   // 由于直接触发事件，所以这里不用主动发起消息数量请求了
+  //   await countAllNotRead()
+  // }
 }
 
 function changeTab(tab){
@@ -239,10 +236,10 @@ watch(() => route.fullPath, (newPath, oldPath) => {
   reset()
 });
 
-defineExpose({
-  exitWebsocket,
-  sendWebsocket
-})
+// defineExpose({
+//   exitWebsocket,
+//   sendWebsocket
+// })
 </script>
 
 <template>

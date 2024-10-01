@@ -28,13 +28,15 @@ import MessageDetail from "@/components/Basic/MessageDetail.vue";
 import MessageTabs from "@/components/Basic/MessageTabs.vue";
 import Base64 from "@/convert/Base64.vue";
 import FavoriteArticles from "@/Comps/Article/FavoriteArticles.vue";
+import Unicode from "@/convert/Unicode.vue";
+import Knowledge from "@/Comps/Knowledge/Knowledge.vue";
 
 const routes = [
   {
     path: '/',
     name: 'default',
-    component: EveryBodysArticles,
-    meta: { title: '社区首页' }
+    component: Knowledge,
+    meta: { title: '手把手教你搭建一个网站' }
   },
   {
     path: '/favoriteArticle',
@@ -151,10 +153,22 @@ const routes = [
     meta: { title: '文件转换' }
   },
   {
-    path: '/base64',
+    path: '/toolbox/base64',
     name: 'base64',
     component: Base64,
     meta: { title: 'Base64加解密' }
+  },
+  {
+    path: '/toolbox/unicode',
+    name: 'unicode',
+    component: Unicode,
+    meta: { title: 'Unicode编码解码' }
+  },
+  {
+    path: '/knowledge',
+    name: 'knowledge',
+    component: Knowledge,
+    meta: { title: '知识库' }
   },
   {
     path: '/viewWord',

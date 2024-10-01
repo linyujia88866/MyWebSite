@@ -3,6 +3,15 @@
   <div class="home-page">
     <div class="card-container">
       <!-- 卡片内容 -->
+<!--      <div>-->
+<!--        <div class="card card-fileChange" @click="gotoToolBox">-->
+
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          返回工具箱-->
+<!--        </p>-->
+<!--      </div>-->
+      <!-- 卡片内容 -->
       <div>
         <div class="card card-fileTrans" @click="gotoDownloadPic">
 
@@ -20,6 +29,25 @@
           Base64加解密
         </p>
       </div>
+      <!-- 卡片内容 -->
+      <div>
+        <div class="card card-unicode" @click="gotoUnicode">
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          Unicode编码解码
+        </p>
+      </div>
+
+      <div>
+        <div class="card card-memory" @click="gotoMemory">
+
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          清单
+        </p>
+      </div>
+
+
     </div>
   </div>
 </template>
@@ -30,11 +58,18 @@ const router = useRouter();
 function gotoDownloadPic() {
   router.push({name: 'downloadGif'});
 }
-
+function gotoToolBox() {
+  router.push({name: 'fileConvert'});
+}
 function gotoBase64() {
   router.push({name: 'base64'});
 }
-
+function gotoUnicode() {
+  router.push({name: 'unicode'});
+}
+function gotoMemory() {
+  router.push({name: 'memoryCards'});
+}
 </script>
 
 <style scoped>
@@ -68,7 +103,12 @@ function gotoBase64() {
   background-position: center;
   background-repeat: no-repeat;
 }
-
+.card-fileChange{
+  background-image: url('@/assets/toolBox.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .card-fileTrans{
   background-image: url('../assets/imgDownload.jpg');
   background-size: cover;
@@ -78,6 +118,19 @@ function gotoBase64() {
 
 .card-base64{
   background-image: url('../assets/base64.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.card-memory{
+  background-image: url('../assets/allright.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-unicode{
+  background-image: url('../assets/unicode.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

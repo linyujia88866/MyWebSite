@@ -48,8 +48,8 @@ const onSubmit = () => {
     type: Enums.MessageType.system_notice
   }
   bus.emit('sendMessage', JSON.stringify(obj));
-  setTimeout(()=>{
-    bus.emit('myEvent', "");
-  }, 3000)
+  // setTimeout(()=>{
+  //   bus.emit('myEvent', "");
+  // }, 3000)
 }
 </script>
