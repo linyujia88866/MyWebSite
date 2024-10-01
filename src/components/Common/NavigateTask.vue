@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {onMounted, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, CirclePlusFilled, List, Postcard} from "@element-plus/icons-vue";
@@ -79,12 +79,7 @@ async function getCurUser() {
   return res
 }
 reset()
-// onMounted( async () => {
-//   await reset()
-// })
-
 async function reset() {
-  // isLogin.value = false;
   await verify();
   await getCurUser();
   let hash = getUrlHash()
@@ -92,7 +87,6 @@ async function reset() {
   emit("checkAuthFinished", isLogin.value)
   bus.$emit("loginStatus", isLogin.value)
   if (hash.startsWith("#/knowledge")
-      // || hash.endsWith("EveryBodyArticle")
       || hash === "#/") {
     return
   }
@@ -100,9 +94,6 @@ async function reset() {
     // 要执行的代码;
     await gotoLoginApi(router)
   }
-  // else {
-  //   bus.$emit('myEvent', 'test');
-  // }
 }
 
 function changeTab(tab){
@@ -184,7 +175,9 @@ watch(() => route.fullPath, (newPath, oldPath) => {
               font-weight: bold;
               cursor: pointer;
               margin-right: 8px;">卡片式显示</div>
-      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleMenu"><Avatar /></el-icon>
+      <el-icon v-if="isLogin" color="white" :size="30"
+               style="cursor: pointer;margin-right: 8px;"
+               @click="toggleMenu"><Avatar /></el-icon>
       <div v-if="isLogin" style="margin-right: 25px; color: white">Hi, {{curUsername}} !</div>
       <el-tooltip
           v-else
@@ -254,10 +247,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
 
 .user-menu {
   position: relative;
-}
-.avatar {
-  cursor: pointer;
-  margin-right: 20px;
 }
 .menu {
   position: absolute;

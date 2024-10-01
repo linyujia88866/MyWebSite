@@ -19,14 +19,9 @@ import bus from "@/utils/eventBus";
 import {ElMessage} from "element-plus";
 import {Enums} from "@/enums/enums";
 
-let fileObjects = ref([])
 let curPath = ref('')
-let allFileNames = ref([])
 const value = ref(0)
-const minSize = ref(0)
 const emit = defineEmits(['close-event'])
-const multipleTableRef = ref()
-const multipleSelection = ref([])
 const dialogTableVisible = ref(false)
 
 function closeDialog() {
@@ -85,12 +80,6 @@ defineExpose({
 <style scoped>
 .el-button--text {
   margin-right: 15px;
-}
-.el-select {
-  width: 300px;
-}
-.el-input {
-  width: 300px;
 }
 .dialog-footer button:first-child {
   //margin-right: 10px;

@@ -2,16 +2,6 @@
 <template>
   <div class="home-page">
     <div class="card-container">
-      <!-- 卡片内容 -->
-<!--      <div>-->
-<!--        <div class="card card-fileChange" @click="gotoToolBox">-->
-
-<!--        </div>-->
-<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
-<!--          返回工具箱-->
-<!--        </p>-->
-<!--      </div>-->
-      <!-- 卡片内容 -->
       <div>
         <div class="card card-fileTrans" @click="gotoDownloadPic">
 
@@ -58,9 +48,6 @@ const router = useRouter();
 function gotoDownloadPic() {
   router.push({name: 'downloadGif'});
 }
-function gotoToolBox() {
-  router.push({name: 'fileConvert'});
-}
 function gotoBase64() {
   router.push({name: 'base64'});
 }
@@ -103,12 +90,7 @@ function gotoMemory() {
   background-position: center;
   background-repeat: no-repeat;
 }
-.card-fileChange{
-  background-image: url('@/assets/toolBox.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+
 .card-fileTrans{
   background-image: url('../assets/imgDownload.jpg');
   background-size: cover;

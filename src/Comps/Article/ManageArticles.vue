@@ -5,16 +5,6 @@
         <el-menu
             :default-active="'1-3'"
             :default-openeds="['1']">
-<!--          <el-sub-menu index="1" :collapse="false">-->
-<!--            <template #title>-->
-<!--              <el-icon><icon-menu /></el-icon>快速导航-->
-<!--            </template>-->
-<!--            <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章-->
-<!--              <el-icon><Edit /></el-icon>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="1-2" @click="router.push('/EveryBodyArticle')">浏览社区文章-->
-<!--              <el-icon><View /></el-icon>-->
-<!--            </el-menu-item>-->
             <el-menu-item index="1-3" @click="showPublish = false">未发布文章
               <el-icon>
                 <template #default>
@@ -29,7 +19,6 @@
                 </template>
               </el-icon>
             </el-menu-item>
-<!--          </el-sub-menu>-->
         </el-menu>
       </el-scrollbar>
     </el-aside>

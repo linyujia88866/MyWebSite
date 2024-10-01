@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import bus from "@/utils/eventBus";
 import {ElMessage} from "element-plus";
 export default {
   name: 'HomeView',
@@ -69,8 +68,6 @@ export default {
           type: 'error',
         });
         clearInterval(self.timeoutId);
-        // alert(event.reason);
-
         self.text_content = self.text_content + `由于${reason}已经关闭连接!` + "\n";
       };
     },
@@ -88,7 +85,6 @@ export default {
           message: '未连接到服务器！',
           type: 'error',
         });
-        // alert("未连接到服务器");
       }
     },
   }

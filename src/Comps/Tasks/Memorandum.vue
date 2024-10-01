@@ -5,7 +5,6 @@ const route=useRoute()
 const router = useRouter();
 import {myHttp} from "@/request/myrequest";
 import {ElMessage} from "element-plus";
-import NavigateOne from "@/components/Common/NavigateOne.vue";
 
 let url ="/task"
 let taskId = ref("")
@@ -38,11 +37,6 @@ function getTaskInfo() {
         }
       })
 }
-
-
-// let items=ref(["web应用开发","UI动效设计","手机微电影制作"]);
-
-const childRef = ref(null);
 
 function add(){
   if(msg.value!=="" )

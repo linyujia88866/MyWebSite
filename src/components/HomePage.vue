@@ -32,24 +32,6 @@
         </p>
       </div>
       <!--=================================================分割线================================================================-->
-<!--      <div>-->
-<!--        <div class="card card-memory" @click="gotoMemory">-->
-
-<!--        </div>-->
-<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
-<!--          清单-->
-<!--        </p>-->
-<!--      </div>-->
-      <!--=================================================分割线================================================================-->
-<!--      <div v-if="false">-->
-<!--        <div class="card card-table" >-->
-
-<!--        </div>-->
-<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
-<!--          表格快捷变换-->
-<!--        </p>-->
-<!--      </div>-->
-      <!--=================================================分割线================================================================-->
       <div>
         <div class="card card-knowledge" @click="gotoKnowledge">
 
@@ -89,10 +71,6 @@ function gotoKnowledge() {
 }
 function gotoTest() {
   router.push({name: 'test'});
-}
-
-function gotoMemory() {
-  router.push({name: 'memoryCards'});
 }
 
 function gotoTrans() {
@@ -136,13 +114,6 @@ function gotoConvert() {
   background-position: center;
   background-repeat: no-repeat;
 }
-
-.card-table{
-   background-image: url('../assets/table.png');
-   background-size: cover;
-   background-position: 0 -20px;
-   background-repeat: no-repeat;
- }
 .card-notebook{
   background-image: url('../assets/paper.jpg');
   background-size: cover;
@@ -151,12 +122,6 @@ function gotoConvert() {
 }
 .card-knowledge{
   background-image: url('../assets/knowledge.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.card-memory{
-  background-image: url('../assets/allright.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

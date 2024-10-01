@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute, useRouter} from 'vue-router';
-import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import { defineProps } from 'vue';
 import {myHttp} from "@/request/myrequest";
 import {Avatar, Message} from "@element-plus/icons-vue";
@@ -16,22 +16,6 @@ const props = defineProps({
     default: "",
   }
 });
-
-// onMounted(() => {
-//   bus.$on('myEvent', foo);
-//   bus.$on('sendMessage', sendWebsocket);
-//   onUnmounted(()=>{
-//     bus.$off('myEvent', foo)
-//     bus.$off('sendMessage', sendWebsocket)
-//   }); // 确保在组件卸载时移除监听器
-// });
-
-// 测试方法
-// function foo(message) {
-//   setTimeout(()=>{
-//     countAllNotRead()
-//   }, 1000)
-// }
 
 let emit = defineEmits(["checkAuthFinished"])
 function handleMouseLeave(){
@@ -91,74 +75,6 @@ async function getCurUser() {
   return res
 }
 reset()
-// onMounted( async () => {
-//   await reset()
-// })
-
-// 下面这个函数暂时不触发了，没有服务器来通知前端获取消息数量和列表了
-// function initWebsocket(){
-//   const domain = window.location.hostname;
-//   if(domain === "127.0.0.1"){
-//     ws.value = new WebSocket("ws://127.0.0.1/websocket/link");
-//   }else {
-//     ws.value = new WebSocket("wss://linyujia.cn/websocket/link");
-//   }
-//
-//   ws.value.onopen = function (event) {
-//
-//   };
-//   ws.value.onmessage = function (event) {
-//     let res = event.data
-//     let jsonObj = JSON.parse(res)
-//     if(jsonObj.type > 1){
-//       bus.$emit('myEvent', 'test');
-//     }
-//   };
-//   ws.value.onclose = function (event) {
-//     if(verify()){
-//       initWebsocket()
-//     } else {
-//       reset()
-//     }
-//   };
-// }
-
-async function countAllNotRead() {
-  let array
-  await myHttp.get('/message/count')
-      .then(async response => {
-        if (response.data.code === 200) {
-          messageNum.value = response.data.data
-        } else if(response.data.code > 10000){
-          await gotoLoginApi(router)
-        }else {
-          ElMessage({
-            message: '获取消息列表失败！',
-            type: 'error',
-          });
-        }
-      })
-      .catch(error => {
-      });
-  return array
-}
-function exitWebsocket() {
-  if (ws.value) {
-    ws.value.close();
-    ws.value = null;
-  }
-}
-function  sendWebsocket(message) {
-  if (ws.value) {
-    ws.value.send(message);
-    bus.emit("sendMessageFinished", "消息已发送")
-  } else {
-    ElMessage({
-      message: "未连接到服务器",
-      type: 'error',
-    });
-  }
-}
 
 async function reset() {
   // isLogin.value = false;
@@ -177,13 +93,6 @@ async function reset() {
     // 要执行的代码;
     await gotoLoginApi(router)
   }
-  // else {
-  //   initWebsocket()
-  //   // 不采取消息模式，而是直接触发事件，只要用户的路由发生变化，就触发本事件
-  //   bus.$emit('myEvent', 'test');
-  //   // 由于直接触发事件，所以这里不用主动发起消息数量请求了
-  //   await countAllNotRead()
-  // }
 }
 
 function changeTab(tab){
@@ -193,25 +102,12 @@ function changeTab(tab){
   }
 }
 
-function gotoHelp(){
-  router.push({name: 'help'});
-}
-
 function gotoMessage(){
   router.push({name: 'message'});
 
 }
-
-function gotoSetting(){
-  router.push({name: 'setting'});
-}
-
 function gotoManage(){
   router.push({name: 'manager'});
-}
-
-function gotoMessageManage(){
-  router.push({name: 'messageManage'});
 }
 
 function logout() {
@@ -236,10 +132,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
   reset()
 });
 
-// defineExpose({
-//   exitWebsocket,
-//   sendWebsocket
-// })
 </script>
 
 <template>
@@ -254,10 +146,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
           <li :class="{active: activeTab === '首页'}" style="min-width: 80px; text-align: left">
             <a @click="changeTab('首页')">首页</a>
           </li>
-<!--          <li style="margin-left: 12px; cursor: default;min-width: 80px"-->
-<!--              v-if="props.originTab.length > 0" :class="{active: activeTab === props.originTab}">-->
-<!--            <a >{{props.originTab}}</a>-->
-<!--          </li>-->
         </ul>
       </div>
     </div>
@@ -266,25 +154,11 @@ watch(() => route.fullPath, (newPath, oldPath) => {
         <el-icon v-if="false"  color="white" :size="30" @click="gotoMessage"
                  style="cursor: pointer; margin-right: 8px;"><Message /></el-icon>
       </el-badge>
-
-<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoHelp">-->
-<!--        <template #default>-->
-<!--          <img style="height: 100%; width: 100%" src="@/assets/help.svg" alt="">-->
-<!--        </template>-->
-<!--      </el-icon>-->
-<!--      <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoSetting"><Setting /></el-icon>-->
       <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoManage"
                v-if="authority === '0' && isLogin">
         <template #default>
           <img style="height: 100%; width: 100%" src="@/assets/peopleManage.svg" alt="用户管理">
         </template>
-      </el-icon>
-      <el-icon color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="gotoMessageManage"
-               v-if="false">
-<!--               v-if="authority === '0' && isLogin">-->
-          <template #default>
-            <img style="height: 100%; width: 100%" src="@/assets/messageManage.svg" alt="消息管理">
-          </template>
       </el-icon>
       <el-icon v-if="isLogin" color="white" :size="30" style="cursor: pointer;margin-right: 8px;" @click="toggleMenu"><Avatar /></el-icon>
       <div v-if="isLogin" style="margin-right: 25px; color: white">Hi, {{curUsername}} !</div>
@@ -303,9 +177,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
       </el-tooltip>
       <div class="user-menu" v-if="menuVisible" @mouseleave="handleMouseLeave">
         <ul  class="menu" >
-          <!-- 菜单项 -->
-<!--          <li><a href="/#/profile">个人信息</a></li>-->
-<!--          <li><a href="/#/setting">设置</a></li>-->
           <li style="cursor: pointer"><a @click="logout">退出登录</a></li>
         </ul>
       </div>

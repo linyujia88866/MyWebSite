@@ -83,9 +83,6 @@ async function getCurUser() {
   return res
 }
 reset()
-// onMounted( async () => {
-//   await reset()
-// })
 
 async function reset() {
   // isLogin.value = false;
@@ -96,7 +93,6 @@ async function reset() {
   emit("checkAuthFinished", isLogin.value)
   bus.$emit("loginStatus", isLogin.value)
   if (hash.startsWith("#/knowledge")
-      // || hash.endsWith("EveryBodyArticle")
       || hash === "#/") {
     return
   }
@@ -104,9 +100,6 @@ async function reset() {
     // 要执行的代码;
     await gotoLoginApi(router)
   }
-  // else {
-  //   bus.$emit('myEvent', 'test');
-  // }
 }
 
 function changeTab(tab){
@@ -114,10 +107,6 @@ function changeTab(tab){
   if(tab==="首页"){
     router.push({name: 'home'});
   }
-}
-
-function gotoManage(){
-  router.push({name: 'manager'});
 }
 function logout() {
   // 执行退出登录的操作，例如清除token或调用API

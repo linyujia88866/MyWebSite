@@ -1,7 +1,4 @@
 <template>
-<!--  <el-affix :offset="100" style="text-align: right;">-->
-
-<!--  </el-affix>-->
   <div style="width: 100%; text-align: right; position: absolute; margin-top: 80px">
     <el-tooltip
         effect="dark"
@@ -17,40 +14,6 @@
     </el-tooltip>
   </div>
   <el-container class="layout-container-demo" style="height: 100%">
-<!--    <el-aside width="200px">-->
-<!--      <el-scrollbar>-->
-<!--        <el-menu-->
-<!--            :default-active="'1-3'"-->
-<!--            :default-openeds="['1']">-->
-<!--          <el-sub-menu index="1" :collapse="false">-->
-<!--            <template #title>-->
-<!--              <el-icon><icon-menu /></el-icon>快速导航-->
-<!--            </template>-->
-<!--            <el-menu-item index="1-2" @click="router.push('/createArticle')">前往创建文章-->
-<!--              <el-icon><Edit /></el-icon>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="1-2" @click="router.push('/manageArticle')" v-if="isLogin">管理我的文章-->
-<!--              <el-icon><Setting /></el-icon>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="1-3" @click="showILike = false" v-if="isLogin">浏览所有文章-->
-<!--              <el-icon >-->
-<!--                <template #default>-->
-<!--                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/allArt.svg" alt="">-->
-<!--                </template>-->
-<!--              </el-icon>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="1-4" @click="showILike = true" v-if="isLogin">我收藏的文章-->
-<!--              <el-icon >-->
-<!--                <template #default>-->
-<!--                  <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/myfavor.svg" alt="">-->
-<!--                </template>-->
-<!--              </el-icon>-->
-<!--            </el-menu-item>-->
-<!--          </el-sub-menu>-->
-<!--        </el-menu>-->
-<!--      </el-scrollbar>-->
-<!--    </el-aside>-->
-
     <el-container>
       <el-main>
         <ArticlesILike v-if="showILike" style="margin-top:12px; margin-left: auto;"></ArticlesILike>
@@ -80,7 +43,6 @@
 
 <script setup>
 import {onMounted, onUnmounted, ref} from "vue";
-import {Menu as IconMenu, Edit, Setting} from '@element-plus/icons-vue'
 import {useRouter} from "vue-router";
 import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
 import ArticlesILike from "@/Comps/Article/ArticlesILike.vue";

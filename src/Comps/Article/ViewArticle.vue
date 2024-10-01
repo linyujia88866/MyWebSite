@@ -5,17 +5,6 @@
         <el-scrollbar >
           <el-menu
               :default-openeds="['1']">
-<!--            <el-sub-menu index="1">-->
-<!--              <template #title>-->
-<!--                <el-icon><icon-menu /></el-icon>快速导航-->
-<!--              </template>-->
-<!--              <el-menu-item index="1-2" v-if="isLogin" @click="router.push('/manageArticle')">返回文章管理-->
-<!--                <el-icon><Setting /></el-icon>-->
-<!--              </el-menu-item>-->
-<!--              <el-menu-item index="1-3" @click="router.push('/')">返回浏览文章-->
-<!--                <el-icon><View /></el-icon>-->
-<!--              </el-menu-item>-->
-<!--            </el-sub-menu>-->
           </el-menu>
         </el-scrollbar>
       </el-aside>
@@ -47,7 +36,7 @@
                   <template #suffix>
                     <el-icon >
                       <template #default>
-                        <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/giveGoodLine.svg">
+                        <img style="height: 100%; width: 100%; vertical-align: -0.125em" src="@/assets/giveGoodLine.svg" alt="">
                       </template>
                     </el-icon>
                   </template>
@@ -162,7 +151,7 @@
                   <template #default>
                     <el-icon>
                       <template #default>
-                        <img style="height: 100%; width: 100%" src="@/assets/like.svg">
+                        <img style="height: 100%; width: 100%" src="@/assets/like.svg" alt="">
                       </template>
                     </el-icon>
                   </template>
@@ -197,7 +186,7 @@
 <script setup>
 import {nextTick, onMounted, onUnmounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import {Menu as IconMenu,ChatLineRound, StarFilled,Star, View, Setting} from '@element-plus/icons-vue'
+import {ChatLineRound, Star, View} from '@element-plus/icons-vue'
 import {timestampToDate} from "@/utils/stringutils";
 import {
   addGoodToArtApi,

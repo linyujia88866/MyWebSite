@@ -18,7 +18,6 @@ import Help from "@/components/Basic/Help.vue";
 import TransNew from "@/Core/TransNew.vue";
 import ViewArticle from "@/Comps/Article/ViewArticle.vue";
 import CreateArticle from "@/Comps/Article/CreateArticle.vue";
-import ArticleHome from "@/Comps/Article/ArticleHome.vue";
 import EveryBodysArticles from "@/Comps/Article/EveryBodysArticles.vue";
 import FileConvertHome from "@/convert/FileConvertHome.vue";
 import DownLoadGif from "@/convert/DownLoadGif.vue";
@@ -205,12 +204,6 @@ const routes = [
     name: 'createArticle',
     component: CreateArticle,
     meta: { title: '创建文章' }
-  },
-  {
-    path: '/articleHome',
-    name: 'articleHome',
-    component: ArticleHome,
-    meta: { title: '文章首页' }
   },
   {
     path: '/EveryBodyArticle',
