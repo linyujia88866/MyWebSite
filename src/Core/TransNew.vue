@@ -106,7 +106,7 @@ import MoveFile from "@/Core/MoveFile.vue";
 import CopyFile from "@/Core/CopyFile.vue";
 import FileInfoData from "@/Core/FileInfoData.vue";
 import {Upload} from '@element-plus/icons-vue'
-import {ElMessage, ElMessageBox, ElNotification} from 'element-plus'
+import {ElMessageBox, ElNotification} from 'element-plus'
 import Repeat from "@/Core/Repeat.vue";
 import RenameFile from "@/Core/RenameFile.vue";
 import MakingDir from "@/Core/MakingDir.vue";

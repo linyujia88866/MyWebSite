@@ -38,7 +38,6 @@ watch(() => route.fullPath, (newPath, oldPath) => {
   // 你可以在这里根据路由变化执行相应的逻辑
 });
 const currentHash = window.location.hash;
-// console.log(currentHash)
 if(currentHash){
   router.push(currentHash.slice(1))
   checkPath(currentHash.slice(1))
@@ -47,7 +46,6 @@ if(currentHash){
 }
 
 function checkPath(newPath){
-  // console.log("check path," + newPath)
   if(newPath === "/"){
     router.push("/knowledge")
     taskUrl.value = false

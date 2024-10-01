@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookie from "quill-editor";
 import {getUuid} from "@/utils/getUuid";
 
 async function downloadPic(url) {
@@ -9,7 +8,6 @@ async function downloadPic(url) {
         })
             .then(response => {
                 if (response.status === 200) {
-                    console.log("111111")
                     //浏览器下载
                     const myBlob = response.data
                     const qrUrl = window.URL.createObjectURL(myBlob);
@@ -26,7 +24,6 @@ async function downloadPic(url) {
 }
 
 function downFile(url, suffix) {
-    console.log(url)
     fetch(url, {
         method: 'GET',
     })

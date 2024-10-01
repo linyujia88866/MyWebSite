@@ -216,7 +216,6 @@
         keyDown: function(event){
             event.preventDefault();
             var key = event.keyCode;
-            //console.log(key);
             var data = pptxjslideObj.data;
             switch(key){
                 case(37): // Left arrow
