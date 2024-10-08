@@ -47,7 +47,8 @@ if(currentHash){
 
 function checkPath(newPath){
   if(newPath === "/"){
-    router.push("/knowledge")
+    // router.push("/knowledge")
+    router.push({name: 'knowledge',state:{activeIndex: '1-0'}});
     taskUrl.value = false
     curUrl.value = false
     articleUrl.value = true

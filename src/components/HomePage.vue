@@ -67,8 +67,10 @@ function gotoNotebook() {
   router.push({name: 'EveryBodyArticle'});
 }
 function gotoKnowledge() {
-  router.push({name: 'knowledge'});
+  // router.push({name: 'knowledge'});
+  router.push({name: 'knowledge',state: {activeIndex: '1-0'}});
 }
+
 function gotoTest() {
   router.push({name: 'test'});
 }
