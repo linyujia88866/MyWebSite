@@ -18,6 +18,16 @@
               <el-menu-item index="1-4-2">部署一个最简单的web服务器</el-menu-item>
               <el-menu-item index="1-4-3">开发一个简单的html页面</el-menu-item>
             </el-sub-menu>
+            <el-sub-menu index="1-5">
+              <template #title>前端开发</template>
+              <el-menu-item index="1-5-1">单页面应用介绍</el-menu-item>
+              <el-menu-item index="1-5-2">创建一个vue工程</el-menu-item>
+              <el-menu-item index="1-5-3">使用vue开发一个简单的网页</el-menu-item>
+            </el-sub-menu>
+<!--            <el-sub-menu index="1-6">-->
+<!--              <template #title>后端开发</template>-->
+<!--              <el-menu-item index="1-6-1">写一个最简单的后端服务</el-menu-item>-->
+<!--            </el-sub-menu>-->
 <!--            <el-menu-item index="1-1">K8S</el-menu-item>-->
 <!--            <el-menu-item index="1-2">Docker</el-menu-item>-->
 <!--            <el-menu-item index="1-3">中间件部署</el-menu-item>-->
@@ -52,6 +62,9 @@
             <BuyServer v-if="activeIndex==='1-4-1'"/>
             <DeployNginx  v-if="activeIndex==='1-4-2'"></DeployNginx>
             <DevHtml v-if="activeIndex==='1-4-3'"></DevHtml>
+            <SPA  v-if="activeIndex==='1-5-1'"></SPA>
+            <CreateVue  v-if="activeIndex==='1-5-2'"></CreateVue>
+            <UseVue  v-if="activeIndex==='1-5-3'"></UseVue>
           </template>
         </el-scrollbar>
       </el-main>
@@ -60,13 +73,17 @@
 </template>
 
 <script setup>
-import {nextTick, ref} from 'vue'
-import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
+import {nextTick, onUnmounted, ref} from 'vue'
+import { Message } from '@element-plus/icons-vue'
 import Summary from "@/Comps/Knowledge/Content/Summary.vue";
 import BuyServer from "@/Comps/Knowledge/Content/BuyServer.vue";
 import DeployNginx from "@/Comps/Knowledge/Content/DeployNginx.vue";
 import {useRoute, useRouter} from "vue-router";
 import DevHtml from "@/Comps/Knowledge/Content/DevHtml.vue";
+import SPA from "@/Comps/Knowledge/Content/Website/SPA.vue";
+import bus from "@/utils/eventBus";
+import CreateVue from "@/Comps/Knowledge/Content/Website/CreateVue.vue";
+import UseVue from "@/Comps/Knowledge/Content/Website/UseVue.vue";
 const activeIndex = ref("1-0")
 const menu = ref()
 const defaultActive = ref('')
@@ -94,25 +111,44 @@ let dist = {
   , '1-4-3': {
     title: '开发一个简单的html页面'
   }
+  , '1-5-1': {
+    title: 'SPA单页面应用介绍'
+  }
+  , '1-5-2': {
+    title: '创建一个vue工程'
+  }
+  , '1-5-3': {
+    title: '使用vue开发一个简单的网页'
+  }
+  , '1-6-1': {
+    title: '写一个最简单的后端服务'
+  }
 }
 function handleSelect(e) {
+  // console.log("您正在阅读第" + e + "章内容")
   title.value = dist[e].title
   activeIndex.value = e
   defaultActive.value = e
   history.state.activeIndex = e
 }
-const item = {
-  date: '2016-05-02',
-  name: 'Tom',
-  address: 'No. 189, Grove St, Los Angeles',
-}
+
 const title= ref("")
 activeIndex.value = history.state.activeIndex
 nextTick(()=> {
   if(activeIndex.value){
     handleSelect(activeIndex.value)
+  } else {
+    handleSelect('1-0')
   }
+})
+bus.on('handleSelect', handleSelect)
 
+onUnmounted(()=>{
+  bus.off('handleSelect', handleSelect)
+})
+
+defineExpose({
+  handleSelect
 })
 </script>
 

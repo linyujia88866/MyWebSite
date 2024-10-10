@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import DrawTitle from "@/Comps/Knowledge/Comp/DrawTitle.vue";
 
-const activeNames = ref(['1'])
+const activeNames = ref(['1', '2', '3', '4'])
 function handleChange(val) {
-  console.log(val)
+  // console.log(val)
 }
 </script>
 
