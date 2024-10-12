@@ -1,6 +1,6 @@
 <template>
   <div class="article-list">
-    <input type="text" v-model="searchQuery" placeholder="Search..." />
+    <input type="text" v-model="searchQuery" placeholder="请输入文章标题搜索" />
     <h1 style="margin: 0;">文章列表</h1>
     <ul v-if="filteredArticles.length > 0">
       <li v-for="article in filteredArticles" :key="article.id">
@@ -37,7 +37,7 @@ const router = useRouter();
 
 getArtList()
 async function getArtList() {
-  let array = await  getAllPubArticles()
+  let array = await  getAllPubArticles(5, 0)
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({

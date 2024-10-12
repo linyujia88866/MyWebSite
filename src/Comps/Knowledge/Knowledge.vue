@@ -12,6 +12,7 @@
               <el-icon><message /></el-icon>从0到1搭建一个自己的网站
             </template>
             <el-menu-item index="1-0">知识库概览</el-menu-item>
+            <el-menu-item index="1-3">项目简介</el-menu-item>
             <el-sub-menu index="1-4">
               <template #title>环境的搭建</template>
               <el-menu-item index="1-4-1">拥有自己的第一台服务器</el-menu-item>
@@ -59,6 +60,7 @@
         <el-scrollbar>
           <template #default>
             <Summary v-if="activeIndex==='1-0'"/>
+            <Introduce v-if="activeIndex==='1-3'"></Introduce>
             <BuyServer v-if="activeIndex==='1-4-1'"/>
             <DeployNginx  v-if="activeIndex==='1-4-2'"></DeployNginx>
             <DevHtml v-if="activeIndex==='1-4-3'"></DevHtml>
@@ -74,7 +76,7 @@
 
 <script setup>
 import {nextTick, onUnmounted, ref} from 'vue'
-import { Message } from '@element-plus/icons-vue'
+import {Message} from '@element-plus/icons-vue'
 import Summary from "@/Comps/Knowledge/Content/Summary.vue";
 import BuyServer from "@/Comps/Knowledge/Content/BuyServer.vue";
 import DeployNginx from "@/Comps/Knowledge/Content/DeployNginx.vue";
@@ -84,10 +86,13 @@ import SPA from "@/Comps/Knowledge/Content/Website/SPA.vue";
 import bus from "@/utils/eventBus";
 import CreateVue from "@/Comps/Knowledge/Content/Website/CreateVue.vue";
 import UseVue from "@/Comps/Knowledge/Content/Website/UseVue.vue";
+import PutIdDown from "@/Comps/Knowledge/Content/Website/Three/PutIdDown.vue";
+import Introduce from "@/Comps/Knowledge/Content/Website/Three/Introduce.vue";
+
 const activeIndex = ref("1-0")
 const menu = ref()
 const defaultActive = ref('')
-const route=useRoute()
+const route = useRoute()
 const router = useRouter();
 let dist = {
   '1-0': {
@@ -100,9 +105,18 @@ let dist = {
     title: 'Docker'
   },
   '1-3': {
-    title: '中间件部署'
-  },
-  '1-4-1': {
+    title: '项目简介'
+  }
+  , '1-3-1': {
+    title: '将知识沉淀下来'
+  }
+  , '1-3-2': {
+    title: '灵感来源'
+  }
+  , '1-3-3': {
+    title: '网站项目介绍'
+  }
+  , '1-4-1': {
     title: '拥有自己的第一台服务器'
   }
   , '1-4-2': {
@@ -124,6 +138,11 @@ let dist = {
     title: '写一个最简单的后端服务'
   }
 }
+//
+// <el-menu-item index="1-3-1">将知识沉淀下来</el-menu-item>
+// <el-menu-item index="1-3-2">灵感来源</el-menu-item>
+// <el-menu-item index="1-3-3">网站项目介绍</el-menu-item>
+
 function handleSelect(e) {
   // console.log("您正在阅读第" + e + "章内容")
   title.value = dist[e].title
@@ -132,10 +151,10 @@ function handleSelect(e) {
   history.state.activeIndex = e
 }
 
-const title= ref("")
+const title = ref("")
 activeIndex.value = history.state.activeIndex
-nextTick(()=> {
-  if(activeIndex.value){
+nextTick(() => {
+  if (activeIndex.value) {
     handleSelect(activeIndex.value)
   } else {
     handleSelect('1-0')
@@ -143,7 +162,7 @@ nextTick(()=> {
 })
 bus.on('handleSelect', handleSelect)
 
-onUnmounted(()=>{
+onUnmounted(() => {
   bus.off('handleSelect', handleSelect)
 })
 
@@ -158,6 +177,7 @@ defineExpose({
   //background-color: var(--el-color-primary-light-7);
   //color: var(--el-text-color-primary);
 }
+
 .layout-container-demo .el-aside {
   //color: var(--el-text-color-primary);
   //background: var(--el-color-primary-light-8);

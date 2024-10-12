@@ -63,7 +63,7 @@
             </el-row>
             <!--    ===============================================================================================-->
             <el-divider content-position="center">文章内容</el-divider>
-            <div style="text-align: left; margin-left: 20px;" v-html="content"></div>
+            <div style="text-align: left; margin-left: 20px;white-space: pre-wrap;" v-html="content"></div>
             <div style="display: flex; width: 100%;
             padding: 8px;
             justify-content: flex-end;

@@ -4,9 +4,6 @@ import DrawTitle from "@/Comps/Knowledge/Comp/DrawTitle.vue";
 import bus from "@/utils/eventBus";
 
 const activeNames = ref(['1', '2', '3', '4'])
-function handleChange(val) {
-  // console.log(val)
-}
 
 function handleSelect(val) {
   bus.emit('handleSelect', val)
@@ -16,7 +13,7 @@ function handleSelect(val) {
 
 <template>
 <div style="height: 500px">
-  <el-collapse v-model="activeNames" @change="handleChange">
+  <el-collapse v-model="activeNames">
     <el-collapse-item title="环境的搭建" name="1">
       <template #title>
         <DrawTitle title="环境的搭建"></DrawTitle>

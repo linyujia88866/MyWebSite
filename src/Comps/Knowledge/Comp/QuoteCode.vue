@@ -22,6 +22,6 @@ nextTick(async () => {
 
 <style scoped>
 .abc{
-  text-align: left; white-space: pre-wrap;
+  text-align: left; background-color: #add8e6; white-space: pre-wrap;
 }
 </style>

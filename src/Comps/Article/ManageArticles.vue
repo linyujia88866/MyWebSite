@@ -3,7 +3,7 @@
     <el-aside width="200px">
       <el-scrollbar>
         <el-menu
-            :default-active="'1-3'"
+            :default-active="'1-4'"
             :default-openeds="['1']">
             <el-menu-item index="1-3" @click="showPublish = false">未发布文章
               <el-icon>
@@ -56,7 +56,7 @@ import {useRouter} from "vue-router";
 import PubArticles from "@/Comps/Article/PubArticles.vue";
 import PriArticles from "@/Comps/Article/PriArticles.vue";
 
-let showPublish = ref(false)
+let showPublish = ref(true)
 const router = useRouter();
 </script>
 

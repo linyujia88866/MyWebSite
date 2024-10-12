@@ -214,9 +214,9 @@ async function addOneRead(articleId) {
 }
 
 
-async function getAllPubArticles() {
+async function getAllPubArticles(limit, offset) {
     let array
-    await myHttp.get('/article/AllPubArticles')
+    await myHttp.get(`/article/AllPubArticles?limit=${limit}&offset=${offset}`)
         .then(response => {
             if (response.data.code === 200) {
                 array = response.data.data;
