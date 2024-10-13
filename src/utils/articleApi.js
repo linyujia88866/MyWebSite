@@ -144,6 +144,11 @@ async function saveArtApi(title, content ,publish, emit, artId) {
                     type: 'success',
                 });
                 emit('save-event', 'Hello from child with Composition API');
+            } else {
+                ElMessage({
+                    message: "文章保存失败，" + response.data.message,
+                    type: 'error',
+                });
             }
         })
         .catch(error => {});
@@ -195,9 +200,9 @@ async function updateArtApi(title, content , articleId) {
 }
 
 
-async function getPubArticles() {
+async function getPubArticles(limit, offset) {
     let array
-    await myHttp.get('/article/pubArticles')
+    await myHttp.get(`/article/pubArticles?limit=${limit}&offset=${offset}`)
         .then(response => {
             if (response.data.code === 200) {
                 array = response.data.data;
@@ -212,6 +217,22 @@ async function getPubArticles() {
     return array
 }
 
+async function getPubArticlesCount() {
+    let array
+    await myHttp.get(`/article/pubArticles/total`)
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章数量失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {});
+    return array
+}
 
 async function addOneRead(articleId) {
     let array
@@ -248,6 +269,23 @@ async function getAllPubArticles(limit, offset) {
     return array
 }
 
+async function searchArtApi(limit, offset, name) {
+    let array
+    await myHttp.get(`/article/AllPubArticles/search?limit=${limit}&offset=${offset}&name=${name}`)
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章列表失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {});
+    return array
+}
+
 async function getAllPubArticlesCount() {
     let array
     await myHttp.get(`/article/AllPubArticles/total`)
@@ -265,9 +303,9 @@ async function getAllPubArticlesCount() {
     return array
 }
 
-async function getPriArticles() {
+async function getPriArticles(limit, offset) {
     let array
-    await myHttp.get('/article/priArticles')
+    await myHttp.get(`/article/priArticles?limit=${limit}&offset=${offset}`)
         .then(response => {
             if (response.data.code === 200) {
                 array = response.data.data;
@@ -282,6 +320,22 @@ async function getPriArticles() {
     return array
 }
 
+async function getPriArticlesCount() {
+    let array
+    await myHttp.get('/article/priArticles/total')
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章数量失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {});
+    return array
+}
 
 export {
     viewArt,
@@ -294,5 +348,8 @@ export {
     getAllPubArticles,
     getMyFavoriteArtApi,
     getAllPubArticlesCount,
-    getMyFavoriteArtTotalApi
+    getMyFavoriteArtTotalApi,
+    getPubArticlesCount,
+    getPriArticlesCount,
+    searchArtApi
 }

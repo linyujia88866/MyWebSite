@@ -5,14 +5,14 @@
         <el-menu
             :default-active="'1-4'"
             :default-openeds="['1']">
-            <el-menu-item index="1-3" @click="showPublish = false">未发布文章
+            <el-menu-item index="1-3" @click="showPri">未发布文章
               <el-icon>
                 <template #default>
                   <img style="height: 100%; width: 100%" src="@/assets/notPub.svg" alt="">
                 </template>
               </el-icon>
             </el-menu-item>
-            <el-menu-item index="1-4" @click="showPublish = true">已发布文章
+            <el-menu-item index="1-4" @click="showPub">已发布文章
               <el-icon>
                 <template #default>
                   <img style="height: 100%; width: 100%" src="@/assets/alreadyPub.svg" alt="">
@@ -25,12 +25,31 @@
 
     <el-container>
       <el-main>
-        <PubArticles v-if="showPublish" style="margin-top:12px; margin-left: auto;"></PubArticles>
-        <PriArticles v-else style="margin-top:12px; margin-left: auto;"></PriArticles>
+        <PubArticles ref="allPub" v-if="showPublish" style="margin-top:12px; margin-left: auto;"></PubArticles>
+        <PriArticles ref="allPri" v-else style="margin-top:12px; margin-left: auto;"></PriArticles>
       </el-main>
     </el-container>
   </el-container>
-
+  <div style="display: flex;
+              justify-content: center;
+              width: 100%;"
+       v-if="total>0">
+    <div style="display: flex;
+                width: 1100px;
+                margin-top: 20px;
+                justify-content: right ">
+      <el-pagination
+          @change="refresh"
+          hide-on-single-page
+          v-model:page-size="pageSize"
+          :page-sizes="[5, 10, 20, 30]"
+          pager-count="5"
+          v-model:current-page="pageCount"
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total" />
+    </div>
+  </div>
 <div>
     <el-backtop :right="100" :bottom="100" style="width: 150px">
       <div
@@ -55,9 +74,44 @@ import {ref} from "vue";
 import {useRouter} from "vue-router";
 import PubArticles from "@/Comps/Article/PubArticles.vue";
 import PriArticles from "@/Comps/Article/PriArticles.vue";
+import {getPriArticlesCount, getPubArticlesCount} from "@/utils/articleApi";
 
 let showPublish = ref(true)
 const router = useRouter();
+const total = ref(10)
+const pageSize = ref(5)
+const pageCount = ref(1)
+const allPub = ref()
+const allPri = ref()
+
+function showPri() {
+  showPublish.value = false
+  getArtList()
+}
+
+function showPub() {
+  showPublish.value = true
+  getArtList()
+}
+
+// 先获取总数
+async function getArtList() {
+  if(showPublish.value){
+    total.value = await getPubArticlesCount()
+  } else {
+    total.value = await getPriArticlesCount()
+  }
+}
+getArtList()
+
+function refresh(cur_page, page_size){
+  let offset = page_size * (cur_page - 1)
+  if(showPublish.value){
+    allPub.value.getArtList(page_size, offset)
+  } else {
+    allPri.value.getArtList(page_size, offset)
+  }
+}
 </script>
 
 <style scoped>

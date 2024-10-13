@@ -4,14 +4,19 @@
       <ArticlesILike ref="allPub" style="margin-top:12px; margin-left: auto;"></ArticlesILike>
     </el-main>
   </el-container>
-  <div style="display: flex;  justify-content: center; width: 100%;" v-if="total>0">
+  <div style="display: flex;
+              justify-content: center;
+              margin-top: 20px;
+              width: 100%;"
+       v-if="total>0">
     <div style="display: flex;   width: 900px; justify-content: right ">
       <el-pagination
           @change="refresh"
           hide-on-single-page
           v-model:page-size="pageSize"
+          v-model:current-page="pageCount"
           :page-sizes="[5, 10, 20, 30]"
-          v-model:pager-count="pageCount"
+          pager-count="5"
           background
           layout="total, sizes, prev, pager, next, jumper"
           :total="total" />
@@ -38,7 +43,7 @@
 
 <script setup>
 import ArticlesILike from "@/Comps/Article/ArticlesILike.vue";
-import {getAllPubArticlesCount, getMyFavoriteArtTotalApi} from "@/utils/articleApi";
+import {getMyFavoriteArtTotalApi} from "@/utils/articleApi";
 import {ref} from "vue";
 const total = ref(0)
 const pageSize = ref(5)
@@ -48,7 +53,6 @@ async function getArtList() {
   total.value = await getMyFavoriteArtTotalApi()
 }
 getArtList()
-
 
 function refresh(cur_page, page_size){
   let offset = page_size * (cur_page - 1)

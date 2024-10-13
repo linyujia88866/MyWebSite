@@ -1,9 +1,13 @@
 <template>
   <div class="article-list">
-    <input type="text" v-model="searchQuery" placeholder="请输入文章标题搜索" />
-    <h1 style="margin: 0;">文章列表</h1>
-    <ul v-if="filteredArticles.length > 0">
-      <li v-for="article in filteredArticles" :key="article.id">
+    <div style="display: flex;  width: 1000px">
+      <input style="margin-left: 20px" type="text" v-model="searchQuery" placeholder="请输入文章标题搜索" />
+      <el-button @click="searchArt" style="margin-top: 4px; margin-left: 8px;" type="primary">搜索</el-button>
+      <el-button @click="clearSearch" style="margin-top: 4px; margin-left: 8px;" type="primary">清空搜索</el-button>
+    </div>
+<!--    <h1 style="margin: 0;">文章列表</h1>-->
+    <ul v-if="articles.length > 0">
+      <li v-for="article in articles" :key="article.id">
         <h2>{{ article.title }}</h2>
         <div class="meta">
           <span>作者: {{ article.username }}</span>
@@ -29,14 +33,14 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getAllPubArticles} from "@/utils/articleApi";
+import {getAllPubArticles, searchArtApi} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
 const router = useRouter();
 
 
-getArtList(0, 10)
+getArtList(0, 100)
 async function getArtList(offset, limit) {
   articles.value = []
   let array = await  getAllPubArticles(limit, offset)
@@ -54,6 +58,27 @@ async function getArtList(offset, limit) {
   }
 }
 
+function clearSearch() {
+  getArtList(0, 100)
+  searchQuery.value = ''
+}
+
+async function searchArt() {
+  articles.value = []
+  let array = await searchArtApi(100, 0, searchQuery.value)
+  for (let i = 0; i < array.length; i++) {
+    let item = array[i]
+    articles.value.push({
+      id: item.articleId,
+      title: item.title,
+      reads: item.readCount,
+      comments: item.commentCount,
+      likes: item.goodCount,
+      username: item.username,
+      date: item.createdAt.replace(/\.0$/, '')
+    })
+  }
+}
 const filteredArticles = computed(() => {
   return articles.value.filter(article =>
       article.title.toLowerCase().includes(searchQuery.value.toLowerCase())

@@ -20,18 +20,23 @@
       </el-main>
     </el-container>
   </el-container>
-  <div style="display: flex;  justify-content: center; width: 100%;" v-if="total>0">
-    <div style="display: flex;   width: 900px; justify-content: right ">
-      <el-pagination
-          @change="refresh"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 30, 40]"
-          v-model:pager-count="pageCount"
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total" />
-    </div>
-  </div>
+<!--  <div style="display: flex;-->
+<!--              justify-content: center;-->
+<!--              margin-top: 20px;-->
+<!--              width: 100%;"-->
+<!--       v-if="total>0">-->
+<!--    <div style="display: flex;   width: 900px; justify-content: right ">-->
+<!--      <el-pagination-->
+<!--          @change="refresh"-->
+<!--          v-model:page-size="pageSize"-->
+<!--          :page-sizes="[10, 20, 30, 40]"-->
+<!--          page-count="5"-->
+<!--          v-model:current-page="pageCount"-->
+<!--          background-->
+<!--          layout="total, sizes, prev, pager, next, jumper"-->
+<!--          :total="total" />-->
+<!--    </div>-->
+<!--  </div>-->
   <div>
     <el-backtop :right="100" :bottom="100" style="width: 150px">
       <div

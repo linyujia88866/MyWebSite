@@ -1,4 +1,5 @@
 <template>
+  <GotoBox></GotoBox>
   <div style="width:100%; justify-content: center; display: flex; margin: 20px;">
     <!--      <div style="margin: 12px 0 0 8px;padding: 0; display: flex ">-->
     <!--        <el-button type="primary"  @click.prevent="gotoShowCase()"  size="large">创建清单</el-button>-->
@@ -76,6 +77,7 @@ import {ElMessage, ElMessageBox, ElTable} from "element-plus";
 import Card from "@/Comps/Tasks/Card.vue";
 import {useRouter} from 'vue-router';
 import bus from "@/utils/eventBus";
+import GotoBox from "@/convert/GotoBox.vue";
 
 const router = useRouter();
 const tasks = ref([])
@@ -158,7 +160,7 @@ async function deleteTask(taskId) {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 5px;
-  margin: 80px 110px 80px 80px;
+  margin: 80px 250px 80px 180px;
   flex-grow: 1;
 }
 </style>

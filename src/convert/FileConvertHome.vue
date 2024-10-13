@@ -99,7 +99,7 @@ function gotoMemory() {
 }
 
 .card-base64{
-  background-image: url('../assets/base64.jpg');
+  background-image: url('../assets/base64.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -112,7 +112,7 @@ function gotoMemory() {
 }
 
 .card-unicode{
-  background-image: url('../assets/unicode.png');
+  background-image: url('../assets/unicode.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

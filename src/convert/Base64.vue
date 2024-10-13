@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import {base64DecodeApi, base64EncodeApi} from "@/utils/base64Api";
-
+import GotoBox from "@/convert/GotoBox.vue";
 const desc = ref("");
 let result = ref("");
 async function encode() {
@@ -13,17 +13,20 @@ async function decode() {
 </script>
 
 <template>
-  <div style="margin-left: 260px; margin-right: 260px">
-    <h1>
+  <GotoBox></GotoBox>
+  <div style="margin: auto; width: 800px">
+    <h2 style="text-align: left">
       Base64 在线编码解码(最好用的 Base64 在线工具)
-    </h1>
-    <div>
+    </h2>
+    <div style="text-align: left;">
       请输入要进行 Base64 编码或解码的字符
     </div>
     <el-input show-word-limit maxlength="5000" :rows="10" v-model="desc" type="textarea" style="margin-top: 12px; margin-bottom: 12px; " />
-    <el-button type="primary" @click="encode">编码(Encode)</el-button>
-    <el-button type="primary" @click="decode">解码(Decode)</el-button>
-    <div style="margin-top: 12px; margin-bottom: 12px">
+    <div style="text-align: left">
+      <el-button type="primary" @click="encode">编码(Encode)</el-button>
+      <el-button type="primary" @click="decode">解码(Decode)</el-button>
+    </div>
+    <div style="margin-top: 12px; margin-bottom: 12px; text-align: left">
       Base64 编码或解码的结果：
     </div>
     <el-input :rows="10" v-model="result" type="textarea" />

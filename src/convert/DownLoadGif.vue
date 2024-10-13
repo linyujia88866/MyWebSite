@@ -1,5 +1,6 @@
 /* eslint-disable */
 <template>
+  <GotoBox></GotoBox>
   <div class="home-page">
     <div>
     </div>
@@ -42,6 +43,7 @@
 import {useRouter} from 'vue-router';
 import {ref} from "vue";
 import {downFile} from "@/utils/fileConvertApis";
+import GotoBox from "@/convert/GotoBox.vue";
 const router = useRouter();
 const input = ref('')
 input.value = ""
