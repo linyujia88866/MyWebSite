@@ -1,7 +1,6 @@
 import {myHttp} from "@/request/myrequest";
 import {
-    calSize, copyToClipboard, genNewFileName,
-    getFirstAndLastChars,
+    calSize, copyToClipboard, getFirstAndLastChars,
     hasName,
     removePrefix,
     replaceSuffix,
