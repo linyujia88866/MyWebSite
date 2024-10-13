@@ -189,7 +189,7 @@ async function addOperationToArtApi(articleId, type="like") {
                 } else {
                     ElMessage({
                         message: `${msg}！`,
-                        type: 'info',
+                        type: 'success',
                     });
                 }
             });

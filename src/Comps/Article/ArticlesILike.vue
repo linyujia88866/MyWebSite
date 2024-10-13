@@ -34,9 +34,10 @@ const searchQuery = ref('');
 const articles = ref([]);
 const router = useRouter();
 
-getArtList()
-async function getArtList() {
-  let array = await  getMyFavoriteArtApi()
+getArtList(5, 0)
+async function getArtList(limit, offset) {
+  articles.value = []
+  let array = await  getMyFavoriteArtApi(limit, offset)
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({
@@ -65,6 +66,10 @@ const filteredArticles = computed(() => {
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
 };
+
+defineExpose({
+  getArtList
+})
 
 </script>
 

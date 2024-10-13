@@ -29,15 +29,17 @@
 import { ref, computed } from 'vue';
 import { format } from 'date-fns';
 import {useRouter} from "vue-router";
-import {getAllPubArticles, viewArt} from "@/utils/articleApi";
+import {getAllPubArticles} from "@/utils/articleApi";
 
 const searchQuery = ref('');
 const articles = ref([]);
 const router = useRouter();
 
-getArtList()
-async function getArtList() {
-  let array = await  getAllPubArticles(5, 0)
+
+getArtList(0, 10)
+async function getArtList(offset, limit) {
+  articles.value = []
+  let array = await  getAllPubArticles(limit, offset)
   for (let i = 0; i < array.length; i++) {
     let item = array[i]
     articles.value.push({
@@ -69,6 +71,10 @@ async function viewArticleById(artId) {
 const formatDate = (date) => {
   return format(date, 'yyyy-MM-dd HH:mm:ss');
 };
+
+defineExpose({
+  getArtList
+})
 
 </script>
 

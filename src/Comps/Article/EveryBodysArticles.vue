@@ -16,12 +16,22 @@
   <el-container class="layout-container-demo" style="height: 100%">
     <el-container>
       <el-main>
-        <ArticlesILike v-if="showILike" style="margin-top:12px; margin-left: auto;"></ArticlesILike>
-        <AllPubArticles v-else style="margin-top:12px; margin-left: auto;"></AllPubArticles>
+        <AllPubArticles ref="allPub" style="margin-top:12px; margin-left: auto;"></AllPubArticles>
       </el-main>
     </el-container>
   </el-container>
-
+  <div style="display: flex;  justify-content: center; width: 100%;" v-if="total>0">
+    <div style="display: flex;   width: 900px; justify-content: right ">
+      <el-pagination
+          @change="refresh"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 30, 40]"
+          v-model:pager-count="pageCount"
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total" />
+    </div>
+  </div>
   <div>
     <el-backtop :right="100" :bottom="100" style="width: 150px">
       <div
@@ -47,11 +57,21 @@ import {useRouter} from "vue-router";
 import AllPubArticles from "@/Comps/Article/AllPubArticles.vue";
 import ArticlesILike from "@/Comps/Article/ArticlesILike.vue";
 import bus from "@/utils/eventBus";
+import {getAllPubArticlesCount} from "@/utils/articleApi";
 
 const router = useRouter();
 let showILike = ref(false)
 let nav = ref()
 let isLogin = ref(false)
+const total = ref(0)
+const pageSize = ref(10)
+const pageCount = ref(1)
+const allPub = ref()
+
+function refresh(cur_page, page_size){
+  let offset = page_size * (cur_page - 1)
+  allPub.value.getArtList(offset, page_size)
+}
 
 onMounted(() => {
   bus.$on('loginStatus', decideContentToShow);
@@ -59,6 +79,11 @@ onMounted(() => {
     bus.$off('loginStatus', decideContentToShow)
   }); // 确保在组件卸载时移除监听器
 });
+
+async function getArtList() {
+  total.value = await getAllPubArticlesCount()
+}
+getArtList()
 
 function decideContentToShow(x) {
   isLogin.value = x

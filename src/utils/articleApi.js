@@ -71,15 +71,32 @@ async function cancelPubArt(artId) {
     return res
 }
 
-async function getMyFavoriteArtApi() {
+async function getMyFavoriteArtApi(limit, offset) {
     let array
-    await myHttp.get('/article/MyFavoriteArticles')
+    await myHttp.get(`/article/MyFavoriteArticles?limit=${limit}&offset=${offset}`)
         .then(response => {
             if (response.data.code === 200) {
                 array = response.data.data;
             } else {
                 ElMessage({
                     message: '获取文章列表失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {});
+    return array
+}
+
+async function getMyFavoriteArtTotalApi() {
+    let array
+    await myHttp.get(`/article/MyFavoriteArticles/total`)
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章数量失败！',
                     type: 'error',
                 });
             }
@@ -231,6 +248,23 @@ async function getAllPubArticles(limit, offset) {
     return array
 }
 
+async function getAllPubArticlesCount() {
+    let array
+    await myHttp.get(`/article/AllPubArticles/total`)
+        .then(response => {
+            if (response.data.code === 200) {
+                array = response.data.data;
+            } else {
+                ElMessage({
+                    message: '获取文章数量失败！',
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {});
+    return array
+}
+
 async function getPriArticles() {
     let array
     await myHttp.get('/article/priArticles')
@@ -258,5 +292,7 @@ export {
     saveArtApi,
     updateArtApi,
     getAllPubArticles,
-    getMyFavoriteArtApi
+    getMyFavoriteArtApi,
+    getAllPubArticlesCount,
+    getMyFavoriteArtTotalApi
 }
