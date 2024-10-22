@@ -2,14 +2,6 @@
 <template>
   <div class="home-page">
     <div class="card-container">
-      <div>
-        <div class="card card-fileTrans" @click="gotoDownloadPic">
-
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          图片下载
-        </p>
-      </div>
       <!-- 卡片内容 -->
       <div>
         <div class="card card-base64" @click="gotoBase64">
@@ -38,6 +30,22 @@
       </div>
 
 
+      <div>
+        <div class="card card-ledger" @click="gotoLedger">
+
+        </div>
+        <p style="margin: 0; padding: 0; font-weight: bold;">
+          一本糊涂账
+        </p>
+      </div>
+
+<!--      <div>-->
+<!--        <div class="card card-fileTrans" @click="gotoDownloadPic"></div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          图片下载-->
+<!--        </p>-->
+<!--      </div>-->
+
     </div>
   </div>
 </template>
@@ -56,6 +64,10 @@ function gotoUnicode() {
 }
 function gotoMemory() {
   router.push({name: 'memoryCards'});
+}
+
+function gotoLedger() {
+  router.push({name: 'muddled-ledger'});
 }
 </script>
 
@@ -99,13 +111,20 @@ function gotoMemory() {
 }
 
 .card-base64{
-  background-image: url('../assets/base64.png');
+  background-image: url('../assets/B.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 .card-memory{
   background-image: url('../assets/allright.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-ledger{
+  background-image: url('../assets/ledger.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

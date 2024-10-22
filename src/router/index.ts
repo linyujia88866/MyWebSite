@@ -29,6 +29,7 @@ import Base64 from "@/convert/Base64.vue";
 import FavoriteArticles from "@/Comps/Article/FavoriteArticles.vue";
 import Unicode from "@/convert/Unicode.vue";
 import Knowledge from "@/Comps/Knowledge/Knowledge.vue";
+import MuddledLedger from "@/Comps/MuddledLedger/MuddledLedger.vue";
 
 const routes = [
   {
@@ -42,6 +43,12 @@ const routes = [
     name: 'favoriteArticle',
     component: FavoriteArticles,
     meta: { title: '我收藏的文章' }
+  },
+  {
+    path: '/muddled-ledger',
+    name: 'muddled-ledger',
+    component: MuddledLedger,
+    meta: { title: '一本糊涂账' }
   },
   {
     path: '/home',

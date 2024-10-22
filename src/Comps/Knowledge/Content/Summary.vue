@@ -2,13 +2,14 @@
 import { ref } from 'vue'
 import DrawTitle from "@/Comps/Knowledge/Comp/DrawTitle.vue";
 import bus from "@/utils/eventBus";
+import {knowledgeList} from "@/constant/knowledge";
 
 const activeNames = ref(['1', '2', '3', '4'])
 
 function handleSelect(val) {
   bus.emit('handleSelect', val)
 }
-
+let dist = knowledgeList
 </script>
 
 <template>
@@ -20,9 +21,13 @@ function handleSelect(val) {
       </template>
       <div style="text-align: left">
         <ul>
-          <li><strong class="ql-size-large"  @click="handleSelect('1-4-1')"><a>拥有自己的第一台服务器</a></strong></li>
-          <li><strong class="ql-size-large"  @click="handleSelect('1-4-2')"><a>部署一个最简单的web服务器</a></strong></li>
-          <li><strong class="ql-size-large"  @click="handleSelect('1-4-3')"><a>开发一个简单的html页面</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-1')"><a>{{dist['1-4-1'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-2')"><a>{{dist['1-4-2'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-3')"><a>{{dist['1-4-3'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-4')"><a>{{dist['1-4-4'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-5')"><a>{{dist['1-4-5'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-6')"><a>{{dist['1-4-6'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-4-7')"><a>{{dist['1-4-7'].title}}</a></strong></li>
         </ul>
       </div>
     </el-collapse-item>
@@ -32,8 +37,9 @@ function handleSelect(val) {
       </template>
       <div style="text-align: left">
         <ul>
-          <li><strong class="ql-size-large"  @click="handleSelect('1-5-1')"><a>单页面应用介绍</a></strong></li>
-          <li><strong class="ql-size-large"  @click="handleSelect('1-5-2')"><a>创建一个vue工程</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-5-1')"><a>{{dist['1-5-1'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-5-2')"><a>{{dist['1-5-2'].title}}</a></strong></li>
+          <li><strong class="ql-size-large"  @click="handleSelect('1-5-3')"><a>{{dist['1-5-3'].title}}</a></strong></li>
         </ul>
       </div>
     </el-collapse-item>

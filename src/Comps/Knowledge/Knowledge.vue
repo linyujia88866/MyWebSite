@@ -11,19 +11,23 @@
             <template #title>
               <el-icon><message /></el-icon>从0到1搭建一个自己的网站
             </template>
-            <el-menu-item index="1-0">知识库概览</el-menu-item>
-            <el-menu-item index="1-3">项目简介</el-menu-item>
+            <el-menu-item index="1-0">{{dist['1-0'].title}}</el-menu-item>
+            <el-menu-item index="1-3">{{dist['1-3'].title}}</el-menu-item>
             <el-sub-menu index="1-4">
               <template #title>环境的搭建</template>
-              <el-menu-item index="1-4-1">拥有自己的第一台服务器</el-menu-item>
-              <el-menu-item index="1-4-2">部署一个最简单的web服务器</el-menu-item>
-              <el-menu-item index="1-4-3">开发一个简单的html页面</el-menu-item>
+              <el-menu-item index="1-4-1">{{dist['1-4-1'].title}}</el-menu-item>
+              <el-menu-item index="1-4-2">{{dist['1-4-2'].title}}</el-menu-item>
+              <el-menu-item index="1-4-3">{{dist['1-4-3'].title}}</el-menu-item>
+              <el-menu-item index="1-4-4">{{dist['1-4-4'].title}}</el-menu-item>
+              <el-menu-item index="1-4-5">{{dist['1-4-5'].title}}</el-menu-item>
+              <el-menu-item index="1-4-6">{{dist['1-4-6'].title}}</el-menu-item>
+              <el-menu-item index="1-4-7">{{dist['1-4-7'].title}}</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="1-5">
               <template #title>前端开发</template>
-              <el-menu-item index="1-5-1">单页面应用介绍</el-menu-item>
-              <el-menu-item index="1-5-2">创建一个vue工程</el-menu-item>
-              <el-menu-item index="1-5-3">使用vue开发一个简单的网页</el-menu-item>
+              <el-menu-item index="1-5-1">{{dist['1-5-1'].title}}</el-menu-item>
+              <el-menu-item index="1-5-2">{{dist['1-5-2'].title}}</el-menu-item>
+              <el-menu-item index="1-5-3">{{dist['1-5-3'].title}}</el-menu-item>
             </el-sub-menu>
 <!--            <el-sub-menu index="1-6">-->
 <!--              <template #title>后端开发</template>-->
@@ -64,6 +68,9 @@
             <BuyServer v-if="activeIndex==='1-4-1'"/>
             <DeployNginx  v-if="activeIndex==='1-4-2'"></DeployNginx>
             <DevHtml v-if="activeIndex==='1-4-3'"></DevHtml>
+            <InstallDocker v-if="activeIndex==='1-4-4'"></InstallDocker>
+            <ViewDocker v-if="activeIndex==='1-4-5'"></ViewDocker>
+            <DockerInsNginx v-if="activeIndex==='1-4-6'"></DockerInsNginx>
             <SPA  v-if="activeIndex==='1-5-1'"></SPA>
             <CreateVue  v-if="activeIndex==='1-5-2'"></CreateVue>
             <UseVue  v-if="activeIndex==='1-5-3'"></UseVue>
@@ -86,62 +93,18 @@ import SPA from "@/Comps/Knowledge/Content/Website/SPA.vue";
 import bus from "@/utils/eventBus";
 import CreateVue from "@/Comps/Knowledge/Content/Website/CreateVue.vue";
 import UseVue from "@/Comps/Knowledge/Content/Website/UseVue.vue";
-import PutIdDown from "@/Comps/Knowledge/Content/Website/Three/PutIdDown.vue";
 import Introduce from "@/Comps/Knowledge/Content/Website/Three/Introduce.vue";
+import InstallDocker from "@/Comps/Knowledge/Content/InstallDocker.vue";
+import ViewDocker from "@/Comps/Knowledge/Content/ViewDocker.vue";
+import DockerInsNginx from "@/Comps/Knowledge/Content/DockerInsNginx.vue";
+import {knowledgeList} from "@/constant/knowledge";
 
 const activeIndex = ref("1-0")
 const menu = ref()
 const defaultActive = ref('')
 const route = useRoute()
 const router = useRouter();
-let dist = {
-  '1-0': {
-    title: '知识库概览'
-  },
-  '1-1': {
-    title: 'K8S'
-  },
-  '1-2': {
-    title: 'Docker'
-  },
-  '1-3': {
-    title: '项目简介'
-  }
-  , '1-3-1': {
-    title: '将知识沉淀下来'
-  }
-  , '1-3-2': {
-    title: '灵感来源'
-  }
-  , '1-3-3': {
-    title: '网站项目介绍'
-  }
-  , '1-4-1': {
-    title: '拥有自己的第一台服务器'
-  }
-  , '1-4-2': {
-    title: '部署一个最简单的web服务器'
-  }
-  , '1-4-3': {
-    title: '开发一个简单的html页面'
-  }
-  , '1-5-1': {
-    title: 'SPA单页面应用介绍'
-  }
-  , '1-5-2': {
-    title: '创建一个vue工程'
-  }
-  , '1-5-3': {
-    title: '使用vue开发一个简单的网页'
-  }
-  , '1-6-1': {
-    title: '写一个最简单的后端服务'
-  }
-}
-//
-// <el-menu-item index="1-3-1">将知识沉淀下来</el-menu-item>
-// <el-menu-item index="1-3-2">灵感来源</el-menu-item>
-// <el-menu-item index="1-3-3">网站项目介绍</el-menu-item>
+let dist = knowledgeList
 
 function handleSelect(e) {
   // console.log("您正在阅读第" + e + "章内容")
