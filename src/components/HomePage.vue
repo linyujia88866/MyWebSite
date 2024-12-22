@@ -23,14 +23,14 @@
         </p>
       </div>
       <!--=================================================分割线================================================================-->
-      <div>
-        <div class="card card-notebook" @click="gotoNotebook">
+<!--      <div>-->
+<!--        <div class="card card-notebook" @click="gotoNotebook">-->
 
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          文章博客社区
-        </p>
-      </div>
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          文章博客社区-->
+<!--        </p>-->
+<!--      </div>-->
       <!--=================================================分割线================================================================-->
       <div>
         <div class="card card-knowledge" @click="gotoKnowledge">

@@ -20,24 +20,24 @@
         </p>
       </div>
 
-      <div>
-        <div class="card card-memory" @click="gotoMemory">
+<!--      <div>-->
+<!--        <div class="card card-memory" @click="gotoMemory">-->
 
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          清单
-        </p>
-      </div>
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          清单-->
+<!--        </p>-->
+<!--      </div>-->
 
 
-      <div>
-        <div class="card card-ledger" @click="gotoLedger">
+<!--      <div>-->
+<!--        <div class="card card-ledger" @click="gotoLedger">-->
 
-        </div>
-        <p style="margin: 0; padding: 0; font-weight: bold;">
-          一本糊涂账
-        </p>
-      </div>
+<!--        </div>-->
+<!--        <p style="margin: 0; padding: 0; font-weight: bold;">-->
+<!--          一本糊涂账-->
+<!--        </p>-->
+<!--      </div>-->
 
 <!--      <div>-->
 <!--        <div class="card card-fileTrans" @click="gotoDownloadPic"></div>-->
