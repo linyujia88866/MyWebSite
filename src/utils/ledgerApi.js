@@ -37,7 +37,6 @@ async function add_category(cname) {
 }
 
 async function add_record(spend, comment, date, category) {
-    console.log(date)
     let requestBody = {
         spend: spend,
         comment: comment,
@@ -106,6 +105,39 @@ async function edit_category(o, n) {
     return res
 }
 
+async function edit_record(spend, comment, date, category, id) {
+    let requestBody = {
+        id: id,
+        spend: spend,
+        comment: comment,
+        date: date,
+        cname: category,
+    };
+    let res = {}
+    await myHttp.post(`/ledger/record/edit`, requestBody)
+        .then(response => {
+            if (response.data.code === 200) {
+                ElMessage({
+                    message: `修改消费记录成功！`,
+                    type: 'success',
+                });
+
+            } else {
+                ElMessage({
+                    message: `修改消费记录失败！`,
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {
+            ElMessage({
+                message: `修改消费记录失败！`,
+                type: 'error',
+            });
+        });
+    return res
+}
+
 async function delete_category(o) {
     let requestBody = {
         name: o,
@@ -135,7 +167,7 @@ async function delete_category(o) {
 
 async function delete_record(o) {
     let requestBody = {
-        name: o,
+        id: o,
     };
     await myHttp.post(`/ledger/record/delete`, requestBody)
         .then(response => {
@@ -236,12 +268,43 @@ async function get_all_record() {
     return res
 }
 
+async function get_report(year_month) {
+    let parts = year_month.split('-');
+    let year = parts[0];
+    let month = parts[1];
+    let requestBody = {
+        year: year,
+        month: month
+    };
+    let res
+    await myHttp.post(`/ledger/report/month`, requestBody)
+        .then(response => {
+            if (response.data.code === 200) {
+                res = response.data.data
+            } else {
+                ElMessage({
+                    message: `获取消费记录列表失败！`,
+                    type: 'error',
+                });
+            }
+        })
+        .catch(error => {
+            ElMessage({
+                message: `获取消费记录列表失败！`,
+                type: 'error',
+            });
+        });
+    return res
+}
+
 export {
     add_category,
     get_all_category,
     get_all_record,
     add_record,
     edit_category,
+    edit_record,
     delete_category,
     delete_record,
+    get_report,
 }

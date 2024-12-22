@@ -100,6 +100,7 @@ function set_default() {
   }
 
 goto_consumption()
+goto_report()
 </script>
 
 <template>

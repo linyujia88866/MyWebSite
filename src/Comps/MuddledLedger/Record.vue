@@ -1,15 +1,11 @@
 <script setup>
 import {
-  add_category, add_record,
-  delete_record, get_all_category,
+  add_record,
+  delete_record, edit_record, get_all_category,
   get_all_record
 } from "@/utils/ledgerApi";
 import {onMounted, reactive, ref} from "vue";
-import { ArrowDown } from '@element-plus/icons-vue'
 import {ElMessage} from "element-plus";
-
-// add_category()
-// add_record()
 
 let tableData = ref([])
 
@@ -65,7 +61,10 @@ function add() {
 }
 function edit() {
   if(currentRow.value !== undefined && currentRow.value !== null){
-    form.name = currentRow.value.name
+    cur_category_value.value = currentRow.value.name
+    value1.value = currentRow.value.date
+    form.spend = currentRow.value.spend
+    form.comment = currentRow.value.comment
     show_edit.value = true
   } else {
     ElMessage({
@@ -78,7 +77,7 @@ const formLabelWidth = '140px'
 
 async function deleteRow() {
   if (currentRow.value !== undefined && currentRow.value !== null) {
-    await delete_record(currentRow.value.name)
+    await delete_record(currentRow.value.id)
     await reset()
   } else {
     ElMessage({
@@ -96,13 +95,7 @@ async function add_() {
     });
     return
   }
-  if(cur_category_value.value === undefined || cur_category_value.value === ''){
-    ElMessage({
-      message: `请选择消费类型！`,
-      type: 'error',
-    });
-    return
-  }
+
   if(value1.value === undefined || value1.value === ''){
     ElMessage({
       message: `请选择消费日期！`,
@@ -115,15 +108,39 @@ async function add_() {
   await reset()
 }
 
+const cur_edit_record_id = ref()
+
+async function edit_() {
+  cur_edit_record_id.value = currentRow.value.id
+  if(form.spend <= 0){
+    ElMessage({
+      message: `消费金额不能小于0！`,
+      type: 'error',
+    });
+    return
+  }
+
+  if(value1.value === undefined || value1.value === ''){
+    ElMessage({
+      message: `请选择消费日期！`,
+      type: 'error',
+    });
+    return
+  }
+  show_edit.value = false
+  await edit_record(form.spend, form.comment, value1.value, cur_category_value.value, cur_edit_record_id.value)
+  await reset()
+}
+
 const value1 = ref('')
 
 </script>
 
 <template>
-  <div>
-    <h1>消费记录</h1>
-  </div>
-  <div style="display: flex; justify-content: center; max-height: 500px">
+<!--  <div>-->
+<!--    <h1>消费记录</h1>-->
+<!--  </div>-->
+  <div style="display: flex; justify-content: center; max-height: 500px; margin-top: 80px">
     <el-table :data="tableData"
               height="250"
               highlight-current-row
@@ -131,6 +148,7 @@ const value1 = ref('')
               style="width: 800px;  ">
       <!--        <el-table-column type="selection" width="30" />-->
       <el-table-column sortable align="center" type="index" label="序号" width="80" />
+      <el-table-column sortable v-if="false" align="center" prop="id" label="id" width="80" />
       <el-table-column sortable align="center" prop="spend" label="金额(¥)" width="180" />
       <el-table-column sortable align="center" prop="name" label="消费类型" width="180" />
       <el-table-column align="center" prop="comment" label="备注" width="180" />
@@ -149,29 +167,6 @@ const value1 = ref('')
         <el-input v-model="form.spend" autocomplete="off" type="number" />
       </el-form-item>
       <el-form-item label="消费类型" :label-width="formLabelWidth" >
-<!--        <el-dropdown>-->
-<!--          <el-button type="primary">-->
-<!--            消费类型<el-icon class="el-icon&#45;&#45;right"><arrow-down /></el-icon>-->
-<!--          </el-button>-->
-<!--          <template #dropdown>-->
-<!--            <el-dropdown-menu>-->
-<!--              <el-dropdown-item v-for="(value, key) in categoryList" :key="key">{{value}}</el-dropdown-item>-->
-<!--            </el-dropdown-menu>-->
-<!--            <el-select-->
-<!--                v-model="value"-->
-<!--                placeholder="Select"-->
-<!--                size="large"-->
-<!--                style="width: 240px"-->
-<!--            >-->
-<!--              <el-option-->
-<!--                  v-for="item in options"-->
-<!--                  :key="item.value"-->
-<!--                  :label="item.label"-->
-<!--                  :value="item.value"-->
-<!--              />-->
-<!--            </el-select>-->
-<!--          </template>-->
-<!--        </el-dropdown>-->
         <el-select
             v-model="cur_category_value"
             placeholder="Select"
@@ -189,14 +184,6 @@ const value1 = ref('')
       <el-form-item label="备注" :label-width="formLabelWidth">
         <el-input v-model="form.comment" autocomplete="off" />
       </el-form-item>
-<!--      <div style="display: flex">-->
-<!--        <p>消费日期</p>-->
-<!--        <el-date-picker-->
-<!--            v-model="value1"-->
-<!--            type="date"-->
-<!--            placeholder="消费日期"-->
-<!--        />-->
-<!--      </div>-->
       <el-form-item label="消费日期" :label-width="formLabelWidth">
         <el-date-picker
             v-model="value1"
@@ -215,7 +202,46 @@ const value1 = ref('')
     </template>
   </el-dialog>
 
-
+  <el-dialog v-model="show_edit" title="修改消费记录" width="500">
+    <el-form :model="form" >
+      <el-form-item label="消费金额(￥)" :label-width="formLabelWidth">
+        <el-input v-model="form.spend" autocomplete="off" type="number" />
+      </el-form-item>
+      <el-form-item label="消费类型" :label-width="formLabelWidth" >
+        <el-select
+            v-model="cur_category_value"
+            placeholder="Select"
+            size="large"
+            style="width: 240px"
+        >
+          <el-option
+              v-for="item in categoryList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="备注" :label-width="formLabelWidth">
+        <el-input v-model="form.comment" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="消费日期" :label-width="formLabelWidth">
+        <el-date-picker
+            v-model="value1"
+            type="date"
+            placeholder="消费日期"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="show_edit = false">取消</el-button>
+        <el-button type="primary" @click="edit_">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

@@ -2,8 +2,6 @@
 import {add_category, delete_category, edit_category, get_all_category} from "@/utils/ledgerApi";
 import {onMounted, ref, reactive} from "vue";
 import {ElMessage} from "element-plus";
-// const tableData
-// add_category()
 let tableData = ref([])
 const form = reactive({
   name: '',
@@ -82,8 +80,8 @@ const handleCurrentChange = (val) => {
 
 <template>
   <div >
-    <h1>消费分类</h1>
-    <div style="display: flex; justify-content: center">
+<!--    <h1>消费分类</h1>-->
+    <div style="display: flex; justify-content: center; margin-top: 80px">
       <el-table :data="tableData"
                 highlight-current-row
                 @selection-change="handleSelectionChange"
